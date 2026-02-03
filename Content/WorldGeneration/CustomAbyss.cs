@@ -508,7 +508,7 @@ namespace InfernumMode.Content.WorldGeneration
         {
             Point currentPoint = start;
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
 
             // Descend downward, carving out gravel.
             int startingWidth = WorldGen.genRand.Next(MinStartingTrenchWidth, MaxStartingTrenchWidth);
@@ -642,7 +642,7 @@ namespace InfernumMode.Content.WorldGeneration
         {
             int entireAbyssTop = AbyssTop;
             int entireAbyssBottom = AbyssBottom;
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
             layer4ConvergencePoint = new(GetActualX((MaxAbyssWidth - WallThickness) / 2), Layer4Top + 5);
             List<int> caveSeeds = [];
             List<Vector2> caveNoisePositions = [];
@@ -1024,7 +1024,7 @@ namespace InfernumMode.Content.WorldGeneration
         public static void GenerateLayer3SquidDen(Rectangle area)
         {
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
 
             // Generate a voidstone circle for the den and then cut out most of its insides to create a shell.
             WorldSaveSystem.SquidDenCenter = new(GetActualX(area.Left + Layer3SquidDenOuterRadius + 15), area.Top + Layer3SquidDenOuterRadius);
@@ -1073,7 +1073,7 @@ namespace InfernumMode.Content.WorldGeneration
             int top = Layer4Top;
             int bottom = AbyssBottom;
             int offsetSeed = WorldGen.genRand.Next();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
 
             for (int i = 1; i < maxWidth; i++)
             {

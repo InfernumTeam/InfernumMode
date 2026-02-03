@@ -3,6 +3,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;

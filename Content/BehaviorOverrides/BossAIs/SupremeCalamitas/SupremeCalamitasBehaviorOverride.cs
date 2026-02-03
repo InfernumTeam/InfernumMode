@@ -4,11 +4,13 @@ using System.Linq;
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Graphics.Metaballs;
 using CalamityMod.Items.Mounts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Systems.Mechanic;
 using CalamityMod.Tiles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -16,6 +18,7 @@ using InfernumMode.Common.Graphics.Fluids;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -273,6 +276,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             return SCal.Center + new Vector2(SCal.spriteDirection * -18f, 2f);
         }
 
+        public ArenaWallSystem.Box ArenaBox = null;
+
         public override bool PreAI(NPC npc)
         {
             // Do targeting.
@@ -297,7 +302,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Handle initializations.
             if (npc.localAI[0] == 0f)
-            {
+            {   
+
                 // Define the arena. This is finely picked to be the same as in death mode.
                 Vector2 arenaArea = new(125f, 125f);
                 npc.Infernum().Arena = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
@@ -309,25 +315,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 int width = npc.Infernum().Arena.Width / 2 / 16 + 1;
                 int height = npc.Infernum().Arena.Height / 2 / 16 + 1;
                 for (int x = arenaCenter.X - width; x <= arenaCenter.X + width; x++)
-                {
+            {
                     for (int y = arenaCenter.Y - height; y <= arenaCenter.Y + height; y++)
-                    {
+                {
                         if (!WorldGen.InWorld(x, y, 2))
                             continue;
 
                         if ((x == arenaCenter.X - width || x == arenaCenter.X + width || y == arenaCenter.Y - height || y == arenaCenter.Y + height) && !Main.tile[x, y].HasTile)
-                        {
+                {
                             Main.tile[x, y].TileType = arenaTileType;
                             Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
-                        }
+                }
                         if (Main.netMode == NetmodeID.Server)
-                        {
+            {
                             NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
-                        }
+            }
                         else
-                        {
+                    {
                             WorldGen.SquareTileFrame(x, y, true);
-                        }
+                    }
                     }
                 }
 
@@ -562,7 +568,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackTimer >= shootDelay)
             {
                 // Release energy particles at the hand position.
-                Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, DustID.PortalBoltTrail);
+                Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, 264);
                 brimstoneMagic.velocity = Vector2.UnitY.RotatedByRandom(0.14f) * Main.rand.NextFloat(-3.5f, -3f) + npc.velocity;
                 brimstoneMagic.scale = Main.rand.NextFloat(1.25f, 1.35f);
                 brimstoneMagic.noGravity = true;
@@ -702,7 +708,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 condemnationTip = condemnationRef.ModProjectile<CondemnationProj>().TipPosition;
                 for (int i = 0; i < 36; i++)
                 {
-                    Dust chargeMagic = Dust.NewDustPerfect(condemnationTip, DustID.RainbowMk2);
+                    Dust chargeMagic = Dust.NewDustPerfect(condemnationTip, 267);
                     chargeMagic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 5f + npc.velocity;
                     chargeMagic.scale = Main.rand.NextFloat(1f, 1.5f);
                     chargeMagic.color = Color.Violet;
@@ -969,7 +975,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 for (int i = 0; i < 25; i++)
                 {
-                    Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, DustID.PortalBoltTrail);
+                    Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, 264);
                     brimstoneMagic.velocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.31f) * Main.rand.NextFloat(3f, 8f) + npc.velocity;
                     brimstoneMagic.scale = Main.rand.NextFloat(1.25f, 1.35f);
                     brimstoneMagic.noGravity = true;
@@ -1087,7 +1093,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     for (int j = 0; j < 150; j++)
                     {
                         Vector2 dustSpawnPosition = Vector2.Lerp(handPosition, target.Center + shootOffset, j / 149f);
-                        Dust fire = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2);
+                        Dust fire = Dust.NewDustPerfect(dustSpawnPosition, 267);
                         fire.velocity = Vector2.Zero;
                         fire.scale = 1.1f;
                         fire.alpha = 128;
@@ -1325,7 +1331,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.velocity *= 0.925f;
 
                 // Create some magic at the position of SCal's hands.
-                Dust darkMagic = Dust.NewDustPerfect(handPosition, DustID.RainbowMk2);
+                Dust darkMagic = Dust.NewDustPerfect(handPosition, 267);
                 darkMagic.color = Color.Lerp(Color.Red, Color.Violet, Main.rand.NextFloat(0.81f));
                 darkMagic.noGravity = true;
 
@@ -1450,7 +1456,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
                 for (int i = 0; i < 15; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(handPosition, DustID.RainbowMk2);
+                    Dust magic = Dust.NewDustPerfect(handPosition, 267);
                     magic.color = Color.Lerp(Color.Red, Color.Purple, Main.rand.NextFloat());
                     magic.velocity = Main.rand.NextVector2Circular(5f, 5f);
                     magic.scale = Main.rand.NextFloat(1f, 1.25f);
@@ -2463,7 +2469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             float berserkPhaseInterpolant = npc.ai[3];
             Texture2D energyChargeupEffect = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect").Value;
-            Texture2D texture = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas.HoodedTexture.Value;
+            Texture2D texture = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
 
             // Draw a chargeup effect behind SCal if berserk.
             if (berserkPhaseInterpolant > 0f)

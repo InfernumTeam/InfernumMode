@@ -8,6 +8,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using CalamityMod.UI.CalamitasEnchants;
+using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -403,7 +404,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Filters.Scene["CalamityMod:CalamitasRun3"].Deactivate();
 
             // Rain? What is rain?
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             attackTimer++;
             generalTimer++;

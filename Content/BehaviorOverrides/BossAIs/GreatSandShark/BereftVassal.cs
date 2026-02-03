@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;

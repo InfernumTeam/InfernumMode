@@ -681,6 +681,7 @@ Mods: {
 						Судьбы как эта — последствия обманывающего самодовольства. Не причиняй бездумной боли в стремлении к великим целям.
 						'''
 					DisplayName: Обездоленный вассал
+					// Tooltip: ""
 				}
 			}
 
@@ -2541,6 +2542,7 @@ Mods: {
 			GolemArena.MapEntry: Арена
 			MoonlordArena.MapEntry: Арена
 			SeaShell.MapEntry: Морская раковина
+			// ArenaTile.MapEntry: Arena Tile
 		}
 
 		UI: {

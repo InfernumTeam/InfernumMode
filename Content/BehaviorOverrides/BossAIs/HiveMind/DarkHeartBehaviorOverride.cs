@@ -4,6 +4,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -98,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     int shaderainXPos = (int)(npc.position.X + 10f + Main.rand.Next(npc.width - 20));
                     int shaderainYos = (int)(npc.position.Y + npc.height + 4f);
                     int type = ModContent.ProjectileType<ShaderainHostile>();
-                    int damage = npc.GetProjectileDamage(type);
+                    int damage = CalamityMod.NPCs.HiveMind.HiveMind.ShaderainDamage;
                     float randomXVelocity = (CalamityWorld.LegendaryMode && CalamityWorld.revenge) ? Main.rand.NextFloat() * 5f : 0f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), shaderainXPos, shaderainYos, randomXVelocity, 4f, type, damage, 0f, Main.myPlayer);
                 }

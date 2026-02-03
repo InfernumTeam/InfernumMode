@@ -24,6 +24,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             flags2[1] = HasGeneratedColosseumEntrance;
             flags2[2] = PerformedLacewingAnimation;
             flags2[3] = MetSignusAtProfanedGarden;
+            flags2[4] = DownedDreadnautilus;
 
             writer.Write(flags);
             writer.Write(flags2);
@@ -61,6 +62,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasGeneratedColosseumEntrance = flags2[1];
             PerformedLacewingAnimation = flags2[2];
             MetSignusAtProfanedGarden = flags2[3];
+            DownedDreadnautilus = flags2[4];
 
             AbyssLayer1ForestSeed = reader.ReadInt32();
             AbyssLayer3CavernSeed = reader.ReadInt32();

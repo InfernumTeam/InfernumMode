@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public bool GuardiansType;
 
-        public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? ProvidenceBoss.BossMode.Night : ProvidenceBoss.BossMode.Day);
+        public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? ProvidenceBoss.BossMode.Enraged : ProvidenceBoss.BossMode.Normal);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-            Color baseColor = ProvUtils.GetProjectileColor(Variant, 255);
+            Color baseColor = ProvUtils.GetColorBasedOnEnrage(255);
             baseColor.A = 0;
             Color colorA = baseColor with { A = 0 };
             Color colorB = baseColor with { A = 0 } * 0.5f;
@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 
             Projectile.ExpandHitboxBy(50);
-            int dustType = ProvUtils.GetDustID(Variant);
+            int dustType = ProvUtils.GetDustID(Variant == -1 ? true : false);
             if (ProvidenceBehaviorOverride.IsEnraged)
                 dustType = 187;
 
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (modifiers.FinalDamage.Base <= 0 || target.creativeGodMode)
                 return;
 
-            ProvUtils.ApplyHitEffects(target, Variant, 180, 0);
+            ProvUtils.ApplyDebuffs(target, 180);
             Projectile.Kill();
         }
     }

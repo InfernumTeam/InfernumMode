@@ -6,6 +6,7 @@ using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -416,7 +417,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public override bool PreAI(NPC npc)
         {
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             // Aquire a new target if the current one is dead or inactive.
             // If no target exists, fly away.
@@ -933,7 +934,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         CloudParticle fireCloud = new(teleportPosition, Main.rand.NextVector2Circular(12f, 12f), fireColor * 0.85f, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
                         GeneralParticleHandler.SpawnParticle(fireCloud);
 
-                        Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), DustID.CursedTorch);
+                        Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), 75);
                         fire.velocity = -Vector2.UnitY.RotateRandom(0.6f) * Main.rand.NextFloat(1f, 10f);
                         fire.scale *= 1.66f;
                         fire.noGravity = true;
@@ -1255,7 +1256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         Vector2 fireSpawnPosition = npc.Center + angle.ToRotationVector2() * Main.rand.NextFloat(720f, 900f);
                         Vector2 fireVelocity = (angle - Pi).ToRotationVector2() * (29f + 11f * intensity);
 
-                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Torch, fireVelocity);
+                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6, fireVelocity);
                         fire.scale = 0.9f;
                         fire.fadeIn = 1.15f + intensity * 0.3f;
                         fire.noGravity = true;

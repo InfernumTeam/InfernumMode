@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Bumblefuck>()) && InfernumMode.CanUseCustomAIs;
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>()) && InfernumMode.CanUseCustomAIs;
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
     }

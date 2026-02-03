@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             NPC.TargetClosest(true);
             Lighting.AddLight(NPC.Center, Color.White.ToVector3());
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<Bumblefuck>()) || NPC.Opacity <= 0.01f)
+            if (!NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>()) || NPC.Opacity <= 0.01f)
             {
                 NPC.active = false;
                 NPC.netUpdate = true;

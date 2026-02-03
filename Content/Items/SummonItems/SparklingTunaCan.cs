@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Placeables;
+using CalamityMod.Items.Placeables.SunkenSea;
 using CalamityMod.NPCs.SunkenSea;
 using Microsoft.Xna.Framework;
 using Terraria;

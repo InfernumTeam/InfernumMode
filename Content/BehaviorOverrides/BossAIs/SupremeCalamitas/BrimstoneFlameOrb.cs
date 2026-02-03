@@ -73,13 +73,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Projectile.Center);
                 SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                for (int i = 0; i < LaserCount; i++)
                 {
-                    for (int i = 0; i < LaserCount; i++)
-                    {
-                        Vector2 laserDirection = (TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                        Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), SupremeCalamitasBehaviorOverride.FlameOverloadBeamDamage, 0f, -1, Owner.whoAmI);
-                    }
+                    Vector2 laserDirection = (TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
+                    Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), SupremeCalamitasBehaviorOverride.FlameOverloadBeamDamage, 0f, -1, Owner.whoAmI);
                 }
             }
 

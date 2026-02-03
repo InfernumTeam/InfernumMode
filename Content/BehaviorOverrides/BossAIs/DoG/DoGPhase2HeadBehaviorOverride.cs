@@ -8,6 +8,8 @@ using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Sounds;
+using CalamityMod.UI.DialogueDisplay;
+using CalamityMod.UI.DialogueDisplay.DisplayEffects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
@@ -241,7 +243,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGChargeGate>());
                 }
 
-                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.EdgyBossText6", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DoGHead6", Color.Cyan);
+                DialogueDisplaySystem.StartDialogue("Mods.CalamityMod.DevourerOfGods.Head", npc, 5, 120, false, new BossText());
                 npc.netUpdate = true;
             }
 
@@ -813,7 +816,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     // Chomp at the player if they're close enough.
                     if (distanceFromBaseDestination < 112f && chompEffectsCountdown == 0f)
                     {
-                        SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
+                        SoundEngine.PlaySound(DevourerofGodsHead.HitSound, npc.Center);
                         chompEffectsCountdown = 18f;
                     }
                 }
@@ -831,7 +834,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                 if (chompEffectsCountdown == 0f)
                 {
-                    SoundEngine.PlaySound(CommonCalamitySounds.OtherwordlyHitSound, npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.HitSound, npc.Center);
                     timeSinceLastChomp = 0f;
                     chompEffectsCountdown = 26f;
                     npc.netUpdate = true;

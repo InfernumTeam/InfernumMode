@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         public override void Load()
         {
             GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
-            //GlobalNPCOverrides.OnKillEvent += SetDowned;
+            GlobalNPCOverrides.OnKillEvent += SetDowned;
         }
 
         private void UseCustomMapIcon(NPC npc, ref int index)
@@ -92,13 +92,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
         }
 
-        /*private void SetDowned(NPC nPC)
+        private void SetDowned(NPC nPC)
         {
-            if (nPC.type == NPCID.BloodNautilus && !DownedBossSystem.downedDreadnautilus)
+            if (nPC.type == NPCID.BloodNautilus && !WorldSaveSystem.DownedDreadnautilus)
             {
-                DownedBossSystem.downedDreadnautilus = true;
+                WorldSaveSystem.DownedDreadnautilus = true;
             }
-        }*/
+        }
 
         public override bool PreAI(NPC npc)
         {

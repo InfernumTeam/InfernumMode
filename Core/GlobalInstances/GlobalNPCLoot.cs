@@ -35,6 +35,7 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
@@ -200,7 +201,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProfanedGuardiansRelic>());
             }
 
-            if (npc.type == ModContent.NPCType<Bumblefuck>())
+            if (npc.type == ModContent.NPCType<Dragonfolly>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DragonfollyRelic>());
 
             // Providence only needs the wings added, as she drops the shield due to the temple being in hell.
@@ -276,7 +277,7 @@ namespace InfernumMode.Core.GlobalInstances
                 return EoWHeadBehaviorOverride.PerformDeathEffect(npc);
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>() && NPCBehaviorOverride.Registered(npc.type))
-                CalamityMod.CalamityMod.StopRain();
+                CalamityWorld.StopRain();
 
             if (Utilities.IsExoMech(npc) && NPCBehaviorOverride.Registered<Apollo>())
             {

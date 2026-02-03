@@ -264,7 +264,7 @@ namespace InfernumMode.Content.Projectiles
 
         public override void AI()
         {
-            Item heldItem = Owner.ActiveItem();
+            Item heldItem = Owner.HeldItem;
 
             // Die if no longer holding the click button or otherwise cannot use the item.
             bool shouldDie = !Owner.channel || Owner.dead || !Owner.active || Owner.noItems || Owner.CCed || heldItem is null;

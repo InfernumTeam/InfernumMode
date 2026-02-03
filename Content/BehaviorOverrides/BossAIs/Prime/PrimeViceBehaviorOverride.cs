@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             // Extend outward.
             if (attackTimer == 1f)
             {
-                SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
                 npc.velocity = cannonDirection * chargeSpeed;
                 npc.netUpdate = true;
             }
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 int reelBackTime = 40;
                 if (localTimer >= reelBackTime)
                 {
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
 
                     if (notFirstCharge == 1f)
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;

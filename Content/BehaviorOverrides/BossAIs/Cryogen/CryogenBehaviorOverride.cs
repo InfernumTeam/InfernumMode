@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
+using CalamityMod.World;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
@@ -292,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             else
                 npc.Opacity = Lerp(npc.Opacity, 1f, 0.1f);
 
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
             return false;
         }
 

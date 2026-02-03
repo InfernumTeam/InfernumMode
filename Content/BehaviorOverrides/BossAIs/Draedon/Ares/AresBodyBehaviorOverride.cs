@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CalamityMod;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.InverseKinematics;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Melee;
@@ -19,7 +20,6 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -1466,8 +1466,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void DrawArm(NPC npc, Vector2 handPosition, Vector2 screenOffset, Color glowmaskColor, int direction, bool backArm, Color? colorToInterpolateTo = null, float colorInterpolant = 0f)
         {
 
-            PrimitiveSettings foregroundSettings = new(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, null, false);
-            PrimitiveSettings backgroundSettings = new(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, null, false);
+            PrimitiveSettings foregroundSettings = new(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, smoothen: false);
+            PrimitiveSettings backgroundSettings = new(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.As<AresBody>().BackgroundColorFunction, smoothen: false);
 
             float scale = npc.scale;
             SpriteEffects spriteDirection = direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

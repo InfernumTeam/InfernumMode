@@ -162,7 +162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
                     Vector2 dustMoveDirection = Main.rand.NextVector2Unit();
                     Vector2 dustSpawnPosition = pupilPosition + dustMoveDirection * 8f;
-                    Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2);
+                    Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 267);
                     electricity.color = Color.Lerp(Color.Cyan, Color.Wheat, Main.rand.NextFloat());
                     electricity.velocity = dustMoveDirection * 3.6f;
                     electricity.scale = 1.25f;
@@ -295,18 +295,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 headOrigin = new(191f, 130f);
-            Texture2D eyeScleraTexture = TextureAssets.Extra[ExtrasID.MoonLordEyeWhiteHead].Value;
-            Texture2D pupilTexture = TextureAssets.Extra[ExtrasID.MoonLordEye].Value;
+            Texture2D eyeScleraTexture = TextureAssets.Extra[18].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
             Vector2 mouthOrigin = new(19f, 34f);
-            Texture2D mouthTexture = TextureAssets.Extra[ExtrasID.MoonLordMouth].Value;
+            Texture2D mouthTexture = TextureAssets.Extra[25].Value;
             Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
             Rectangle mouthFrame = mouthTexture.Frame(1, 3, 0, (int)npc.Infernum().ExtraAI[6]);
-            Texture2D eyeTexture = TextureAssets.Extra[ExtrasID.MoonLordEyeMouth].Value;
+            Texture2D eyeTexture = TextureAssets.Extra[29].Value;
             Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
             Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
             eyeFrame.Height /= 4;
             eyeFrame.Y += eyeFrame.Height * (int)(npc.localAI[3] / 5f);
-            Texture2D mouthOutlineTexture = TextureAssets.Extra[ExtrasID.MoonLordHandMouth].Value;
+            Texture2D mouthOutlineTexture = TextureAssets.Extra[26].Value;
             Rectangle mouthOuterFrame = mouthOutlineTexture.Frame(1, 1, 0, 0);
             mouthOuterFrame.Height /= 4;
             Point centerTileCoords = npc.Center.ToTileCoordinates();

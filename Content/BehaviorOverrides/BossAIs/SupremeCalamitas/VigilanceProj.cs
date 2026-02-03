@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 fireSpawnPosition += Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.NextFloatDirection() * Projectile.width * 0.5f;
                 fireSpawnPosition += Vector2.UnitY.RotatedBy(Projectile.rotation) * Main.rand.NextFloatDirection() * Projectile.height * 0.5f;
 
-                Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Torch);
+                Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6);
                 fire.velocity = -Vector2.UnitY.RotatedByRandom(0.44f) * Main.rand.NextFloat(2f, 4f);
                 fire.scale = 1.4f;
                 fire.fadeIn = 0.4f;

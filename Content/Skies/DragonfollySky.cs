@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Skies
     {
         public override bool IsSceneEffectActive(Player player)
         {
-            int bumblefuckID = ModContent.NPCType<Bumblefuck>();
+            int bumblefuckID = ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>();
             bool enabled = NPC.AnyNPCs(bumblefuckID) && Main.npc[NPC.FindFirstNPC(bumblefuckID)].Infernum().ExtraAI[8] > 0f;
             return enabled;
         }
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.Skies
 
         private bool UpdatePIndex()
         {
-            int ProvType = ModContent.NPCType<Bumblefuck>();
+            int ProvType = ModContent.NPCType<Dragonfolly>();
             if (BirdbrainIndex >= 0 && Main.npc[BirdbrainIndex].active && Main.npc[BirdbrainIndex].type == ProvType)
             {
                 return true;

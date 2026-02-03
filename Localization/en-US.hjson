@@ -681,6 +681,7 @@ Mods: {
 						Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
 						'''
 					DisplayName: Bereft Vassal
+					Tooltip: ""
 				}
 			}
 
@@ -2529,6 +2530,7 @@ Mods: {
 			GolemArena.MapEntry: Arena
 			MoonlordArena.MapEntry: Arena
 			SeaShell.MapEntry: Sea Shell
+			ArenaTile.MapEntry: Arena Tile
 		}
 
 		UI: {

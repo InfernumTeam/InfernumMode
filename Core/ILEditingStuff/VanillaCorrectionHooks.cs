@@ -637,14 +637,14 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class GetRidOfProvidenceLootBoxHook : ILEditProvider
+    /*public class GetRidOfProvidenceLootBoxHook : ILEditProvider
     {
         public override void Subscribe(ManagedILEdit edit) => SpawnProvLootBox += edit.SubscriptionWrapper;
 
         public override void Unsubscribe(ManagedILEdit edit) => SpawnProvLootBox -= edit.SubscriptionWrapper;
 
         public override void PerformEdit(ILContext il, ManagedILEdit edit) => HookHelper.EarlyReturnEdit(il, edit);
-    }
+    }*/
 
     public class AddWarningAboutNonExpertOnWorldSelectionHook : ILEditProvider
     {
@@ -1102,8 +1102,7 @@ namespace InfernumMode.Core.ILEditingStuff
             ILCursor cursor = new(il);
             cursor.EmitDelegate(() =>
             {
-                if (!MakeSulphSeaWaterEasierToSeeInHook.CanUseHighQualityWater)
-                    WaterClearingBubble.ClaimAllBubbles();
+                WaterClearingBubble.ClaimAllBubbles();
                 if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
                     Main.LocalPlayer.Calamity().decayEffigy = false;
             });

@@ -580,7 +580,7 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class MakeSulphSeaWaterEasierToSeeInHook : ILEditProvider, IExistingDetourProvider
+    /*public sealed class MakeSulphSeaWaterEasierToSeeInHook : ILEditProvider, IExistingDetourProvider
     {
         internal static int SulphurWaterIndex
         {
@@ -600,11 +600,11 @@ namespace InfernumMode.Core.ILEditingStuff
             if (Main.netMode != NetmodeID.Server)
                 SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
 
-            SelectSulphuricWaterColor += edit.SubscriptionWrapper;
+            ModifySulphuricWaterColor += edit.SubscriptionWrapper;
 
         }
 
-        public override void Unsubscribe(ManagedILEdit edit) => SelectSulphuricWaterColor -= edit.SubscriptionWrapper;
+        public override void Unsubscribe(ManagedILEdit edit) => ModifySulphuricWaterColor -= edit.SubscriptionWrapper;
 
         public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
@@ -649,7 +649,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 outputColor = Vector3.Lerp(outputColor, idealColor, 0.8f);
             }
         }
-    }
+    }*/
 
     public sealed class ChangeRuneOfKosCanUseHook : ILEditProvider
     {
@@ -691,7 +691,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         NPC ceaselessVoid = Main.npc[CalamityGlobalNPC.voidBoss];
                         if (ceaselessVoid.ai[0] == (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.ChainedUp)
                         {
-                            SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
+                            SoundEngine.PlaySound(MarkofProvidence.CVSound, player.Center);
                             CeaselessVoidBehaviorOverride.SelectNewAttack(ceaselessVoid);
                             ceaselessVoid.ai[0] = (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl;
 
@@ -700,7 +700,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     }
                     else if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter.X == 0)
                     {
-                        SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
+                        SoundEngine.PlaySound(MarkofProvidence.CVSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             CalamityUtils.SpawnBossBetter(player.Center, ModContent.NPCType<CeaselessVoid>(), new ExactPositionBossSpawnContext(), (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl, 0f, 0f, 1f);
                         else
@@ -716,7 +716,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         NPC signus = Main.npc[CalamityGlobalNPC.signus];
                         if (signus.ai[1] == (int)SignusBehaviorOverride.SignusAttackType.Patrol)
                         {
-                            SoundEngine.PlaySound(RuneofKos.SignutSound, player.Center);
+                            SoundEngine.PlaySound(MarkofProvidence.SignutSound, player.Center);
                             SignusBehaviorOverride.SelectNextAttack(signus);
                             signus.ai[1] = (int)SignusBehaviorOverride.SignusAttackType.KunaiDashes;
                             signus.Infernum().ExtraAI[9] = 0f;
@@ -726,7 +726,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     }
                     else
                     {
-                        SoundEngine.PlaySound(RuneofKos.SignutSound, player.Center);
+                        SoundEngine.PlaySound(MarkofProvidence.SignutSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Signus>());
                         else
@@ -742,7 +742,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         NPC weaver = Main.npc[weaverIndex];
                         if (weaver.ai[1] == (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.HuntSkyCreatures)
                         {
-                            SoundEngine.PlaySound(RuneofKos.StormSound, player.Center);
+                            SoundEngine.PlaySound(MarkofProvidence.StormSound, player.Center);
                             StormWeaverHeadBehaviorOverride.SelectNewAttack(weaver);
                             weaver.ai[1] = (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.IceStorm;
 
@@ -751,7 +751,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     }
                     else
                     {
-                        SoundEngine.PlaySound(RuneofKos.StormSound, player.Center);
+                        SoundEngine.PlaySound(MarkofProvidence.StormSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<StormWeaverHead>());
                         else

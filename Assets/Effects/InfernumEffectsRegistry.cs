@@ -111,7 +111,7 @@ namespace InfernumMode.Assets.Effects
             LoadScreenShaders(assets);
 
             // Significantly dampen the effects of Boss Rush's color-muting shader.
-            Filters.Scene["CalamityMod:BossRush"].GetShader().UseOpacity(0.367f);
+            //Filters.Scene["CalamityMod:BossRush"].GetShader().UseOpacity(0.367f);
         }
 
         public static void LoadRegularShaders(AssetRepository assets)

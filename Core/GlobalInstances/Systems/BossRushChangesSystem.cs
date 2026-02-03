@@ -169,7 +169,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 new Boss(ModContent.NPCType<HiveMind>(), spawnContext: type =>
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
-                }, permittedNPCs: [ModContent.NPCType<DankCreeper>(), ModContent.NPCType<DarkHeart>(), ModContent.NPCType<HiveBlob>(), ModContent.NPCType<HiveBlob2>()]),
+                }, permittedNPCs: [ModContent.NPCType<DankCreeper>(), ModContent.NPCType<DarkHeart>(), ModContent.NPCType<HiveBlob>()]),
 
                 new Boss(NPCID.DukeFishron, spawnContext: type =>
                 {
@@ -187,7 +187,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360),
 
-                new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: [ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer]),
+                new Boss(ModContent.NPCType<Dragonfolly>(), TimeChangeContext.Day, permittedNPCs: [ModContent.NPCType<DraconicSwarmer>(), NPCID.Spazmatism, NPCID.Retinazer]),
 
                 new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: [ ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianPaladin>(), ModContent.NPCType<CrimulanPaladin>(), ModContent.NPCType<SplitCrimulanPaladin>(),
                     ModContent.NPCType<SplitEbonianPaladin>(), ModContent.NPCType<SplitBigSlime>() ]),

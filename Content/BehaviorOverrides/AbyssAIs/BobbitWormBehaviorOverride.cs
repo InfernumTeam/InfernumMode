@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (attackTimer == 1f)
             {
                 Utilities.CreateShockwave(npc.Center, 2, 8, 30, false);
-                SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
+                SoundEngine.PlaySound(ScorchedEarth.RocketShoot, target.Center);
             }
 
             // Grab onto the target if they're reached.
@@ -298,7 +298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return Main.npc[npc.TranslatedTargetIndex].Organic();
 
             Player player = Main.player[npc.TranslatedTargetIndex];
-            if (player.Calamity().abyssalDivingSuit && !player.Calamity().abyssalDivingSuitHide)
+            if (player.Calamity().abyssalDivingSuit)
                 return false;
             if (player.Calamity().andromedaState != AndromedaPlayerState.Inactive)
                 return false;

@@ -209,8 +209,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 WormSegments[0].Position = npc.Center;
 
             // Determine hostility.
-            CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
-            npc.Calamity().KillTime = revKillTime;
+            //.TryGetValue(npc.type, out int revKillTime);
+            //npc.Calamity().KillTime = revKillTime;
             npc.damage = npc.defDamage;
             npc.boss = true;
             npc.chaseable = true;

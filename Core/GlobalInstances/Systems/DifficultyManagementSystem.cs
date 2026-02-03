@@ -26,11 +26,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PreUpdateWorld()
         {
-            // Ensure that Death and Revengeance Mode are always active while Infernum is.
+            // Ensure that Revengeance Mode is always active while Infernum is.
             if (WorldSaveSystem.InfernumModeEnabled && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
-            if (WorldSaveSystem.InfernumModeEnabled && !CalamityWorld.death)
-                CalamityWorld.death = true;
 
             // Disable Infernum interactions with FTW/Master/GFB because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;

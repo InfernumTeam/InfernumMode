@@ -1,5 +1,6 @@
 ﻿using System;
 using CalamityMod;
+using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -52,7 +53,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 Projectile.velocity *= 0.96f;
 
             // Prevent bats from bundling together.
-            Projectile.MinionAntiClump(0.7f);
+            CommonProjectileAI.MinionAntiClump(Projectile, 0.7f);
+            
 
             // Determine rotation.
             Projectile.rotation = Math.Abs(Projectile.velocity.X * 0.04f);

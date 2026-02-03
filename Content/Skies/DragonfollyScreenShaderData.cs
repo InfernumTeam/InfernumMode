@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Skies
 
         private void UpdatePIndex()
         {
-            int type = ModContent.NPCType<Bumblefuck>();
+            int type = ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>();
             if (BirdbrainIndex >= 0 && Main.npc[BirdbrainIndex].active && Main.npc[BirdbrainIndex].type == type)
                 return;
             BirdbrainIndex = -1;

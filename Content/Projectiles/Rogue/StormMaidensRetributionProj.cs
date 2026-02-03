@@ -137,7 +137,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 Projectile.rotation += PiOver2;
 
             // Destroy the spear if the owner can no longer hold it.
-            Item heldItem = Owner.ActiveItem();
+            Item heldItem = Owner.HeldItem;
             if (Owner.dead || !Owner.active || Owner.noItems || Owner.CCed || heldItem is null)
             {
                 Projectile.Kill();

@@ -1411,7 +1411,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 if (attackTimer == finalAttackStartTime + soulBurstDelay + 120f)
                 {
                     SoundEngine.PlaySound(npc.DeathSound, target.Center);
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound with { Pitch = -0.27f, Volume = 1.5f }, target.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot with { Pitch = -0.27f, Volume = 1.5f }, target.Center);
                     npc.NPCLoot();
                 }
 

@@ -9,6 +9,7 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -69,8 +70,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ModContent.NPCType<ShockstormShuttle>(),
             ModContent.NPCType<AeroSlime>(),
 
-            // Cloud elemental. I did not choose this internal name.
-            ModContent.NPCType<ThiccWaifu>(),
+            // Cloud elemental.
+            ModContent.NPCType<CloudElemental>(),
         ];
 
         public static int SparkDamage => 275;
@@ -128,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             if (attackState != (int)StormWeaverAttackType.HuntSkyCreatures)
             {
                 if (lifeRatio < 0.1f)
-                    CalamityMod.CalamityMod.StopRain();
+                    CalamityWorld.StopRain();
                 else if (!Main.raining || Main.maxRaining < 0.7f)
                 {
                     Utilities.StartRain(false, true);

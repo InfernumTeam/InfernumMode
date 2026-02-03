@@ -24,7 +24,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void PostUpdateMiscEffects()
         {
-            if (Player.ActiveItem().type == ModContent.ItemType<ProfanedGardenLocationSetter>())
+            if (Player.HeldItem.type == ModContent.ItemType<ProfanedGardenLocationSetter>())
                 Player.rulerGrid = true;
         }
 

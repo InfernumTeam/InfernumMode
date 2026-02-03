@@ -79,7 +79,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             ModContent.NPCType<BereftVassal>(),
             NPCID.MoonLordCore,
             ModContent.NPCType<ProfanedGuardianCommander>(),
-            ModContent.NPCType<Bumblefuck>(),
+            ModContent.NPCType<Dragonfolly>(),
             ModContent.NPCType<Providence>(),
             ModContent.NPCType<CeaselessVoid>(),
             ModContent.NPCType<StormWeaverHead>(),
@@ -163,7 +163,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                     int draedonID = ModContent.NPCType<Draedon>();
 
                     // I don't know why it transforms into the town npc mid frame, but I don't care.
-                    if (npcID == ModContent.NPCType<WITCH>())
+                    if (npcID == ModContent.NPCType<BrimstoneWitch>())
                         npcID = ModContent.NPCType<SupremeCalamitas>();
 
                     if (npcID == leviathanID)

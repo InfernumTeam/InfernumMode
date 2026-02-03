@@ -105,7 +105,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 replaceTooltipText("Tooltip0", summoningText.Value);
             }
 
-            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<RuneofKos>() && WorldSaveSystem.ForbiddenArchiveCenter.X != 0)
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<MarkofProvidence>() && WorldSaveSystem.ForbiddenArchiveCenter.X != 0)
             {
                 LocalizedText summoningText = Utilities.GetLocalization("Items.RuneofKos.DeveloperText");
                 TooltipLine warningLine = new(Mod, "CVWarning", LumUtils.ColorMessage(summoningText.Value, Color.Magenta));

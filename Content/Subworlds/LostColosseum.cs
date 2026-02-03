@@ -24,7 +24,6 @@ using Terraria.ID;
 using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Core;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
@@ -240,36 +239,39 @@ namespace InfernumMode.Content.Subworlds
             TagCompound downedCal = [];
             if (InfernumMode.CalamityMod != null)
             {
-                PropertyInfo[]? DownedBossCalList = AssemblyManager.GetLoadableTypes(InfernumMode.CalamityMod.Code)?.Where(t => t.Name == "DownedBossSystem")?.First()?.GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.GetValue(null) is bool)?.ToArray();
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
                 for (int i = 0; i < DownedBossCalList?.Length; i++)
                 {
-                    downedCal.Add(DownedBossCalList[i].Name, DownedBossCalList[i].GetValue(null) as bool?);
+                    if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
+                        downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
                 }
-                SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
             }
             TagCompound downedInf = [];
+            downedInf.Add("DownedDreadnautilus", WorldSaveSystem.DownedDreadnautilus);
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
             SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
+            SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
         }
-
+#pragma warning disable CS9336 // "Pattern is redundant"
         public override void ReadCopiedMainWorldData()
         {
             if (InfernumMode.CalamityMod != null)
             {
                 var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
-                if (downed != null && downed.Count != 0)
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                if (DownedBossCalList?.Length != downed.ToArray().Length)
                 {
-                    PropertyInfo[]? DownedBossCalList = AssemblyManager.GetLoadableTypes(InfernumMode.CalamityMod.Code)?.Where(t => t.Name == "DownedBossSystem")?.First()?.GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.GetValue(null) is bool)?.ToArray();
-                    for (int i = 0; i < DownedBossCalList?.Length; i++)
-                    {
-                        string Key = DownedBossCalList[i].Name;
-                        if (downed.ContainsKey(Key) && downed.GetBool(Key) == true)
-                        {
-                            DownedBossCalList[i].GetSetMethod()?.Invoke(null, [true]);
-                        }
-                    }
+                    InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");
+                }
+                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                {
+                    if (DownedBossCalList?[i]?.Name == downed?.GetString(DownedBossCalList?[i]?.Name))
+                        DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
                 }
             }
+            WorldSaveSystem.DownedDreadnautilus = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedDreadnautilus");
             WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
             base.ReadCopiedMainWorldData();
         }
@@ -283,6 +285,22 @@ namespace InfernumMode.Content.Subworlds
 
         public override void CopySubworldData()
         {
+            TagCompound downedCal = [];
+            if (InfernumMode.CalamityMod != null)
+            {
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                {
+                    if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
+                        downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                }
+            }
+            TagCompound downedInf = [];
+            downedInf.Add("DownedDreadnautilus", WorldSaveSystem.DownedDreadnautilus);
+            downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
+            SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
+            SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
             // Ensure that the vassal defeat achievement translates over when the player goes to a different subworld.
             if (Main.netMode != NetmodeID.Server)
             {
@@ -301,6 +319,28 @@ namespace InfernumMode.Content.Subworlds
             base.CopySubworldData();
         }
 
+        public override void ReadCopiedSubworldData()
+        {
+            if (InfernumMode.CalamityMod != null)
+            {
+                var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                if (DownedBossCalList?.Length != downed.ToArray().Length)
+                {
+                    InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");
+                }
+                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                {
+                    if (DownedBossCalList?[i]?.Name == downed?.GetString(DownedBossCalList?[i]?.Name))
+                        DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
+                }
+            }
+            WorldSaveSystem.DownedDreadnautilus = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedDreadnautilus");
+            WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
+            base.ReadCopiedSubworldData();
+        }
+#pragma warning restore CS9336
         public override void OnExit()
         {
             // Portal cooldown

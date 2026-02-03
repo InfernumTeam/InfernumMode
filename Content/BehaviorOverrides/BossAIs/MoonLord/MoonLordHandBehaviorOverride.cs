@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Hideous code from vanilla. Don't mind it too much.
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 shoulderOffset = new(220f, -60f);
-            Texture2D armTexture = TextureAssets.Extra[ExtrasID.MoonLordForearm].Value;
+            Texture2D armTexture = TextureAssets.Extra[15].Value;
             Vector2 coreCenter = Main.npc[(int)npc.ai[3]].Center;
             Point centerTileCoords = npc.Center.ToTileCoordinates();
             Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
@@ -379,13 +379,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (!isLeftHand)
                 handOrigin.X = texture.Width - handOrigin.X;
 
-            Texture2D scleraTexture = TextureAssets.Extra[ExtrasID.MoonLordEyeWhiteHand].Value;
-            Texture2D pupilTexture = TextureAssets.Extra[ExtrasID.MoonLordEye].Value;
+            Texture2D scleraTexture = TextureAssets.Extra[17].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
             Vector2 scleraFrame = new(26f, 42f);
             if (!isLeftHand)
                 scleraFrame.X = scleraTexture.Width - scleraFrame.X;
 
-            Texture2D exposedEyeTexture = TextureAssets.Extra[ExtrasID.MoonLordHandMouth].Value;
+            Texture2D exposedEyeTexture = TextureAssets.Extra[26].Value;
             Rectangle exposedEyeFrame = exposedEyeTexture.Frame(1, 1, 0, 0);
             exposedEyeFrame.Height /= 4;
             Vector2 shoulderCenter = coreCenter + shoulderOffset * directionThing;

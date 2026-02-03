@@ -7,6 +7,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.World;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -372,7 +373,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                     npc.damage = (int)(npc.damage * 1.15);
             }
             else
-                CalamityMod.CalamityMod.StopRain();
+                CalamityWorld.StopRain();
 
             // Become fully opaque in contexts where the boss should not need to be transparent.
             if (!inPhase3 && attackState != (int)OldDukeAttackState.SpawnAnimation)

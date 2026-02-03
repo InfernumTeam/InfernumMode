@@ -384,7 +384,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.netUpdate = true;
 
             // If the owner is holding punctus, and is no longer holding right click, and the rocks are fully recoiled, launch them.
-            if (Owner.ActiveItem() == null || Owner.ActiveItem().type != ModContent.ItemType<Punctus>() || !Owner.Calamity().mouseRight && aimBackStrength >= 1f)
+            if (Owner.HeldItem == null || Owner.HeldItem.type != ModContent.ItemType<Punctus>() || !Owner.Calamity().mouseRight && aimBackStrength >= 1f)
             {
                 // Get the amount of active rocks.
                 int rockAmount = ActiveRocks(Owner);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -124,7 +125,7 @@ namespace InfernumMode.Content.Skies
             if (Main.bloodMoon)
                 Main.bloodMoon = false;
 
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             Main.windSpeedTarget = 0f;
 

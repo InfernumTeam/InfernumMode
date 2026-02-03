@@ -4,6 +4,8 @@ using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Skies;
+using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -266,7 +268,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         void ICustomDetourProvider.ModifyMethods()
         {
-            HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
+            //HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
         }
         private bool CalDoGSkyUpdateDoGIndex_Detour(Orig_CalDoGSkyUpdateDoGIndex orig, DoGSky self)
         {
@@ -296,7 +298,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         void ICustomDetourProvider.ModifyMethods()
         {
-            HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
+            //HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
         }
         public static void CalDisplayLocalizedText_Detour(Orig_CalDisplayLocalizedText orig, string key, Color? textColor = null)
         {

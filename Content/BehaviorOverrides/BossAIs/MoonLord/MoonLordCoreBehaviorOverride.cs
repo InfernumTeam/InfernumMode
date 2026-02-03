@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles.Misc;
@@ -168,7 +169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreAI(NPC npc)
         {
             // Stop rain.
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];

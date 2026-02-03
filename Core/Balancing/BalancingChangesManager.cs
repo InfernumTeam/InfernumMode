@@ -45,8 +45,6 @@ namespace InfernumMode.Core.Balancing
             var eowIsSplitRequirement = new NPCSpecificRequirementBalancingRule(n => n.type == NPCID.EaterofWorldsBody && n.realLife >= 0 && Main.npc[n.realLife].ai[2] >= 1f);
 
             int inkCloud1 = ProjectileType<InkCloud>();
-            int inkCloud2 = ProjectileType<InkCloud2>();
-            int inkCloud3 = ProjectileType<InkCloud3>();
 
             float aresPierceResistFactor = 0.925f;
             float thanatosPierceResistFactor = 0.75f;

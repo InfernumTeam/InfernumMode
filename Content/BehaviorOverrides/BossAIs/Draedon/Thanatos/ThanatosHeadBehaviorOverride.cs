@@ -672,7 +672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Play a telegraph sound to alert the player of the impending charge.
             if (attackTimer == slowdownTime + chargePreparationTime / 2)
             {
-                SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
+                SoundEngine.PlaySound(ScorchedEarth.RocketShoot, target.Center);
                 target.Infernum_Camera().CurrentScreenShakePower = 6f;
             }
 

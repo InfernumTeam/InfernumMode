@@ -11,6 +11,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode;
@@ -396,11 +397,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 }
             }
 
-            if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
-                SoundEngine.PlaySound(GatlingLaser.FireSound, npc.Center);
+            //if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
+                //SoundEngine.PlaySound(Gatling, npc.Center);
 
-            if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
-                SoundEngine.PlaySound(GatlingLaser.FireEndSound, npc.Center);
+            //if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
+                //SoundEngine.PlaySound(, npc.Center);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
@@ -501,7 +502,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     for (int i = 0; i < 2; i++)
                         GeneralParticleHandler.SpawnParticle(new PulseRing(tailEnd, Vector2.Zero, Color.Cyan, 0f, 8f, 40));
 
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
                     npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 }
@@ -1316,11 +1317,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
-                            SoundEngine.PlaySound(GatlingLaser.FireSound, target.Center);
+                            SoundEngine.PlaySound(InfernumSoundRegistry.GatlingLaserFireStart, target.Center);
 
                         // Play the laser fire loop.
                         if (attackTimer >= 15f && attackTimer % 70f == 20f && attackTimer < shootTime)
-                            SoundEngine.PlaySound(GatlingLaser.FireLoopSound, target.Center);
+                            SoundEngine.PlaySound(InfernumSoundRegistry.GatlingLaserFireLoop, target.Center);
 
                         bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime;
                         if (shouldFire)

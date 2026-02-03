@@ -14,9 +14,9 @@ namespace InfernumMode.Core.Balancing
         {
             // GSS is moved to post LC, and these are buffed as a result.
             [ModContent.ItemType<DuststormInABottle>()] = 90,
-            [ModContent.ItemType<SandstormGun>()] = 145,
+            //[ModContent.ItemType<SandstormGun>()] = 145,
             [ModContent.ItemType<SandSharknadoStaff>()] = 129,
-            [ModContent.ItemType<Sandslasher>()] = 196,
+            //[ModContent.ItemType<Sandslasher>()] = 196,
             [ModContent.ItemType<ShiftingSands>()] = 104,
             [ModContent.ItemType<Tumbleweed>()] = 203,
 

@@ -1359,7 +1359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
 
                 otherFist.Center = otherFist.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
             }

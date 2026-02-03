@@ -1,6 +1,7 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.MainMenu;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -25,7 +26,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PostUpdateEverything()
         {
-            CalamityMod.CalamityMod.sharkKillCount = 0;
 
             // Make the impending doom timer almost instantaneous.
             if (NPC.MoonLordCountdown >= 240)
@@ -62,7 +62,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             {
                 LostColosseum.ManageSandstorm();
                 LostColosseum.UpdateSunset();
-                CalamityMod.CalamityMod.StopRain();
+                CalamityWorld.StopRain();
                 LanternNight.WorldClear();
 
                 // Get rid of clouds.

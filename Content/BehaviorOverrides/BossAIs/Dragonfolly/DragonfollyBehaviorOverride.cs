@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 {
     public class DragonfollyBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<Bumblefuck>();
+        public override int NPCOverrideType => ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>();
 
         #region Attacks and Frame Enumeration
         public enum DragonfollyAttackType
@@ -172,7 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.ai[3] = 0f;
 
                 // Piss off any remaining swarmers.
-                int swarmerType = ModContent.NPCType<Bumblefuck2>();
+                int swarmerType = ModContent.NPCType<DraconicSwarmer>();
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (!Main.npc[i].active || Main.npc[i].type != swarmerType)
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.ai[3] = 0f;
 
                 // Piss off any remaining swarmers.
-                int swarmerType = ModContent.NPCType<Bumblefuck2>();
+                int swarmerType = ModContent.NPCType<DraconicSwarmer>();
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (!Main.npc[i].active || Main.npc[i].type != swarmerType)
@@ -612,7 +612,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             ref float originalSwamerCount = ref npc.Infernum().ExtraAI[1];
             if (originalSwamerCount == 0f)
             {
-                originalSwamerCount = NPC.CountNPCS(ModContent.NPCType<Bumblefuck2>());
+                originalSwamerCount = NPC.CountNPCS(ModContent.NPCType<DraconicSwarmer>());
 
                 // Don't bother doing this attack if the swarmer count is already at the limit.
                 if (originalSwamerCount >= maxSwarmersAtOnce)
@@ -663,7 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         // Ensure that the spawn position is not near the target, to prevent potentially unfair hits.
                         if (!target.WithinRange(potentialSpawnPosition, 160f))
                         {
-                            int swarmer = NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI, 0f, 0f, 0f, phase2.ToInt() + phase3.ToInt());
+                            int swarmer = NPC.NewNPC(npc.GetSource_FromAI(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<DraconicSwarmer>(), npc.whoAmI, 0f, 0f, 0f, phase2.ToInt() + phase3.ToInt());
                             Main.npc[swarmer].velocity = Vector2.UnitY * -12f;
                             Main.npc[swarmer].netUpdate = true;
                         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Skies;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
@@ -61,7 +62,7 @@ namespace InfernumMode.Content.Skies
                     Position = new Vector2(Main.LocalPlayer.Center.X + Main.rand.NextFloatDirection() * 5000f, Main.rand.NextFloat(4850f)),
                     LightningColor = color
                 };
-                (SkyManager.Instance["InfernumMode:DoG"] as DoGSkyInfernum).LightningBolts.Add(lightning);
+                (SkyManager.Instance["InfernumMode:DoG"] as DoGSkyInfernum)?.LightningBolts.Add(lightning);
             }
 
             if (playSound && !Main.gamePaused)
@@ -70,6 +71,7 @@ namespace InfernumMode.Content.Skies
 
         public override void Update(GameTime gameTime)
         {
+            (SkyManager.Instance["CalamityMod:DevourerofGodsHead"] as DoGSky)?.Deactivate();
             if (isActive && Intensity < 1f)
                 Intensity += 0.01f;
             else if (!isActive && Intensity > 0f)

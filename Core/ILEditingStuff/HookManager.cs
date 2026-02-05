@@ -414,6 +414,10 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public delegate void Orig_CalUpdateBadLifeRegenMethod(CalamityPlayer self);
 
+        internal static MethodInfo CalAbyssEffectsMethod => typeof(CalamityPlayer).GetMethod("AbyssEffects", LumUtils.UniversalBindingFlags);
+        
+        public delegate void Orig_CalAbyssEffectsMethod(CalamityPlayer self);
+
         internal static MethodInfo CalGlobalNPCPredrawMethod => typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);

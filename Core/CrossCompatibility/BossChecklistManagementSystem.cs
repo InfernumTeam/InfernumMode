@@ -99,7 +99,7 @@ namespace InfernumMode.Core.CrossCompatibility
                     { "spawnInfo", Language.GetText($"Mods.{Mod.Name}.NPCs.BereftVassal.BossChecklistIntegration.SpawnInfo") },
                     { "availability", () => InfernumMode.CanUseCustomAIs && NPC.downedAncientCultist },
                     { "spawnItems", ModContent.ItemType<SandstormsCore>() },
-                    { "despawnMessage", Language.GetText($"Mods.{Mod.Name}.NPCs.BereftVassal.BossChecklistIntegration.DespawnMessage") },
+                    { "despawnMessage", Language.GetText($"Mods.{Mod.Name}.NPCs.BereftVassal.BossChecklistIntegration.DespawnMessage") }
                 }
             );
             Add(type: "Boss",
@@ -121,6 +121,7 @@ namespace InfernumMode.Core.CrossCompatibility
                             spriteBatch.Draw(tex, rect.Center.ToVector2(), sourceRect, color, 0f, sourceRect.Size() / 2, scale, SpriteEffects.None, 0);
                         })
                     },
+                    { "overrideHeadTextures", $"{Mod.Name}/Assets/BossTextures/PrimordialWyrm/PrimordialWyrmHead_Head_Boss" }
                 }
             );
         }

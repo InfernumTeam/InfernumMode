@@ -7,6 +7,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -61,6 +62,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         }
 
         public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmHead>();
+
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            if (npc.type == ModContent.NPCType<PrimordialWyrmHead>())
+                index = ModContent.GetModBossHeadSlot(BossTextureRegistry.PrimordialWyrmMapIcon);
+        }
 
         #region AI
         public override float[] PhaseLifeRatioThresholds =>
@@ -1569,13 +1576,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public static void DrawSegment(NPC npc, Color lightColor)
         {
             string segmentString = "Head";
+            Texture2D texture = BossTextureRegistry.PrimordialWyrmHead.Value;
             if (npc.type == ModContent.NPCType<PrimordialWyrmBody>())
+            {
                 segmentString = "Body";
+                texture = BossTextureRegistry.PrimordialWyrmBody.Value;
+            }
             if (npc.type == ModContent.NPCType<PrimordialWyrmBodyAlt>())
+            {
                 segmentString = "BodyAlt";
+                texture = BossTextureRegistry.PrimordialWyrmBodyAlt.Value;
+            }
             if (npc.type == ModContent.NPCType<PrimordialWyrmTail>())
+            {
                 segmentString = "Tail";
-
+                texture = BossTextureRegistry.PrimordialWyrmTail.Value;
+            }
             if (segmentString == "Head")
             {
                 DrawHead(npc, lightColor);
@@ -1583,7 +1599,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 return;
             }
 
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
             // Reset the texture frame for drawing.

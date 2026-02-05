@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
@@ -73,7 +72,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     CeaselessVoidArchivesSpawnSystem.WaitingForPlayersToLeaveArchives = true;
                 }
 
-                CalamityVanillaAIOverrideNPC.Enabled = !value;
                 infernumModeEnabled = value;
             }
         }

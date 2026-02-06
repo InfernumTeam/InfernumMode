@@ -4,6 +4,7 @@ using System.Linq;
 using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
+using CalamityMod.Walls.UnsafeWalls;
 using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Common.Worldgen;
@@ -134,7 +135,7 @@ namespace InfernumMode.Content.WorldGeneration
             int top = AbyssTop;
             int bottom = AbyssBottom;
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
+            ushort gravelWallID = (ushort)ModContent.WallType<UnsafeAbyssGravelWall>();
 
             for (int i = 1; i < maxWidth; i++)
             {
@@ -416,7 +417,7 @@ namespace InfernumMode.Content.WorldGeneration
                     new Modifiers.RadialDither(12f, 18f),
                     new Modifiers.Conditions(new Conditions.IsTile((ushort)ModContent.TileType<AbyssGravel>(), (ushort)ModContent.TileType<SulphurousShale>())),
                     new Actions.SetTile((ushort)ModContent.TileType<PlantyMush>()),
-                    new Actions.PlaceWall((ushort)ModContent.WallType<AbyssGravelWall>()),
+                    new Actions.PlaceWall((ushort)ModContent.WallType<UnsafeAbyssGravelWall>()),
                 ]));
             }
         }
@@ -1135,7 +1136,7 @@ namespace InfernumMode.Content.WorldGeneration
             int top = Layer3Top - 10;
             int bottom = AbyssBottom + 10;
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
+            ushort gravelWallID = (ushort)ModContent.WallType<UnsafeAbyssGravelWall>();
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
             ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
             ushort pyreID = (ushort)ModContent.TileType<PyreMantle>();

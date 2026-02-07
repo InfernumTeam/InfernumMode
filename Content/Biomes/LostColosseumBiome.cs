@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Biomes
 {
     public class LostColosseumBiome : ModBiome
     {
-        public override ModWaterStyle WaterStyle => ModContent.Find<ModWaterStyle>("CalamityMod/SunkenSeaWater");
+        public override ModWaterStyle WaterStyle => ModContent.TryFind("CalamityMod/SunkenSeaReefsWater", out ModWaterStyle style) ? style : default;
 
         public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.Find<ModSurfaceBackgroundStyle>("InfernumMode/LostColosseumSurfaceBGStyle");
 

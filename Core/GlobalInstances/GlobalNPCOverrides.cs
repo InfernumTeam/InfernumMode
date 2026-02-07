@@ -158,11 +158,11 @@ namespace InfernumMode.Core.GlobalInstances
                 return base.PreAI(npc);
 
             // Disable the effects of timed DR.
-            if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
-                npc.Calamity().AITimer = npc.Calamity().KillTime;
+            //if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
+            //    npc.Calamity().AITimer = npc.Calamity().KillTime;
 
             // If any boss NPC is active, apply Zen to nearby players to reduce the spawn rate.
-            if (Main.netMode != NetmodeID.Server && CalamityServerConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
+            if (Main.netMode != NetmodeID.Server && CalamityServerConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<CloudElemental>()))
             {
                 if (!Main.LocalPlayer.dead && Main.LocalPlayer.active && npc.WithinRange(Main.LocalPlayer.Center, 6400f))
                     Main.LocalPlayer.AddBuff(ModContent.BuffType<BossEffects>(), 2);
@@ -194,8 +194,6 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void OnKill(NPC npc)
         {
-            // no shark
-            CalamityMod.CalamityMod.sharkKillCount = 0;
 
             if (!InfernumMode.CanUseCustomAIs)
                 return;

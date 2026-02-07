@@ -275,7 +275,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 SoundEngine.PlaySound(SoundID.Item73, target.Center);
                 for (int i = 0; i < 4; i++)
                 {
-                    Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), 267);
+                    Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), DustID.RainbowMk2);
                     fire.velocity -= Vector2.UnitY.RotatedByRandom(0.23f) * Main.rand.NextFloat(1f, 2.5f);
                     fire.color = Color.Lerp(Color.OrangeRed, Color.Purple, Main.rand.NextFloat(0.7f));
                     fire.noGravity = true;
@@ -329,7 +329,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), 267);
+                    Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), DustID.RainbowMk2);
                     fire.velocity -= Vector2.UnitY.RotatedByRandom(0.23f) * Main.rand.NextFloat(1f, 2.5f);
                     fire.color = Color.Lerp(Color.OrangeRed, Color.Purple, Main.rand.NextFloat(0.7f));
                     fire.noGravity = true;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -17,7 +18,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.addTile(Type);
 
-            DustType = 225;
+            DustType = DustID.Coralstone;
 
             AddMapEntry(new Color(70, 206, 160));
 

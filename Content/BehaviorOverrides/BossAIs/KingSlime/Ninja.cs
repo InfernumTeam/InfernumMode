@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 SoundEngine.PlaySound(SlimeGodCore.PossessionSound, NPC.Center);
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust slime = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(20f, 20f), 4);
+                    Dust slime = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(20f, 20f), DustID.TintableDust);
                     slime.color = new Color(78, 136, 255, 80);
                     slime.noGravity = true;
                     slime.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 14.5f);

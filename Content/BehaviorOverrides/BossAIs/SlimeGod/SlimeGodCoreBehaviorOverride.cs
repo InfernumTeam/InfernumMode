@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     {
                         Vector2 dustSpawnOffset = -Vector2.UnitY.RotatedBy(offsetAngle + TwoPi * i / 6f) * dustOffsetRadius + Main.rand.NextVector2Circular(20f, 20f);
                         Vector2 dustSpawnVelocity = dustSpawnOffset * -0.1f;
-                        Dust slime = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 136, dustSpawnVelocity);
+                        Dust slime = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, DustID.Crimslime, dustSpawnVelocity);
                         slime.color = Color.Lerp(Color.Red, Color.Purple, i / 2f);
                         slime.color = Color.Lerp(slime.color, Color.Gray, 0.525f);
                         slime.color.A = 100;

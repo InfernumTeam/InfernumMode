@@ -4,11 +4,13 @@ using System.Linq;
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Graphics.Metaballs;
 using CalamityMod.Items.Mounts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Systems.Mechanic;
 using CalamityMod.Tiles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -16,6 +18,7 @@ using InfernumMode.Common.Graphics.Fluids;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -273,6 +276,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             return SCal.Center + new Vector2(SCal.spriteDirection * -18f, 2f);
         }
 
+        public ArenaWallSystem.Box ArenaBox = null;
+
         public override bool PreAI(NPC npc)
         {
             // Do targeting.
@@ -297,7 +302,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Handle initializations.
             if (npc.localAI[0] == 0f)
-            {
+            {   
+
                 // Define the arena. This is finely picked to be the same as in death mode.
                 Vector2 arenaArea = new(125f, 125f);
                 npc.Infernum().Arena = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
@@ -309,25 +315,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 int width = npc.Infernum().Arena.Width / 2 / 16 + 1;
                 int height = npc.Infernum().Arena.Height / 2 / 16 + 1;
                 for (int x = arenaCenter.X - width; x <= arenaCenter.X + width; x++)
-                {
+            {
                     for (int y = arenaCenter.Y - height; y <= arenaCenter.Y + height; y++)
-                    {
+                {
                         if (!WorldGen.InWorld(x, y, 2))
                             continue;
 
                         if ((x == arenaCenter.X - width || x == arenaCenter.X + width || y == arenaCenter.Y - height || y == arenaCenter.Y + height) && !Main.tile[x, y].HasTile)
-                        {
+                {
                             Main.tile[x, y].TileType = arenaTileType;
                             Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
-                        }
+                }
                         if (Main.netMode == NetmodeID.Server)
-                        {
+            {
                             NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
-                        }
+            }
                         else
-                        {
+                    {
                             WorldGen.SquareTileFrame(x, y, true);
-                        }
+                    }
                     }
                 }
 
@@ -2463,7 +2469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             float berserkPhaseInterpolant = npc.ai[3];
             Texture2D energyChargeupEffect = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect").Value;
-            Texture2D texture = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas.HoodedTexture.Value;
+            Texture2D texture = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
 
             // Draw a chargeup effect behind SCal if berserk.
             if (berserkPhaseInterpolant > 0f)

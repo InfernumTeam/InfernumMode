@@ -6,6 +6,7 @@ using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
@@ -77,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void CreateDustTelegraphs(NPC npc, Vector2 endOfCannon)
         {
             Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-            Dust laser = Dust.NewDustPerfect(dustSpawnPosition, 182);
+            Dust laser = Dust.NewDustPerfect(dustSpawnPosition, DustID.TheDestroyer);
             laser.velocity = (endOfCannon - laser.position) * 0.04f;
             laser.scale = 1.25f;
             laser.noGravity = true;

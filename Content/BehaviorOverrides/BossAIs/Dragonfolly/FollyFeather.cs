@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (Main.rand.NextBool(24))
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, DustID.RedTorch, Main.rand.NextVector2Circular(3f, 3f));
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
                 redLightning.fadeIn = 1f;
                 redLightning.noGravity = true;

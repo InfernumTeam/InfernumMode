@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     foreach (var head in Heads)
                     {
-                        SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBlastSound, head.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.PlasmaBlast, head.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int i = 0; i < 3; i++)

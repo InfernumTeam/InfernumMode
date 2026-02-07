@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 float xArea = Lerp(400f, 1150f, Time / 300f);
                 Vector2 dustSpawnPosition = waterTop.ToWorldCoordinates() + Vector2.UnitY * 25f;
                 dustSpawnPosition.X += Main.rand.NextFloatDirection() * xArea * 0.35f;
-                Dust bubble = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.UnitY * -12f);
+                Dust bubble = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2, Vector2.UnitY * -12f);
                 bubble.noGravity = true;
                 bubble.scale = 1.9f;
                 bubble.color = Color.CornflowerBlue;

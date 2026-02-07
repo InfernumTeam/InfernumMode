@@ -42,7 +42,7 @@ namespace InfernumMode.Content.Items.Misc
                 for (int i = 0; i < numDust; i++)
                 {
                     Vector2 ringVelocity = (TwoPi * i / numDust).ToRotationVector2().RotatedBy(Item.velocity.ToRotation() + PiOver2) * 5f;
-                    Dust ringDust = Dust.NewDustPerfect(Item.position, 211, ringVelocity, 100, default, 1.25f);
+                    Dust ringDust = Dust.NewDustPerfect(Item.position, DustID.Wet, ringVelocity, 100, default, 1.25f);
                     ringDust.noGravity = true;
                 }
 

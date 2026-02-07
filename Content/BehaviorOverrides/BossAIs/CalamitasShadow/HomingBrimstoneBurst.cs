@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             if (!Main.dedServ && Main.rand.NextBool(5))
             {
-                Dust fire = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 fire.velocity = Main.rand.NextVector2CircularEdge(3f, 3f);
                 fire.color = Color.Red;
                 fire.scale *= 1.1f;

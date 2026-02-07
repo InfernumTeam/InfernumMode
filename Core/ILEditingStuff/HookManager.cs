@@ -19,6 +19,7 @@ using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.UI.DraedonSummoning;
 using CalamityMod.UI.ModeIndicator;
+using CalamityMod.Waters;
 using CalamityMod.World;
 using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
@@ -181,11 +182,11 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => HookHelper.ILEventRemove();
         }
 
-        public static event ILContext.Manipulator SpawnProvLootBox
+        /*public static event ILContext.Manipulator SpawnProvLootBox
         {
             add => HookHelper.ModifyMethodWithIL(typeof(Providence).GetMethod("SpawnLootBox", Utilities.UniversalBindingFlags), value);
             remove => HookHelper.ILEventRemove();
-        }
+        }*/
 
         public static event ILContext.Manipulator DashMovement
         {
@@ -306,11 +307,12 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => HookHelper.ILEventRemove();
         }
 
-        public static event ILContext.Manipulator SelectSulphuricWaterColor
+        //TODO: Figure out whether its possible to reimpl.
+        /*public static event ILContext.Manipulator ModifySulphuricWaterColor
         {
-            add => HookHelper.ModifyMethodWithIL(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
+            add => HookHelper.ModifyMethodWithIL(typeof(WaterStyleCommon).GetMethod("ModifySulphuricWaterColor", Utilities.UniversalBindingFlags), value);
             remove => HookHelper.ILEventRemove();
-        }
+        }*/
 
         public static event ILContext.Manipulator DrawCodebreakerUI
         {
@@ -326,13 +328,13 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator RuneOfKosCanUseItem
         {
-            add => HookHelper.ModifyMethodWithIL(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
+            add => HookHelper.ModifyMethodWithIL(typeof(MarkofProvidence).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
             remove => HookHelper.ILEventRemove();
         }
 
         public static event ILContext.Manipulator RuneOfKosUseItem
         {
-            add => HookHelper.ModifyMethodWithIL(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            add => HookHelper.ModifyMethodWithIL(typeof(MarkofProvidence).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => HookHelper.ILEventRemove();
         }
 
@@ -411,6 +413,10 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalUpdateBadLifeRegenMethod => typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalUpdateBadLifeRegenMethod(CalamityPlayer self);
+
+        internal static MethodInfo CalAbyssEffectsMethod => typeof(CalamityPlayer).GetMethod("AbyssEffects", LumUtils.UniversalBindingFlags);
+        
+        public delegate void Orig_CalAbyssEffectsMethod(CalamityPlayer self);
 
         internal static MethodInfo CalGlobalNPCPredrawMethod => typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
 

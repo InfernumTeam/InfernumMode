@@ -46,7 +46,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             // Release sharks from below.
             // CheckMana returns true if the mana cost can be paid. If mana isn't consumed this frame, the CheckMana short-circuits out of being evaluated.
-            if (Main.myPlayer == Projectile.owner && Time % AridBattlecry.SharkSummonRate == AridBattlecry.SharkSummonRate - 1f && Owner.CheckMana(Owner.ActiveItem(), -1, true))
+            if (Main.myPlayer == Projectile.owner && Time % AridBattlecry.SharkSummonRate == AridBattlecry.SharkSummonRate - 1f && Owner.CheckMana(Owner.HeldItem, -1, true))
             {
                 Vector2 sharkSpawnPosition = Main.MouseWorld + new Vector2(Main.rand.NextFloatDirection() * 96f, 600f);
                 Vector2 sharkSpawnVelocity = (Main.MouseWorld - sharkSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;

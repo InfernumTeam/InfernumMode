@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (Main.rand.NextBool(3) && Time >= -20f)
             {
                 Vector2 sparkleSpawnPosition = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * Projectile.width * 0.5f, -Main.rand.NextFloat(500f));
-                Dust light = Dust.NewDustPerfect(sparkleSpawnPosition, 264);
+                Dust light = Dust.NewDustPerfect(sparkleSpawnPosition, DustID.PortalBoltTrail);
                 light.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, Main.rand.NextFloat(0.8f, 1f));
                 light.noGravity = true;
                 light.velocity = -Vector2.UnitY;

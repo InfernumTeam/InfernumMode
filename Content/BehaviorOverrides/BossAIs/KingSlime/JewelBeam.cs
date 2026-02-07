@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             {
                 for (int i = 0; i < 36; i++)
                 {
-                    Dust gleamingBurst = Dust.NewDustPerfect(Projectile.Center, 264);
+                    Dust gleamingBurst = Dust.NewDustPerfect(Projectile.Center, DustID.PortalBoltTrail);
                     gleamingBurst.velocity = (TwoPi * i / 36f).ToRotationVector2() * 2.5f;
                     gleamingBurst.color = Color.Red;
                     gleamingBurst.noLight = true;
@@ -49,14 +49,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 Projectile.localAI[0] = 1f;
             }
 
-            Dust gleamingRed = Dust.NewDustPerfect(Projectile.Center, 182);
+            Dust gleamingRed = Dust.NewDustPerfect(Projectile.Center, DustID.TheDestroyer);
             gleamingRed.velocity = Vector2.Zero;
             gleamingRed.noGravity = true;
             gleamingRed.scale = 0.5f;
 
             for (int direction = -1; direction <= 1; direction += 2)
             {
-                gleamingRed = Dust.NewDustPerfect(Projectile.Center, 182);
+                gleamingRed = Dust.NewDustPerfect(Projectile.Center, DustID.TheDestroyer);
                 gleamingRed.velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
                 gleamingRed.noGravity = true;
                 gleamingRed.scale = Main.rand.NextFloat(0.8f, 0.96f);

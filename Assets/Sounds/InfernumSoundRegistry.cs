@@ -58,7 +58,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle BubblePop = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/BubblePop");
 
-        public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
+        public static readonly SoundStyle CalThunderStrikeSound = new("InfernumMode/Assets/Sounds/Custom/ThunderStrike");
 
         public static readonly SoundStyle CalShadowDissipateSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/CalamitasShadowDissipate");
 
@@ -258,8 +258,12 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/AEW/WyrmElectricCharge");
 
-        //Yanmei's Knife has been removed in base Calamity Mod. It has been ported to Infernum for the sake of preserving the sound effect because it is used in Infernum fights. - midnight.
+        //These sounds have been removed in base Calamity Mod. It has been ported to Infernum for the sake of preserving the sound effect because it is used in Infernum fights. - midnight.
         public static readonly SoundStyle YanmeiKnife = new("InfernumMode/Assets/Sounds/Custom/YanmeiKnifeHit");
+        public static readonly SoundStyle GatlingLaserFireEnd = new("InfernumMode/Assets/Sounds/Custom/GatlingLaserFireEnd");
+        public static readonly SoundStyle GatlingLaserFireStart = new("InfernumMode/Assets/Sounds/Custom/GatlingLaserFireStart");
+        public static readonly SoundStyle GatlingLaserFireLoop = new("InfernumMode/Assets/Sounds/Custom/GatlingLaserFireLoop");
+        public static readonly SoundStyle PlasmaBlast = new("InfernumMode/Assets/Sounds/Custom/PlasmaBlast");
 
         public const int AresTelegraphSoundLength = 183;
         #endregion Bosses and Enemies

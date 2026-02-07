@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Items.Placeables
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.value = Item.buyPrice(0, 4, 0, 0);
-            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.rare = ModContent.RarityType<CosmicPurple>();
             Item.createTile = ModContent.TileType<CosmicMonolithTile>();
             Item.accessory = true;
             Item.vanity = true;

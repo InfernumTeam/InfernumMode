@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Explode into dark magic clouds and particles.
             for (int i = 0; i < 10; i++)
             {
-                Dust darkMagic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 261);
+                Dust darkMagic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.AncientLight);
                 darkMagic.color = Color.Lerp(Color.DarkBlue, Color.HotPink, Main.rand.NextFloat(0.7f));
                 darkMagic.scale = Main.rand.NextFloat(1f, 1.1f);
                 darkMagic.velocity = Main.rand.NextVector2Circular(2f, 2f);

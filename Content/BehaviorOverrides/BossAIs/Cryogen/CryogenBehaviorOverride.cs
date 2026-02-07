@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
+using CalamityMod.World;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
@@ -292,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             else
                 npc.Opacity = Lerp(npc.Opacity, 1f, 0.1f);
 
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
             return false;
         }
 
@@ -920,7 +921,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         {
             for (int i = 0; i < count; i++)
             {
-                Dust ice = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(62f, 62f), 261);
+                Dust ice = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(62f, 62f), DustID.AncientLight);
                 ice.color = Color.Lerp(Color.White, Color.Cyan, Main.rand.NextFloat(0.15f, 0.7f));
                 ice.velocity = Main.rand.NextVector2Circular(speed, speed) - Vector2.UnitY * 1.6f;
                 ice.scale = Main.rand.NextFloat(1.2f, 1.6f);

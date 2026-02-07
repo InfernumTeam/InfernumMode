@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), 264);
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), DustID.PortalBoltTrail);
                     magic.color = Color.Yellow;
                     magic.velocity = (Projectile.Center - magic.position) * 0.05f;
                     magic.noGravity = true;

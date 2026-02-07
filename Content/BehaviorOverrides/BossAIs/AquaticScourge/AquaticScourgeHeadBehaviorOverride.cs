@@ -209,8 +209,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 WormSegments[0].Position = npc.Center;
 
             // Determine hostility.
-            CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
-            npc.Calamity().KillTime = revKillTime;
+            //.TryGetValue(npc.type, out int revKillTime);
+            //npc.Calamity().KillTime = revKillTime;
             npc.damage = npc.defDamage;
             npc.boss = true;
             npc.chaseable = true;
@@ -445,7 +445,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     {
                         Vector2 acidVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(3f);
                         acidVelocity.X += Abyss.AtLeftSideOfWorld.ToDirectionInt() * -4f;
-                        Dust acid = Dust.NewDustPerfect(bubbleSpawnPosition + Main.rand.NextVector2Circular(80f, 80f), 256, acidVelocity);
+                        Dust acid = Dust.NewDustPerfect(bubbleSpawnPosition + Main.rand.NextVector2Circular(80f, 80f), DustID.ToxicBubble, acidVelocity);
                         acid.scale = 1.25f;
                         acid.fadeIn = 0.87f;
                         acid.noGravity = true;
@@ -1735,7 +1735,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 for (int j = 0; j < 45; j++)
                 {
-                    Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), 256);
+                    Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), DustID.ToxicBubble);
                     bubble.velocity = (TwoPi * i / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
                     bubble.scale = Main.rand.NextFloat(1f, 1.5f);
                     bubble.noGravity = true;

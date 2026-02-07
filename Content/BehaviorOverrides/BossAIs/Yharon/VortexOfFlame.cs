@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 200; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(200f, 200f), 6);
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(200f, 200f), DustID.Torch);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.fadeIn = 1.4f;
                     dust.scale = 1.6f;

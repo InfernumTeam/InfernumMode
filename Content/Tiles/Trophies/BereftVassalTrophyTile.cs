@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Tiles.Trophies
             TileObjectData.addTile(Type);
 
             AddMapEntry(new Color(120, 85, 60), Language.GetText("MapObject.Trophy"));
-            DustType = 7;
+            DustType = DustID.WoodFurniture;
         }
     }
 }

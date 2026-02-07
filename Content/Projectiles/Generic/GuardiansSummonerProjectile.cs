@@ -147,7 +147,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                         float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
 
                         float completion = EasingCurves.Sine.InOutFunction(sineValue);
-                        Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
+                        Dust dust = Dust.NewDustPerfect(ProviLightPosition, DustID.PortalBoltTrail);
                         dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));
                         dust.color = WayfinderSymbol.Colors[2];
                         dust.noLight = true;
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                         for (int j = 1; j <= 10; j++)
                         {
                             float actualCompletion = completion * (1f / j);
-                            Dust dust2 = Dust.NewDustPerfect(Vector2.CatmullRom(ProviLightPosition + Vector2.UnitY * 500f, ProviLightPosition, basePos, basePos + Vector2.UnitY * 500f, actualCompletion), 267);
+                            Dust dust2 = Dust.NewDustPerfect(Vector2.CatmullRom(ProviLightPosition + Vector2.UnitY * 500f, ProviLightPosition, basePos, basePos + Vector2.UnitY * 500f, actualCompletion), DustID.RainbowMk2);
                             dust2.scale = 1.67f;
                             dust2.velocity = Main.rand.NextVector2CircularEdge(0.2f, 0.2f);
                             dust2.fadeIn = 0.67f;
@@ -279,7 +279,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             Main.spriteBatch.Draw(light, drawPosition, null, lightColor * opacity, -PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(light, drawPosition, null, coloredLight * opacity, -PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
 
-            Texture2D lightTexture = TextureAssets.Extra[59].Value;
+            Texture2D lightTexture = TextureAssets.Extra[ExtrasID.PortalGateHalo].Value;
             Main.spriteBatch.Draw(lightTexture, drawPosition + new Vector2(-40f, 0f), null, Color.Lerp(lightColor, coloredLight, 0.5f) * opacity * 0.85f, -PiOver2, lightTexture.Size() * 0.5f, new Vector2(2.5f, 2.7f), SpriteEffects.None, 0f);
         }
 

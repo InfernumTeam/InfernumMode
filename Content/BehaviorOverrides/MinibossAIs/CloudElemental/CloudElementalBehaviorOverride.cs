@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CalamityMod.Buffs.Summon;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
@@ -14,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 {
     public class CloudElementalBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<ThiccWaifu>();
+        public override int NPCOverrideType => ModContent.NPCType<CalamityMod.NPCs.NormalNPCs.CloudElemental>();
 
         public enum AttackTypes
         {

@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         {
             for (int i = 0; i < 14; i++)
             {
-                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(50f, 50f), 222);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(50f, 50f), DustID.FireworkFountain_Yellow);
                 fire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2.5f, 5.25f);
                 fire.scale = 1f + fire.velocity.Length() * 0.1f;
                 fire.color = Color.Lerp(Color.White, Color.OrangeRed, Main.rand.NextFloat());

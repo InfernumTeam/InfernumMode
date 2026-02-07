@@ -40,7 +40,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             Item.knockBack = 0f;
 
             Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
-            Item.rare = ModContent.RarityType<Violet>();
+            Item.rare = ModContent.RarityType<BurnishedAuric>();
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;

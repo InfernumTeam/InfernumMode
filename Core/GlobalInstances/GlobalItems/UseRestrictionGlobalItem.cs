@@ -3,6 +3,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
@@ -74,7 +75,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
         {
             // Disable magic mirror teleportation effects in the lower layers of the abyss.
             bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
-            bool spawnTeleportingItem = (item.type is ItemID.RecallPotion or ItemID.PotionOfReturn or ItemID.MagicMirror or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch or ItemID.CellPhone or ItemID.ShellphoneDummy) || (item.type >= 5358 && item.type <= 5361);
+            bool spawnTeleportingItem = (item.type is ItemID.RecallPotion or ItemID.PotionOfReturn or ItemID.MagicMirror or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch or ItemID.CellPhone or ItemID.ShellphoneDummy) || (item.type >= ItemID.Shellphone && item.type <= ItemID.ShellphoneHell);
             if (spawnTeleportingItem && inAbyss)
             {
                 if (player.itemAnimation >= item.useAnimation - 2)

@@ -24,7 +24,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             }
 
             bool isGSSItem = item.type == ModContent.ItemType<GrandScale>() || item.type == ModContent.ItemType<DuststormInABottle>() || item.type == ModContent.ItemType<SandSharknadoStaff>() ||
-                item.type == ModContent.ItemType<Sandslasher>() || item.type == ModContent.ItemType<SandstormGun>() || item.type == ModContent.ItemType<ShiftingSands>() || item.type == ModContent.ItemType<Tumbleweed>() ||
+                item.type == ModContent.ItemType<ShiftingSands>() || item.type == ModContent.ItemType<Tumbleweed>() ||
                 item.type == ModContent.ItemType<SandSharkToothNecklace>() || item.type == ModContent.ItemType<SandstormsCore>();
 
             if (isGSSItem)

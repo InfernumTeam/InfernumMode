@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             SoundEngine.PlaySound(SoundID.NPCDeath39, Projectile.position);
             for (int i = 0; i < 36; i++)
             {
-                Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 ectoplasm.velocity = (TwoPi * i / 36f).ToRotationVector2() * 8f;
                 ectoplasm.scale = 1.5f;
                 ectoplasm.noGravity = true;

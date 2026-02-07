@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override float DetermineLaserLength() => DetermineLaserLength_CollideWithTiles(10);
+        public override float DetermineLaserLength() => DetermineLaserLength_CollideWithTiles();
 
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * Projectile.localAI[1] * 0.5f;
 

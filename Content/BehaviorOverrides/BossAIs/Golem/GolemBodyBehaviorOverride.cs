@@ -812,7 +812,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                             // Create puffs of fire at the crystal's position.
                             for (int i = 0; i < 6; i++)
                             {
-                                Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), 6);
+                                Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), DustID.Torch);
                                 fire.velocity = Main.rand.NextVector2Circular(5f, 5f) - Vector2.UnitY * 2.5f;
                                 fire.scale = 1.3f;
                                 fire.fadeIn = 0.75f;
@@ -834,7 +834,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                                 // Create puffs of fire at the crystal's position.
                                 for (int i = 0; i < 6; i++)
                                 {
-                                    Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), 6);
+                                    Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), DustID.Torch);
                                     fire.velocity = Main.rand.NextVector2Circular(5f, 5f) + Vector2.UnitX * 2.5f;
                                     fire.scale = 1.3f;
                                     fire.fadeIn = 0.75f;
@@ -1359,7 +1359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
 
                 otherFist.Center = otherFist.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
             }

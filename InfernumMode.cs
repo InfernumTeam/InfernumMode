@@ -4,6 +4,7 @@ global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
 using System.IO;
 using CalamityMod.ILEditing;
+using CalamityMod.NPCs;
 using CalamityMod.Systems;
 using InfernumMode.Assets.BossTextures;
 using InfernumMode.Assets.Effects;
@@ -80,6 +81,15 @@ namespace InfernumMode
             }
         }
 
+        /// <summary>
+        /// Failsafe for external changes just in case
+        /// </summary>
+        public static bool DisableModifyAIOverride
+        {
+            get;
+            set;
+        }
+
         public override void Load()
         {
             Instance = this;
@@ -151,6 +161,11 @@ namespace InfernumMode
             BossBarManager.LoadPhaseInfo();
             NPCBehaviorOverride.LoadPhaseIndicators();
             Utilities.UpdateMapIconList();
+            CalamityVanillaAIOverrideNPC.ModifyAIOverride += (context) =>
+            {
+                if (CanUseCustomAIs && !DisableModifyAIOverride && context.OverrideToApply != null && NPCBehaviorOverride.BehaviorOverrideSet[context.NPCType] != null)
+                    context.OverrideToApply = null;
+            };
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);

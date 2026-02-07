@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Lighting.AddLight((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f), 0f, 0.38f, 0.38f);
 
             if (Projectile.ai[0] != 2f)
-                Projectile.aiStyle = 1;
+                Projectile.aiStyle = ProjAIStyleID.Arrow;
 
             if (Projectile.ai[0] == 0f)
                 Projectile.velocity.Y += 0.36f;

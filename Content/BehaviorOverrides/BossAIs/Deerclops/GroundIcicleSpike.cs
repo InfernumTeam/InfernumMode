@@ -51,13 +51,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 Projectile.frame = Main.rand.Next(maxValue);
                 for (int i = 0; i < 5; i++)
                 {
-                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
+                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Ice, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
                     iceDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
                     iceDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
                 }
                 for (int j = 0; j < 5; j++)
                 {
-                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 80, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
+                    Dust iceDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Ice, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
                     iceDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
                     iceDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
                     iceDust.fadeIn = 1f;

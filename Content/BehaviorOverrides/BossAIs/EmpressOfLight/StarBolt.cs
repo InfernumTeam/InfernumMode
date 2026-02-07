@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float angularOffset = Projectile.velocity.ToRotation();
             for (int i = 0; i < dustCount; i++)
             {
-                Dust rainbowMagic = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust rainbowMagic = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 rainbowMagic.fadeIn = 1f;
                 rainbowMagic.noGravity = true;
                 rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 0.9f, 0.6f) * 0.8f;

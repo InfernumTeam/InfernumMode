@@ -7,12 +7,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 {
     public class HiveBlobBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<HiveBlob2>();
+        public override int NPCOverrideType => ModContent.NPCType<HiveBlob>();
 
         public override bool PreAI(NPC npc)
         {
-            // How about no?
-            npc.active = false;
+            if (npc.ai[2] > 0)
+                npc.active = false;
             return false;
         }
     }

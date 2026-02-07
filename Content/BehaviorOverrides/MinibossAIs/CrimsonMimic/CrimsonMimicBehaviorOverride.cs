@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust blood = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(800f, 400f), 267);
+                    Dust blood = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Circular(800f, 400f), DustID.RainbowMk2);
                     blood.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.4f, 4f);
                     blood.color = Color.Lerp(Color.Red, Color.IndianRed, Main.rand.NextFloat());
                     blood.noGravity = true;

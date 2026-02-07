@@ -687,7 +687,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     npc.velocity *= 0.7f;
 
                 // Emit blood from the mouth as a means of creating a spiral.
-                Dust blood = Dust.NewDustPerfect(mouthPosition, 267);
+                Dust blood = Dust.NewDustPerfect(mouthPosition, DustID.RainbowMk2);
                 blood.velocity = mouthDirection * 8f + Main.rand.NextVector2Circular(1.2f, 1.2f);
                 blood.noGravity = true;
                 blood.scale = 1.5f;
@@ -954,13 +954,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
                     if (npc.ai[3] != 0f)
-                        spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                        spriteBatch.Draw(TextureAssets.Extra[ExtrasID.BloodNautilusMouth].Value, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                 }
             }
 
             spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             if (npc.ai[3] != 0f)
-                spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                spriteBatch.Draw(TextureAssets.Extra[ExtrasID.BloodNautilusMouth].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             // Render a gleam above the eye as necessary.
             if (eyeGleamInterpolant > 0f)

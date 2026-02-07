@@ -185,7 +185,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (target.Center.X < left + 160f)
             {
-                Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 261);
+                Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), DustID.AncientLight);
                 magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
                 magic.velocity.X = Math.Abs(magic.velocity.X);
                 magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
             if (target.Center.X > right - 160f)
             {
-                Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), 261);
+                Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), DustID.AncientLight);
                 magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
                 magic.velocity.X = -Math.Abs(magic.velocity.X);
                 magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
@@ -250,7 +250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         {
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection == -1f ? -8f : 6f, -12f);
 
-            Dust eyeDust = Dust.NewDustPerfect(eyePosition, 264);
+            Dust eyeDust = Dust.NewDustPerfect(eyePosition, DustID.PortalBoltTrail);
             eyeDust.color = Color.CornflowerBlue;
             eyeDust.velocity = -Vector2.UnitY.RotatedBy(Clamp(npc.velocity.X * -0.04f, -1f, 1f)) * 2.6f;
             eyeDust.velocity = eyeDust.velocity.RotatedByRandom(0.12f);
@@ -485,7 +485,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     // Do a magic effect from the arms.
                     foreach (Vector2 armPosition in armPositions)
                     {
-                        Dust magic = Dust.NewDustPerfect(armPosition, 267);
+                        Dust magic = Dust.NewDustPerfect(armPosition, DustID.RainbowMk2);
                         magic.velocity = -Vector2.UnitY.RotatedByRandom(0.14f) * Main.rand.NextFloat(2.5f, 3.25f);
                         magic.color = Color.Lerp(Color.Purple, Color.DarkBlue, Main.rand.NextFloat()) * npc.Opacity;
                         magic.scale = Main.rand.NextFloat(1.05f, 1.25f);
@@ -601,7 +601,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         if (!Main.rand.NextBool(7))
                             continue;
 
-                        Dust fire = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Square(-1200f, 1200f), 6);
+                        Dust fire = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Square(-1200f, 1200f), DustID.Torch);
                         fire.velocity = -Vector2.UnitY.RotatedByRandom(0.35f) * Main.rand.NextFloat(2.5f, 4f);
                         fire.scale *= Main.rand.NextFloat(1.5f, 2f);
                         fire.fadeIn = Main.rand.NextFloat(0.4f, 0.75f);
@@ -647,7 +647,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (adjustedTime < laserTelegraphCreationDelay - 10f)
                 {
                     Vector2 dustSpawnPosition = beamShootPosition + Main.rand.NextVector2CircularEdge(56f, 56f);
-                    Dust fire = Dust.NewDustPerfect(dustSpawnPosition, 222);
+                    Dust fire = Dust.NewDustPerfect(dustSpawnPosition, DustID.FireworkFountain_Yellow);
                     fire.color = Color.Orange;
                     fire.velocity = (beamShootPosition - fire.position) * 0.08f;
                     fire.scale = 1.125f;
@@ -741,7 +741,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 {
                     foreach (Vector2 handPosition in handPositions)
                     {
-                        Dust electricity = Dust.NewDustPerfect(handPosition, 229);
+                        Dust electricity = Dust.NewDustPerfect(handPosition, DustID.Vortex);
                         electricity.velocity = -Vector2.UnitY.RotatedByRandom(0.21f) * Main.rand.NextFloat(2.4f, 4f);
                         electricity.scale = Main.rand.NextFloat(0.75f, 0.85f);
                         electricity.noGravity = true;
@@ -765,7 +765,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                 for (int k = 0; k < 200; k++)
                                 {
                                     Vector2 dustPosition = Vector2.Lerp(handPositions[i], orbSummonPosition, k / 200f);
-                                    Dust electricity = Dust.NewDustPerfect(dustPosition, 229);
+                                    Dust electricity = Dust.NewDustPerfect(dustPosition, DustID.Vortex);
                                     electricity.velocity = Main.rand.NextVector2Circular(0.15f, 0.15f);
                                     electricity.scale = Main.rand.NextFloat(1f, 1.2f);
                                     electricity.noGravity = true;
@@ -854,7 +854,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (adjustedTime < lightCreationDelay)
                 {
                     Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(85f, 85f);
-                    Dust light = Dust.NewDustPerfect(dustSpawnPosition, 264);
+                    Dust light = Dust.NewDustPerfect(dustSpawnPosition, DustID.PortalBoltTrail);
                     light.color = Color.Orange;
                     light.velocity = (npc.Center - light.position) * 0.08f;
                     light.scale = 1.4f;
@@ -892,7 +892,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 // Release light from the hand.
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust lightMagic = Dust.NewDustPerfect(handPosition + Main.rand.NextVector2Circular(4f, 4f), 264);
+                    Dust lightMagic = Dust.NewDustPerfect(handPosition + Main.rand.NextVector2Circular(4f, 4f), DustID.PortalBoltTrail);
                     lightMagic.scale = Main.rand.NextFloat(1.1f, 1.275f);
                     lightMagic.fadeIn = 0.45f;
                     lightMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.28f) * Main.rand.NextFloat(2.8f, 4.2f);
@@ -908,7 +908,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         // Release a burst of light from the hand.
                         for (int i = 0; i < 16; i++)
                         {
-                            Dust lightMagic = Dust.NewDustPerfect(handPosition, 264);
+                            Dust lightMagic = Dust.NewDustPerfect(handPosition, DustID.PortalBoltTrail);
                             lightMagic.scale = 0.85f;
                             lightMagic.fadeIn = 0.35f;
                             lightMagic.velocity = (TwoPi * i / 16f).ToRotationVector2() * 2.7f;
@@ -1161,7 +1161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 for (int i = 0; i < 5; i++)
                 {
                     Vector2 dustSpawnPosition = npc.Top + Vector2.UnitY * 28f + Main.rand.NextVector2CircularEdge(50f, 50f);
-                    Dust snow = Dust.NewDustPerfect(dustSpawnPosition, 221);
+                    Dust snow = Dust.NewDustPerfect(dustSpawnPosition, DustID.FireworkFountain_Blue);
                     snow.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 4f);
                     snow.scale = Main.rand.NextFloat(1.05f, 1.35f);
                     snow.fadeIn = 0.4f;
@@ -1292,7 +1292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 for (int i = 0; i < 40; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(start + Main.rand.NextVector2Circular(50f, 50f), 264);
+                    Dust magic = Dust.NewDustPerfect(start + Main.rand.NextVector2Circular(50f, 50f), DustID.PortalBoltTrail);
                     magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 4f);
                     magic.color = Color.Blue;
                     magic.scale = 1.3f;
@@ -1309,7 +1309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 Vector2 dustDrawPosition = Vector2.Lerp(start, end, i / (float)dustCount);
 
-                Dust magic = Dust.NewDustPerfect(dustDrawPosition, 267);
+                Dust magic = Dust.NewDustPerfect(dustDrawPosition, DustID.RainbowMk2);
                 magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.2f, 0.235f);
                 magic.color = Color.LightCyan;
                 magic.color.A = 0;

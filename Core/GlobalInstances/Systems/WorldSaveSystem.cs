@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CalamityMod;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;

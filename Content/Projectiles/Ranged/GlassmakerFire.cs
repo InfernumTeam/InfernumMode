@@ -64,7 +64,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
             // Randomly emit glass particles.
             if (Main.rand.NextBool(6) && lifetimeInterpolant < 0.33f)
             {
-                Dust glass = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), 13);
+                Dust glass = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), DustID.Glass);
                 glass.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.6f) * 4f + Main.rand.NextVector2Circular(2f, 2f);
                 glass.noGravity = true;
             }

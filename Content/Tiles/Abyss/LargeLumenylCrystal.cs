@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             AddMapEntry(new Color(32, 214, 200));
 
             HitSound = SoundID.Item27;
-            DustType = 67;
+            DustType = DustID.IceRod;
 
             base.SetStaticDefaults();
         }

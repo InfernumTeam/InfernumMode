@@ -110,7 +110,8 @@ namespace InfernumMode.Content.Items.Accessories
                 AddTile(TileID.LunarCraftingStation).
                 AddIngredient(ModContent.ItemType<LunarCoin>()).
                 AddIngredient(ModContent.ItemType<ExodiumCluster>(), 25).
-                AddIngredient(ModContent.ItemType<CoreofEleum>(), 10).
+                AddIngredient(ModContent.ItemType<EssenceofEleum>(), 3).
+                AddIngredient(ItemID.Ectoplasm, 3).
                 Register();
         }
     }

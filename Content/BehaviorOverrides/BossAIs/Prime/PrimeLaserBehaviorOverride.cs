@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 if (Main.rand.NextFloat() >= telegraphIntensity)
                     continue;
 
-                Dust laser = Dust.NewDustPerfect(endOfCannon + Main.rand.NextVector2Circular(30f, 30f), 182);
+                Dust laser = Dust.NewDustPerfect(endOfCannon + Main.rand.NextVector2Circular(30f, 30f), DustID.TheDestroyer);
                 laser.velocity = (endOfCannon - laser.position) * 0.04f;
                 laser.scale = 1.25f;
                 laser.noGravity = true;

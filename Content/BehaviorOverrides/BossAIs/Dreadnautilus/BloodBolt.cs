@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             float angularOffset = Projectile.velocity.ToRotation();
             for (int i = 0; i < dustCount; i++)
             {
-                Dust blood = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust blood = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 blood.fadeIn = 1f;
                 blood.noGravity = true;
                 blood.alpha = 100;

@@ -23,8 +23,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.Opacity = 1f;
             Projectile.penetrate = 1;
             Projectile.timeLeft = 600;
-            Projectile.aiStyle = 1;
-            AIType = 1;
+            Projectile.aiStyle = ProjAIStyleID.Arrow;
+            AIType = ProjectileID.WoodenArrowFriendly;
         }
 
         public override void AI()

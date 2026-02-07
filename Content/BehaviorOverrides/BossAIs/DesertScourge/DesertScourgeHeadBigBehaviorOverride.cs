@@ -170,7 +170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     Vector2 particleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 1200f, -560f));
                     bool sandBelow = Framing.GetTileSafely((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
                     if (sandBelow)
-                        Dust.NewDustPerfect(particleSpawnPosition + new Vector2(Main.rand.NextFloatDirection() * 8f, -8f), 32, Main.rand.NextVector2Circular(1.5f, 1.5f) - Vector2.UnitY * 1.5f);
+                        Dust.NewDustPerfect(particleSpawnPosition + new Vector2(Main.rand.NextFloatDirection() * 8f, -8f), DustID.Sand, Main.rand.NextVector2Circular(1.5f, 1.5f) - Vector2.UnitY * 1.5f);
                 }
 
                 // Create screen shake effects.
@@ -410,7 +410,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                                 break;
 
                             Vector2 air = Utilities.GetGroundPositionFrom(npc.Center, new Searches.Up(9000)) - Vector2.UnitY * 32f;
-                            Dust sand = Dust.NewDustPerfect(air, 32);
+                            Dust sand = Dust.NewDustPerfect(air, DustID.Sand);
                             sand.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * (i * 0.85f + 4f);
                             sand.scale = Main.rand.NextFloat(0.8f, 1f) + i * 0.024f;
                             sand.fadeIn = -1f;

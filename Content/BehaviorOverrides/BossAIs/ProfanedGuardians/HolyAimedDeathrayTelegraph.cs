@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(40f, 40f), 264);
+                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(40f, 40f), DustID.PortalBoltTrail);
                     fire.color = Color.Orange;
                     fire.velocity = (Projectile.Center - fire.position) * 0.08f;
                     fire.fadeIn = 0.5f;

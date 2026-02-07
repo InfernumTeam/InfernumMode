@@ -560,7 +560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
                 if (attackTimer < 140f)
                 {
-                    Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
+                    Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), DustID.TheDestroyer);
                     energy.velocity = (npc.Center - energy.position) * 0.08f;
                     energy.noGravity = true;
                     energy.scale *= 1.1f;

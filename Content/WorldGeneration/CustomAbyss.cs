@@ -4,6 +4,7 @@ using System.Linq;
 using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
+using CalamityMod.Walls.UnsafeWalls;
 using CalamityMod.Walls;
 using CalamityMod.World;
 using InfernumMode.Common.Worldgen;
@@ -134,7 +135,7 @@ namespace InfernumMode.Content.WorldGeneration
             int top = AbyssTop;
             int bottom = AbyssBottom;
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
+            ushort gravelWallID = (ushort)ModContent.WallType<UnsafeAbyssGravelWall>();
 
             for (int i = 1; i < maxWidth; i++)
             {
@@ -416,7 +417,7 @@ namespace InfernumMode.Content.WorldGeneration
                     new Modifiers.RadialDither(12f, 18f),
                     new Modifiers.Conditions(new Conditions.IsTile((ushort)ModContent.TileType<AbyssGravel>(), (ushort)ModContent.TileType<SulphurousShale>())),
                     new Actions.SetTile((ushort)ModContent.TileType<PlantyMush>()),
-                    new Actions.PlaceWall((ushort)ModContent.WallType<AbyssGravelWall>()),
+                    new Actions.PlaceWall((ushort)ModContent.WallType<UnsafeAbyssGravelWall>()),
                 ]));
             }
         }
@@ -508,7 +509,7 @@ namespace InfernumMode.Content.WorldGeneration
         {
             Point currentPoint = start;
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<UnsafeVoidstoneWall>();
 
             // Descend downward, carving out gravel.
             int startingWidth = WorldGen.genRand.Next(MinStartingTrenchWidth, MaxStartingTrenchWidth);
@@ -642,7 +643,7 @@ namespace InfernumMode.Content.WorldGeneration
         {
             int entireAbyssTop = AbyssTop;
             int entireAbyssBottom = AbyssBottom;
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<UnsafeVoidstoneWall>();
             layer4ConvergencePoint = new(GetActualX((MaxAbyssWidth - WallThickness) / 2), Layer4Top + 5);
             List<int> caveSeeds = [];
             List<Vector2> caveNoisePositions = [];
@@ -1024,7 +1025,7 @@ namespace InfernumMode.Content.WorldGeneration
         public static void GenerateLayer3SquidDen(Rectangle area)
         {
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<UnsafeVoidstoneWall>();
 
             // Generate a voidstone circle for the den and then cut out most of its insides to create a shell.
             WorldSaveSystem.SquidDenCenter = new(GetActualX(area.Left + Layer3SquidDenOuterRadius + 15), area.Top + Layer3SquidDenOuterRadius);
@@ -1073,7 +1074,7 @@ namespace InfernumMode.Content.WorldGeneration
             int top = Layer4Top;
             int bottom = AbyssBottom;
             int offsetSeed = WorldGen.genRand.Next();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWallUnsafe>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<UnsafeVoidstoneWall>();
 
             for (int i = 1; i < maxWidth; i++)
             {
@@ -1135,9 +1136,9 @@ namespace InfernumMode.Content.WorldGeneration
             int top = Layer3Top - 10;
             int bottom = AbyssBottom + 10;
             ushort gravelID = (ushort)ModContent.TileType<AbyssGravel>();
-            ushort gravelWallID = (ushort)ModContent.WallType<AbyssGravelWall>();
+            ushort gravelWallID = (ushort)ModContent.WallType<UnsafeAbyssGravelWall>();
             ushort voidstoneID = (ushort)ModContent.TileType<Voidstone>();
-            ushort voidstoneWallID = (ushort)ModContent.WallType<VoidstoneWall>();
+            ushort voidstoneWallID = (ushort)ModContent.WallType<UnsafeVoidstoneWall>();
             ushort pyreID = (ushort)ModContent.TileType<PyreMantle>();
             FastRandom rng = new(WorldGen.genRand.Next());
 

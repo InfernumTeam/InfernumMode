@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Rogue
@@ -131,7 +132,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                     {
                         Vector2 magicOffset = (TwoPi * i / 36f).ToRotationVector2() * (270f - Abs(Cos(Pi * 6f * i / 20f)) * 100f) + Main.rand.NextVector2Circular(15f, 15f);
 
-                        Dust magic = Dust.NewDustPerfect(Projectile.Center + magicOffset, 267);
+                        Dust magic = Dust.NewDustPerfect(Projectile.Center + magicOffset, DustID.RainbowMk2);
                         magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
                         magic.velocity = (Projectile.Center - magic.position) * 0.092f;
                         magic.scale = Main.rand.NextFloat(1.1f, 1.8f);
@@ -146,7 +147,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             {
                 if (Main.rand.NextFloat() <= Pow(chargeUpInterpolant, 2.4f))
                 {
-                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f) * SummoningCircleScale, 267);
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f) * SummoningCircleScale, DustID.RainbowMk2);
                     magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
                     magic.velocity = Projectile.SafeDirectionTo(magic.position).RotatedBy(PiOver2) * -Main.rand.NextFloat(1f, 3f);
                     magic.scale = Main.rand.NextFloat(0.9f, 1.05f);
@@ -168,7 +169,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         public void DoBehavior_ReleaseEnergy()
         {
             // Release a lot of energy in the direction of the mouse.
-            int energyReleaseRate = Owner.ActiveItem().useTime;
+            int energyReleaseRate = Owner.HeldItem.useTime;
             if (Time % energyReleaseRate == energyReleaseRate - 1f)
             {
                 SoundEngine.PlaySound(ArtAttack.UseSound with { Pitch = 0.67f, Volume = 0.8f }, Projectile.Center);
@@ -176,8 +177,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 // Release one big bolt from the book.
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    int damage = (int)Owner.GetDamage<RogueDamageClass>().ApplyTo(Owner.ActiveItem().damage);
-                    Vector2 energyBoltVelocity = Projectile.SafeDirectionTo(Main.MouseWorld) * Main.rand.NextFloat(0.7f, 1.1f) * Owner.ActiveItem().shootSpeed * 0.5f + Main.rand.NextVector2Circular(3f, 3f);
+                    int damage = (int)Owner.GetDamage<RogueDamageClass>().ApplyTo(Owner.HeldItem.damage);
+                    Vector2 energyBoltVelocity = Projectile.SafeDirectionTo(Main.MouseWorld) * Main.rand.NextFloat(0.7f, 1.1f) * Owner.HeldItem.shootSpeed * 0.5f + Main.rand.NextVector2Circular(3f, 3f);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, energyBoltVelocity, ModContent.ProjectileType<DreamtasticEnergyBolt>(), damage, Projectile.knockBack, Projectile.owner, 0f, 75f);
 
                     Owner.ChangeDir(energyBoltVelocity.X.DirectionalSign());
@@ -186,7 +187,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 // Release two minor bolts from the dorks.
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    int damage = (int)Owner.GetDamage<RogueDamageClass>().ApplyTo(Owner.ActiveItem().damage / 3);
+                    int damage = (int)Owner.GetDamage<RogueDamageClass>().ApplyTo(Owner.HeldItem.damage / 3);
                     Vector2 energyBoltVelocity = (Main.MouseWorld - PikyPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(3f, 9f);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), PikyPosition, energyBoltVelocity, ModContent.ProjectileType<DreamtasticEnergyBolt>(), damage, Projectile.knockBack, Projectile.owner, 0f, 27f);
 

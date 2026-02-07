@@ -47,7 +47,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
                     for (int i = 0; i < 6; i++)
                     {
                         Vector2 sandVelocity = new(Main.rand.NextFloat(-7f, 7f), -Main.rand.NextFloat(1.5f, 4f));
-                        Dust crust = Dust.NewDustPerfect(shell.Center, 32, sandVelocity, Scale: Main.rand.NextFloat(0.65f, 1f));
+                        Dust crust = Dust.NewDustPerfect(shell.Center, DustID.Sand, sandVelocity, Scale: Main.rand.NextFloat(0.65f, 1f));
                         crust.noGravity = true;
                     }
 

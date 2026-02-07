@@ -261,7 +261,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 SoundEngine.PlaySound(SoundID.Item122, target.Center);
                 for (int i = 0; i < 220; i++)
                 {
-                    Dust ectoplasm = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(60f, 60f), 264);
+                    Dust ectoplasm = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(60f, 60f), DustID.PortalBoltTrail);
                     ectoplasm.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 12f);
                     ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, (TwoPi * i / 220f).ToRotationVector2() * ectoplasm.velocity.Length(), 0.8f);
                     ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, -Vector2.UnitY * ectoplasm.velocity.Length(), 0.5f);

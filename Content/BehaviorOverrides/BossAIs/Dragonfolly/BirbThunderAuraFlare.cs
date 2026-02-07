@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             for (int i = 0; i < 10; i++)
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 redLightning.velocity = Main.rand.NextVector2CircularEdge(2f, 1.6f).RotatedByRandom(TwoPi) * Main.rand.NextFloat(0.6f, 1f);
                 redLightning.velocity += Projectile.velocity;
                 redLightning.color = Color.Red;

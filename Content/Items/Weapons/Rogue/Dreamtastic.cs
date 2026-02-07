@@ -64,7 +64,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
                 AddIngredient(ModContent.ItemType<StratusBed>(), 2).
                 AddIngredient(ModContent.ItemType<StratusChandelier>()).
                 AddIngredient(ModContent.ItemType<StratusPiano>()).
-                AddIngredient(ModContent.ItemType<NightsGaze>()).
+                AddIngredient(ModContent.ItemType<Vega>()).
                 AddIngredient(ModContent.ItemType<AuricBar>(), 5).
                 Register();
         }

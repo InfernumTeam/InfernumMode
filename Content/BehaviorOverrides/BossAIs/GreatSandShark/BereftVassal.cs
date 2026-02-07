@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
@@ -1121,7 +1120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     for (int i = 0; i < numDust; i++)
                     {
                         Vector2 ringVelocity = (TwoPi * i / numDust).ToRotationVector2().RotatedBy(SpearRotation + PiOver4) * 5f;
-                        Dust ringDust = Dust.NewDustPerfect(spearEnd, 211, ringVelocity, 100, default, 1.25f);
+                        Dust ringDust = Dust.NewDustPerfect(spearEnd, DustID.Wet, ringVelocity, 100, default, 1.25f);
                         ringDust.noGravity = true;
                     }
                 }

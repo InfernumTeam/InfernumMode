@@ -117,7 +117,7 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChangeVanilla(NPCID.WallofFleshEye, 3232);
             yield return CreateBaseChangeVanilla(NPCID.WallofFlesh, 10476);
 
-            yield return CreateBaseChangeModded(ModContent.NPCType<ThiccWaifu>(), 18000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<CloudElemental>(), 18000);
             yield return CreateBaseChangeModded(NPCID.DD2OgreT2, 15100);
             yield return CreateBaseChangeModded(NPCID.QueenSlimeBoss, 30000);
 
@@ -192,8 +192,8 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianCommander>(), 132000);
             yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianDefender>(), 80000);
             yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianHealer>(), 80000);
-            yield return CreateBaseChangeModded(ModContent.NPCType<Bumblefuck>(), 256000);
-            yield return CreateBaseChangeModded(ModContent.NPCType<Bumblefuck2>(), 14300);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Dragonfolly>(), 256000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<DraconicSwarmer>(), 14300);
             yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedRocks>(), 2300);
             yield return CreateBaseChangeModded(ModContent.NPCType<ProvidenceBoss>(), 900000);
             yield return CreateBaseChangeModded(ModContent.NPCType<StormWeaverHead>(), 646400);
@@ -278,8 +278,8 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBossRushChange(ModContent.NPCType<ProfanedGuardianCommander>(), 720000);
             yield return CreateBossRushChange(ModContent.NPCType<ProfanedGuardianDefender>(), 205000);
             yield return CreateBossRushChange(ModContent.NPCType<ProfanedGuardianHealer>(), 205000);
-            yield return CreateBossRushChange(ModContent.NPCType<Bumblefuck>(), 860000);
-            yield return CreateBossRushChange(ModContent.NPCType<Bumblefuck2>(), -1);
+            yield return CreateBossRushChange(ModContent.NPCType<Dragonfolly>(), 860000);
+            yield return CreateBossRushChange(ModContent.NPCType<DraconicSwarmer>(), -1);
             yield return CreateBossRushChange(ModContent.NPCType<ProfanedRocks>(), 7500);
             yield return CreateBossRushChange(ModContent.NPCType<ProvidenceBoss>(), 3900000);
             yield return CreateBossRushChange(ModContent.NPCType<StormWeaverHead>(), 1232100);

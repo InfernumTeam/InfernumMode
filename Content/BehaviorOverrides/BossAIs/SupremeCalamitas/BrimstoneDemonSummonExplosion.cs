@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 fireDustVelocity = (fireSpawnPosition - Projectile.Bottom).SafeNormalize(-Vector2.UnitY).RotatedByRandom(0.19f);
             fireDustVelocity *= Main.rand.NextFloat(2f, 7f);
 
-            Dust brimstoneFire = Dust.NewDustPerfect(fireSpawnPosition, 267);
+            Dust brimstoneFire = Dust.NewDustPerfect(fireSpawnPosition, DustID.RainbowMk2);
             brimstoneFire.velocity = fireDustVelocity;
             brimstoneFire.color = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.7f));
             brimstoneFire.scale = Main.rand.NextFloat(1.05f, 1.45f);

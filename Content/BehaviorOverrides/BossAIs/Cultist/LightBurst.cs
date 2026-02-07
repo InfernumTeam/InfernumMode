@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (ActionCountdown % 8f == 7f)
                 {
                     Vector2 dustSpawnOffset = Main.rand.NextVector2CircularEdge(TelegraphRingScale.X, TelegraphRingScale.Y) * Main.rand.NextFloat(84f, 96f) * 1.45f;
-                    Dust light = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, 267);
+                    Dust light = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, DustID.RainbowMk2);
                     light.color = Color.White * 1.3f;
                     light.color.A = 0;
                     light.scale = Main.rand.NextFloat(1.7f, 2f);
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 267);
+                Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.RainbowMk2);
                 magic.color = Color.SkyBlue;
                 magic.scale = 1.1f;
                 magic.fadeIn = 1.6f;

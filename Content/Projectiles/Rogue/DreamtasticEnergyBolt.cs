@@ -88,7 +88,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             if (Main.rand.NextBool(2))
             {
                 Color dustColor = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.8f);
-                Dust energyDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20f, 20f) + Projectile.velocity, 267, Projectile.velocity * -0.6f, 0, dustColor);
+                Dust energyDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20f, 20f) + Projectile.velocity, DustID.RainbowMk2, Projectile.velocity * -0.6f, 0, dustColor);
                 energyDust.scale = 0.3f;
                 energyDust.fadeIn = Main.rand.NextFloat() * 1.2f;
                 energyDust.noGravity = true;

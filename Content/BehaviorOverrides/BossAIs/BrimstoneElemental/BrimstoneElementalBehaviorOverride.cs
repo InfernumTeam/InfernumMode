@@ -183,7 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             int brimstoneDustCount = (int)Lerp(2f, 8f, npc.Opacity);
             for (int i = 0; i < brimstoneDustCount; i++)
             {
-                Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
+                Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, DustID.RainbowMk2);
                 brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                 brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
                 brimstoneFire.scale = SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
@@ -233,7 +233,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     Vector2 teleportPosition = target.Center + Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt() * 0.8f;
                     for (int i = 0; i < brimstoneDustCount; i++)
                     {
-                        Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
+                        Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, DustID.RainbowMk2);
                         brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                         brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
                         brimstoneFire.scale = SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
@@ -245,7 +245,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     CloudParticle fireCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor, Color.DarkGray, 36, Main.rand.NextFloat(1.4f, 1.6f));
                     GeneralParticleHandler.SpawnParticle(fireCloud);
 
-                    Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), 219);
+                    Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), DustID.Fireworks);
                     fire.velocity = -Vector2.UnitY.RotateRandom(0.5f) * Main.rand.NextFloat(1f, 5f);
                     fire.scale *= 1.12f;
                     fire.noGravity = true;
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         float dustScale = i % 2 == 1 ? 1.65f : 0.8f;
 
                         Vector2 dustSpawnPosition = eyePosition + Main.rand.NextVector2CircularEdge(16f, 16f);
-                        Dust chargeDust = Dust.NewDustPerfect(dustSpawnPosition, 267);
+                        Dust chargeDust = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2);
                         chargeDust.velocity = (eyePosition - dustSpawnPosition).SafeNormalize(Vector2.UnitY) * (dustCount == 2 ? 3.5f : 2.8f);
                         chargeDust.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.222f, 0.777f));
                         chargeDust.scale = dustScale;
@@ -898,7 +898,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 for (int i = 0; i < 40; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(start + Main.rand.NextVector2Circular(50f, 50f), 264);
+                    Dust magic = Dust.NewDustPerfect(start + Main.rand.NextVector2Circular(50f, 50f), DustID.PortalBoltTrail);
                     magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 4f);
                     magic.color = Color.Red;
                     magic.scale = 1.4f;
@@ -915,7 +915,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 Vector2 dustDrawPosition = Vector2.Lerp(start, end, i / (float)dustCount);
 
-                Dust magic = Dust.NewDustPerfect(dustDrawPosition, 267);
+                Dust magic = Dust.NewDustPerfect(dustDrawPosition, DustID.RainbowMk2);
                 magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.2f, 0.235f);
                 magic.color = Color.OrangeRed;
                 magic.color.A = 0;

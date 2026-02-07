@@ -225,14 +225,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 if (animationCompletion >= 0.5f && animationCompletion < 0.71f)
                 {
                     Vector2 featherSpawnPosition = npc.Center - Vector2.UnitX.RotatedBy(npc.rotation + Wings[i].WingRotation + 0.55f).RotatedByRandom(0.12f) * Main.rand.NextFloat(110f);
-                    Dust feather = Dust.NewDustPerfect(featherSpawnPosition, 267);
+                    Dust feather = Dust.NewDustPerfect(featherSpawnPosition, DustID.RainbowMk2);
                     feather.velocity = Main.rand.NextVector2Circular(2f, 2f) - Vector2.UnitY * 3f;
                     feather.scale = Main.rand.NextFloat(1f, 1.25f);
                     feather.color = NPC.AI_121_QueenSlime_GetDustColor();
                     feather.noGravity = true;
 
                     featherSpawnPosition = npc.Center + Vector2.UnitX.RotatedBy(npc.rotation + Wings[i].WingRotation + 0.55f).RotatedByRandom(0.12f) * Main.rand.NextFloat(110f);
-                    feather = Dust.NewDustPerfect(featherSpawnPosition, 267);
+                    feather = Dust.NewDustPerfect(featherSpawnPosition, DustID.RainbowMk2);
                     feather.velocity = Main.rand.NextVector2Circular(2f, 2f) - Vector2.UnitY * 3f;
                     feather.scale = Main.rand.NextFloat(1f, 1.25f);
                     feather.color = NPC.AI_121_QueenSlime_GetDustColor();
@@ -1101,7 +1101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             float crystalDrawOffset = 0f;
-            Texture2D crystalTexture = TextureAssets.Extra[186].Value;
+            Texture2D crystalTexture = TextureAssets.Extra[ExtrasID.QueenSlimeCrystalCore].Value;
             Rectangle crystalFrame = crystalTexture.Frame();
             Vector2 crystalOrigin = crystalFrame.Size() * 0.5f;
             Vector2 crystalDrawPosition = npc.Center;
@@ -1174,7 +1174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             spriteBatch.ExitShaderRegion();
 
             // Draw the crown.
-            Texture2D crownTexture = TextureAssets.Extra[177].Value;
+            Texture2D crownTexture = TextureAssets.Extra[ExtrasID.QueenSlimeCrown].Value;
             frameThing = crownTexture.Frame();
             origin = frameThing.Size() * 0.5f;
 

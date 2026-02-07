@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
@@ -34,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 for (int i = 0; i < 18; i++)
                 {
-                    Dust laser = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f) - Projectile.velocity.SafeNormalize(Vector2.UnitY) * Projectile.scale * 20f, 182);
+                    Dust laser = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f) - Projectile.velocity.SafeNormalize(Vector2.UnitY) * Projectile.scale * 20f, DustID.TheDestroyer);
                     laser.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.19f) * Main.rand.NextFloat(4f, 12f);
                     laser.noGravity = true;
                     laser.scale *= 1.25f;

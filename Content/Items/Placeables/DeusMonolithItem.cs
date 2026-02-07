@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables;
+using CalamityMod.Items.Placeables.Astral;
 using InfernumMode.Content.Tiles.Misc;
 using Terraria;
 using Terraria.ID;

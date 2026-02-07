@@ -10,6 +10,7 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
@@ -417,7 +418,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // End rain.
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             // Be enraged at night.
             npc.Calamity().CurrentlyEnraged = IsEnraged;
@@ -645,7 +646,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Mark Providence as defeated at night. This is necessary for ensuring that the moonlight dye drops.
-            npc.ModNPC<ProvidenceBoss>().hasTakenDaytimeDamage = wasSummonedAtNight;
+            //npc.ModNPC<ProvidenceBoss>().de = wasSummonedAtNight;
 
             burnIntensity = MathF.Max(burnIntensity, Utils.GetLerpValue(0f, 45f, deathEffectTimer, true));
             npc.life = (int)Lerp(npc.lifeMax * DeathAnimationLifeRatio - 1f, 1f, Utils.GetLerpValue(0f, 435f, deathEffectTimer, true));

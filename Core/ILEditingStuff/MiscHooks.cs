@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.PrimordialWyrm;
+using CalamityMod.Skies;
+using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -262,11 +266,35 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
+    public class DisableAbyssEffectsDuringWyrm : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(CalAbyssEffectsMethod, AbyssEffects_Detour);
+        }
+
+        private void AbyssEffects_Detour(Orig_CalAbyssEffectsMethod orig, CalamityPlayer self)
+        {
+            int wyrm = CalamityGlobalNPC.adultEidolonWyrmHead;
+            if (InfernumMode.CanUseCustomAIs && wyrm >= 0 && wyrm < Main.maxNPCs)
+            {
+                NPC Wyrm = Main.npc[wyrm];
+                if (Wyrm != null && Wyrm.active && Wyrm.type == ModContent.NPCType<PrimordialWyrmHead>() && Wyrm.WithinRange(self.Player.Center, 40000f))
+                {
+                    self.abyssBreathCD = 0;
+                    self.abyssDeath = false;
+                    return;
+                }
+            }
+            orig(self);
+        }
+    }
+
     public class DisableDoGSkyHook : ICustomDetourProvider
     {
         void ICustomDetourProvider.ModifyMethods()
         {
-            HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
+            //HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
         }
         private bool CalDoGSkyUpdateDoGIndex_Detour(Orig_CalDoGSkyUpdateDoGIndex orig, DoGSky self)
         {
@@ -289,14 +317,14 @@ namespace InfernumMode.Core.ILEditingStuff
             bool value = orig(placementPoint, careAboutLava);
             if (WorldSaveSystem.ProvidenceArena.Contains(placementPoint))
                 value = true;
-           return value;
+            return value;
         }
     }
     public class DisableGSSMessageHook : ICustomDetourProvider
     {
         void ICustomDetourProvider.ModifyMethods()
         {
-            HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
+            //HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
         }
         public static void CalDisplayLocalizedText_Detour(Orig_CalDisplayLocalizedText orig, string key, Color? textColor = null)
         {

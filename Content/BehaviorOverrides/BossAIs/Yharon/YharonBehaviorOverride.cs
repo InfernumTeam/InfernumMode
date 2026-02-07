@@ -6,6 +6,7 @@ using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.World;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -416,7 +417,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public override bool PreAI(NPC npc)
         {
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
-            CalamityMod.CalamityMod.StopRain();
+            CalamityWorld.StopRain();
 
             // Aquire a new target if the current one is dead or inactive.
             // If no target exists, fly away.

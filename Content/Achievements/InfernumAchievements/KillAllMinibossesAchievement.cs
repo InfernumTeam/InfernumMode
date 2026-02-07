@@ -140,7 +140,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 new MinibossData(Minibosses.GiantClam, ModContent.NPCType<GiantClam>()),
                 new MinibossData(Minibosses.DarkMageTier1, NPCID.DD2DarkMageT1),
                 new MinibossData(Minibosses.SandElemental, NPCID.SandElemental),
-                new MinibossData(Minibosses.CloudElemental, ModContent.NPCType<ThiccWaifu>()),
+                new MinibossData(Minibosses.CloudElemental, ModContent.NPCType<CloudElemental>()),
                 new MinibossData(Minibosses.CorruptionMimic, NPCID.BigMimicCorruption),
                 new MinibossData(Minibosses.CrimsonMimic, NPCID.BigMimicCrimson),
                 new MinibossData(Minibosses.HallowMimic, NPCID.BigMimicHallow),

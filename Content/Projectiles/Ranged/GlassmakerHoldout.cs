@@ -38,7 +38,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
 
         public override void AI()
         {
-            Item heldItem = Owner.ActiveItem();
+            Item heldItem = Owner.HeldItem;
 
             // Die if no longer holding the click button or otherwise cannot use the item.
             if (!Owner.channel || Owner.dead || !Owner.active || Owner.noItems || Owner.CCed || heldItem is null)
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
             AdjustPlayerValues();
 
             // Update damage dynamically, in case item stats change during the projectile's lifetime.
-            Projectile.damage = Owner.GetWeaponDamage(Owner.ActiveItem());
+            Projectile.damage = Owner.GetWeaponDamage(Owner.HeldItem);
 
             // Release flames outward.
             if (Main.myPlayer == Projectile.owner && Time % heldItem.useTime == heldItem.useTime - 1f && Owner.HasAmmo(heldItem))

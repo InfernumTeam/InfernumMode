@@ -1,4 +1,5 @@
-﻿using InfernumMode.Common.Graphics.ScreenEffects;
+﻿using CalamityMod.World;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -67,7 +68,7 @@ namespace InfernumMode.Content.Skies
         {
             isActive = true;
             if (Main.raining)
-                CalamityMod.CalamityMod.StopRain();
+                CalamityWorld.StopRain();
         }
 
         public override void Deactivate(params object[] args)

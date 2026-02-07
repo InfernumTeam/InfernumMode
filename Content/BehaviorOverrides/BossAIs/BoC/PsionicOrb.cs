@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
             for (int i = 0; i < 36; i++)
             {
-                Dust psychicMagic = Dust.NewDustPerfect(Projectile.Center, 264);
+                Dust psychicMagic = Dust.NewDustPerfect(Projectile.Center, DustID.PortalBoltTrail);
                 psychicMagic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 5f;
                 psychicMagic.scale = 1.45f;
                 psychicMagic.noLight = true;

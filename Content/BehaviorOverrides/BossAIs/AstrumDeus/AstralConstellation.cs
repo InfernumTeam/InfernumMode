@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Draw connection lines to the next star in the constellation.
             if (projectileToConnectTo != null)
             {
-                Texture2D lineTexture = TextureAssets.Extra[47].Value;
+                Texture2D lineTexture = TextureAssets.Extra[ExtrasID.StardustTowerMark].Value;
                 Vector2 connectionDirection = Projectile.SafeDirectionTo(projectileToConnectTo.Center);
                 Vector2 start = Projectile.Center + connectionDirection * Projectile.scale * 24f;
                 Vector2 end = projectileToConnectTo.Center - connectionDirection * Projectile.scale * 24f;

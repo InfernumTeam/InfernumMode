@@ -367,7 +367,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                     Vector2 crystalShardSpawnPosition = Vector2.Lerp(end, start, Main.rand.NextFloat());
                     Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
 
-                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 68, shardVelocity);
+                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, DustID.BlueCrystalShard, shardVelocity);
                     shard.noGravity = Main.rand.NextBool();
                     shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
                     shard.velocity.Y -= 5f;

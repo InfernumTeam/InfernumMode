@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Vector2 endOfRocket = projectile.Center - currentDirection * 36f;
             Vector2 smokeVelocity = -currentDirection.RotatedByRandom(0.93f) * Main.rand.NextFloat(1f, 7f);
 
-            Dust smokeDust = Dust.NewDustPerfect(endOfRocket, 31);
+            Dust smokeDust = Dust.NewDustPerfect(endOfRocket, DustID.Smoke);
             smokeDust.velocity = smokeVelocity * Main.rand.NextFloat(0.3f, 1.1f) + projectile.velocity;
             smokeDust.scale *= 0.92f;
             smokeDust.fadeIn = -0.2f;

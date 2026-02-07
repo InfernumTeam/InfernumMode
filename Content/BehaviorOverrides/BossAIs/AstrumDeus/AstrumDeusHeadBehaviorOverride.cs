@@ -668,7 +668,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 if (hasCharged == 0f)
                 {
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
+                    SoundEngine.PlaySound(ScorchedEarth.RocketShoot, target.Center);
                     foreach (Projectile vortex in Utilities.AllProjectilesByID(ModContent.ProjectileType<AstralVortex>()))
                     {
                         vortex.velocity = vortex.SafeDirectionTo(target.Center) * (BossRushEvent.BossRushActive ? 24f : 11f);

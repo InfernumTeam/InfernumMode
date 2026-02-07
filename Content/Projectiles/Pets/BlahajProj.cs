@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -36,7 +37,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 return;
             }
 
-            Projectile.FloatingPetAI(false, 0.02f);
+            CommonProjectileAI.FloatingPetAI(Projectile, false, 0.02f);
             Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X).ToDirectionInt();
 
             // Decide frames.

@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Projectile.velocity = Projectile.ai[0].ToRotationVector2() * FlySpeedFactor * 40f;
                 if (Main.rand.NextBool(3))
                 {
-                    Dust rainbowMagic = Dust.NewDustPerfect(Projectile.Center, 267);
+                    Dust rainbowMagic = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                     rainbowMagic.fadeIn = 1f;
                     rainbowMagic.noGravity = true;
                     rainbowMagic.alpha = 100;

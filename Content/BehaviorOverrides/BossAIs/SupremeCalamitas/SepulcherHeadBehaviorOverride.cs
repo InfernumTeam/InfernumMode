@@ -355,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Launch the bomb.
             if (wrappedAttackTimer == bombHoverTime)
             {
-                SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
+                SoundEngine.PlaySound(ScorchedEarth.RocketShoot, npc.Center);
                 foreach (Projectile bomb in Utilities.AllProjectilesByID(bombID))
                 {
                     bomb.ModProjectile<SepulcherSoulBomb>().ExplodeCountdown = bombExplodeDelay;

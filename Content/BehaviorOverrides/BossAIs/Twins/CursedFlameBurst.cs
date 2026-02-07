@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             if (!Main.dedServ && Main.rand.NextBool(5))
             {
-                Dust fire = Dust.NewDustPerfect(Projectile.Center, 27);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center, DustID.Shadowflame);
                 fire.velocity = Main.rand.NextVector2CircularEdge(3f, 3f);
                 fire.scale *= 1.1f;
             }

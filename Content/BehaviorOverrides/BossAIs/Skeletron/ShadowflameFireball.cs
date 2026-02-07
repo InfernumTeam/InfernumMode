@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             if (Main.dedServ || InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
-            Dust cursedFlame = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width, Projectile.height) * 0.5f, 173);
+            Dust cursedFlame = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width, Projectile.height) * 0.5f, DustID.ShadowbeamStaff);
             cursedFlame.velocity = Vector2.UnitY.RotatedBy(Projectile.velocity.ToRotation()) * Main.rand.NextFloat(1.5f, 2.3f);
             cursedFlame.scale = Main.rand.NextFloat(0.7f, 0.8f);
             cursedFlame.fadeIn = 0.6f;

@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                         for (int i = 0; i < 36; i++)
                         {
-                            Dust magic = Dust.NewDustPerfect(npc.Center, 267);
+                            Dust magic = Dust.NewDustPerfect(npc.Center, DustID.RainbowMk2);
                             magic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 6f;
                             magic.scale = 1.1f;
                             magic.color = Color.Yellow;

@@ -296,7 +296,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Lerp(0, 13, interpolant);
                 for (int i = 0; i < Lerp(2, 4, interpolant); i++)
                 {
-                    Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), 4);
+                    Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), DustID.TintableDust);
                     slime.color = new Color(78, 136, 255, 80);
                     slime.noGravity = true;
                     slime.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(6f, 20.5f);
@@ -321,7 +321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         {
             for (int i = 0; i < 50; i++)
             {
-                Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), 4);
+                Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), DustID.TintableDust);
                 slime.color = new Color(78, 136, 255, 80);
                 slime.noGravity = true;
                 slime.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(11f, 25.5f);
@@ -651,7 +651,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     verticalCrownOffset = 0f;
                     break;
             }
-            Texture2D crownTexture = TextureAssets.Extra[39].Value;
+            Texture2D crownTexture = TextureAssets.Extra[ExtrasID.KingSlimeCrown].Value;
             Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (56f - verticalCrownOffset) * npc.scale);
             Main.spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;

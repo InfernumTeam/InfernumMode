@@ -215,7 +215,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
                     // Swap the current state to firing, set the velocity, reset the timer and sync.
                     CurrentState = UseState.Firing;
-                    Projectile.velocity *= Owner.ActiveItem().shootSpeed;
+                    Projectile.velocity *= Owner.HeldItem.shootSpeed;
                     Timer = 0f;
                     Projectile.netUpdate = true;
                 }

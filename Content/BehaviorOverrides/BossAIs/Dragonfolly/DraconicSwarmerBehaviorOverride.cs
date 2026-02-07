@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 {
     public class DraconicSwarmerBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<Bumblefuck2>();
+        public override int NPCOverrideType => ModContent.NPCType<DraconicSwarmer>();
 
         #region AI
         public override void SetDefaults(NPC npc)
@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreAI(NPC npc)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<Bumblefuck>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>()))
                 return true;
 
             npc.damage = CalamityPlayer.areThereAnyDamnBosses ? npc.defDamage : (int)(npc.defDamage * 0.8);
@@ -307,12 +307,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<Bumblefuck>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>()))
                 return true;
 
             float fadeToRed = npc.localAI[0];
             float backgroundFadeToRed = 0f;
-            int follyIndex = NPC.FindFirstNPC(ModContent.NPCType<Bumblefuck>());
+            int follyIndex = NPC.FindFirstNPC(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>());
             if (Main.npc.IndexInRange(follyIndex))
                 backgroundFadeToRed = Main.npc[follyIndex].Infernum().ExtraAI[8];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

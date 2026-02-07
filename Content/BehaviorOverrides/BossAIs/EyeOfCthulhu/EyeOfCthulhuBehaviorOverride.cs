@@ -313,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         for (int i = 0; i < 20; i++)
                         {
                             float angle = TwoPi * i / 20f;
-                            Dust magicBlood = Dust.NewDustPerfect(spawnPosition + angle.ToRotationVector2() * 4f, 261);
+                            Dust magicBlood = Dust.NewDustPerfect(spawnPosition + angle.ToRotationVector2() * 4f, DustID.AncientLight);
                             magicBlood.color = Color.IndianRed;
                             magicBlood.velocity = angle.ToRotationVector2() * 5f;
                             magicBlood.noGravity = true;
@@ -722,7 +722,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 // Charge up.
                 if (wrappedTimer < shootTime / (float)totalShots * 0.8f)
                 {
-                    Dust blood = Dust.NewDustPerfect(shootCenter + Main.rand.NextVector2Circular(8f, 8f), 267);
+                    Dust blood = Dust.NewDustPerfect(shootCenter + Main.rand.NextVector2Circular(8f, 8f), DustID.RainbowMk2);
                     blood.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 6f);
                     blood.color = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
                     blood.scale = Main.rand.NextFloat(1f, 1.4f);

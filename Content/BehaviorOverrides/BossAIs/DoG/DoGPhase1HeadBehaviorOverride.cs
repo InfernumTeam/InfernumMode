@@ -368,6 +368,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            target.Calamity().dogTextCooldown = 20;
+
             // Teleport to the sides of the target on the very first frame. This ensures that DoG will always be in a consistent spot before the fight begins.
             if (npc.Infernum().ExtraAI[HasTeleportedAboveTargetFlagIndex] == 0f)
             {

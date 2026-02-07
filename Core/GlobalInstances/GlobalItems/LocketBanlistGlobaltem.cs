@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CalamityMod;
+using CalamityMod.Systems.Collections;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using Terraria.ModLoader;
 
@@ -9,11 +10,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
     {
         public override void SetStaticDefaults()
         {
-            CalamityLists.VeneratedLocketBanlist.AddRange(new List<int>
-            {
-                ModContent.ItemType<Dreamtastic>(),
-                ModContent.ItemType<StormMaidensRetribution>()
-            });
+            CalamityItemSets.DisablesVeneratedLocketEffect[ModContent.ItemType<Dreamtastic>()] = true;
+            CalamityItemSets.DisablesVeneratedLocketEffect[ModContent.ItemType<StormMaidensRetribution>()] = true;
         }
     }
 }

@@ -681,6 +681,7 @@ Mods: {
 						他的命运是个人正义误入歧途所结出的果实。不要为了远大理想而遭受无意义的苦痛。
 						'''
 					DisplayName: 无邦封臣
+					// Tooltip: ""
 				}
 			}
 
@@ -2524,6 +2525,7 @@ Mods: {
 			GolemArena.MapEntry: 战斗场地
 			MoonlordArena.MapEntry: 战斗场地
 			SeaShell.MapEntry: 海贝
+			// ArenaTile.MapEntry: Arena Tile
 		}
 
 		UI: {

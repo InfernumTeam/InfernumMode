@@ -511,7 +511,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
             {
-                SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBlastSound, npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBoltSound, npc.Center);
 
                 bool targetAndCloseAndShouldNotFire = attackTimer < 130f && target.WithinRange(npc.Center, 325f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

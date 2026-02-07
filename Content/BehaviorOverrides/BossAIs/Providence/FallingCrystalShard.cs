@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);
             for (int i = 0; i < 6; i++)
             {
-                Dust crystal = Dust.NewDustPerfect(Projectile.Center, 68);
+                Dust crystal = Dust.NewDustPerfect(Projectile.Center, DustID.BlueCrystalShard);
                 crystal.velocity = Main.rand.NextVector2Circular(6f, 6f);
                 crystal.noGravity = true;
             }

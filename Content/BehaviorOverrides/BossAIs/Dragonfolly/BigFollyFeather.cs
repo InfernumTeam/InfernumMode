@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (Main.rand.NextBool(8))
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, DustID.RedTorch, Main.rand.NextVector2Circular(3f, 3f));
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
                 redLightning.fadeIn = 1f;
                 redLightning.noGravity = true;
@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             // Explode and fire a red lightning spark at the nearest player.
             for (int i = 0; i < 7; i++)
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 267, Main.rand.NextVector2Circular(2f, 2f));
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2, Main.rand.NextVector2Circular(2f, 2f));
                 redLightning.velocity *= Main.rand.NextFloat(1f, 1.7f);
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
                 redLightning.color = Color.Lerp(Color.White, Color.Red, Main.rand.NextFloat(0.5f, 1f));
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 float lifePersistance = Main.rand.NextFloat(0.8f, 1.7f);
                 for (int i = 0; i < 40; i++)
                 {
-                    Dust energy = Dust.NewDustPerfect(Projectile.Center, 267);
+                    Dust energy = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                     energy.velocity = (TwoPi * i / 40f).ToRotationVector2() * speed;
                     energy.noGravity = true;
                     energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);

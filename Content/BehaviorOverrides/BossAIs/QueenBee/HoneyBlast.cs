@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         {
             for (int i = 0; i < 10; i++)
             {
-                Dust ichor = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f), 170);
+                Dust ichor = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f), DustID.Ichor);
                 ichor.velocity = Main.rand.NextVector2Circular(3f, 3f);
                 ichor.scale = 0.7f;
                 ichor.fadeIn = 0.7f;

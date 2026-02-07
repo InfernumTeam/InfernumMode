@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.rotation += Projectile.scale * 0.05f;
 
             // Emit fire particles.
-            Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(225f, 225f) * Projectile.scale, 6);
+            Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(225f, 225f) * Projectile.scale, DustID.Torch);
             fire.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 5f);
             fire.scale *= 2.7f;
             fire.noGravity = true;

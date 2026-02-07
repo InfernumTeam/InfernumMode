@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
+using CalamityMod.Tiles;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -97,12 +98,13 @@ namespace InfernumMode.Content.Tiles.Misc
 
         public override void HitWire(int i, int j)
         {
-            CalamityUtils.LightHitWire(Type, i, j, 2, 4);
+            FurnitureCommon.LightHitWire(Type, i, j, 2, 4);
+
         }
 
         public override bool RightClick(int i, int j)
         {
-            CalamityUtils.LightHitWire(Type, i, j, 2, 4);
+            FurnitureCommon.LightHitWire(Type, i, j, 2, 4);
             SoundEngine.PlaySound(SoundID.MenuTick, new Point(i, j).ToWorldCoordinates());
             return true;
         }

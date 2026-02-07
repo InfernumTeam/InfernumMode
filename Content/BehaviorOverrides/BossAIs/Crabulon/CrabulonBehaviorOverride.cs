@@ -39,11 +39,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
         #region AI
 
-        public static int MushroomBombDamage => 70;
+        public static int MushroomBombDamage => 56;
 
-        public static int SporeCloudDamage => 75;
+        public static int SporeCloudDamage => 60;
 
-        public static int MushroomPillarDamage => 80;
+        public static int MushroomPillarDamage => 64;
 
         public const int MushroomStompBarrageInterval = 3;
 

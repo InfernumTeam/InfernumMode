@@ -66,9 +66,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             set;
         }
 
-        public static int AcceleratingFireballDamage => 380;
+        public static int AcceleratingFireballDamage => 280;
 
-        public static int DeathLaserDamage => 400;
+        public static int DeathLaserDamage => 320;
 
         public const float Phase2LifeRatio = 0.8f;
 
@@ -399,7 +399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 npc.netUpdate = true;
             }
 
-            npc.damage = npc.dontTakeDamage ? 0 : 800;
+            npc.damage = npc.dontTakeDamage ? 0 : 600;
 
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)

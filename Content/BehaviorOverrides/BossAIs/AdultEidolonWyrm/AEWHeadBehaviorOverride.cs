@@ -168,11 +168,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         };
 
         // Projectile damage values.
-        public const int NormalShotDamage = 540;
+        public const int NormalShotDamage = 490;
 
-        public const int StrongerNormalShotDamage = 560;
+        public const int StrongerNormalShotDamage = 520;
 
-        public const int PowerfulShotDamage = 850;
+        public const int PowerfulShotDamage = 620;
 
         public const int EnragedFormSegmentCount = 45;
 

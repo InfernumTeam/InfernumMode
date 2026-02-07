@@ -43,23 +43,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             VoidAccretionDisk
         }
 
-        public static int FireballDamage => 215;
+        public static int FireballDamage => 200;
 
-        public static int LunarFireballDamage => 215;
+        public static int LunarFireballDamage => 200;
 
-        public static int PhantasmalBoltDamage => 215;
+        public static int PhantasmalBoltDamage => 200;
 
-        public static int PhantasmalEyeDamage => 215;
+        public static int PhantasmalEyeDamage => 200;
 
-        public static int LunarAsteroidDamage => 220;
+        public static int LunarAsteroidDamage => 200;
 
-        public static int PhantasmalSphereDamage => 220;
+        public static int PhantasmalSphereDamage => 200;
 
-        public static int PhantasmalDeathrayDamage => 325;
+        public static int PhantasmalDeathrayDamage => 250;
 
-        public static int BlackHoleDamage => 350;
+        public static int BlackHoleDamage => 300;
 
-        public static int PhantasmalBoltEnragedDamage => 500;
+        public static int PhantasmalBoltEnragedDamage => 400;
 
         public const int ArenaWidth = 200;
 

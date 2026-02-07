@@ -57,17 +57,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         #region AI
 
-        public const int BrimstoneFireballDamage = 135;
+        public const int BrimstoneFireballDamage = 124;
 
-        public const int BrimstoneHellblastDamage = 135;
+        public const int BrimstoneHellblastDamage = 124;
 
-        public const int BrimstonePetalDamage = 135;
+        public const int BrimstonePetalDamage = 124;
 
-        public const int BrimstoneSkullDamage = 135;
+        public const int BrimstoneSkullDamage = 124;
 
-        public const int DeathrayBackPetalDamage = 175;
+        public const int DeathrayBackPetalDamage = 150;
 
-        public const int BrimstoneDeathrayDamage = 225;
+        public const int BrimstoneDeathrayDamage = 180;
 
         public const float BaseDR = 0.12f;
 

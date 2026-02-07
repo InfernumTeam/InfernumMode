@@ -39,17 +39,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public override int NPCOverrideType => ModContent.NPCType<HiveMindBoss>();
 
-        public static int VileClotDamage => 85;
+        public static int VileClotDamage => 75;
 
-        public static int EaterOfSoulsWallDamage => 90;
+        public static int EaterOfSoulsWallDamage => 80;
 
-        public static int ShadeNimbusDamage => 90;
+        public static int ShadeNimbusDamage => 80;
 
-        public static int ShadeRainDamage => 90;
+        public static int ShadeRainDamage => 80;
 
-        public static int HiveBlobDamage => 95;
+        public static int HiveBlobDamage => 85;
 
-        public static int ShadeFireDamage => 100;
+        public static int ShadeFireDamage => 90;
 
         public const float FinalPhaseLifeRatio = 0.2f;
 

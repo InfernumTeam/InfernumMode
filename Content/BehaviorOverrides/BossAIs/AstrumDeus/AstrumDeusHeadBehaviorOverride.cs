@@ -46,25 +46,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         #region AI
 
-        public static int AstralPlasmaSparkDamage => 180;
+        public static int AstralPlasmaSparkDamage => 175;
 
-        public static int AstralFlameDamage => 200;
+        public static int AstralFlameDamage => 180;
 
-        public static int AstralLaserDamage => 200;
+        public static int AstralLaserDamage => 180;
 
-        public static int AstralPlasmaFireballDamage => 200;
+        public static int AstralPlasmaFireballDamage => 180;
 
-        public static int AstralRubbleDamage => 200;
+        public static int AstralRubbleDamage => 180;
 
-        public static int DarkBoltDamage => 200;
+        public static int DarkBoltDamage => 180;
 
-        public static int InfectionGlobDamage => 200;
+        public static int InfectionGlobDamage => 180;
 
-        public static int AstralVortexDamage => 250;
+        public static int AstralVortexDamage => 220;
 
-        public static int BlackHoleDamage => 300;
+        public static int BlackHoleDamage => 240;
 
-        public static int BlackHoleLaserDamage => 300;
+        public static int BlackHoleLaserDamage => 240;
 
         public const float Phase2LifeRatio = 0.6f;
 

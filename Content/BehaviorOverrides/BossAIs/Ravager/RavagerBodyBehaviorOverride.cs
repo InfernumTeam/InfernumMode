@@ -41,17 +41,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();
 
-        public static int BloodGlobDamage => 185;
+        public static int BloodGlobDamage => 174;
 
-        public static int BloodSpikeDamage => 185;
+        public static int BloodSpikeDamage => 174;
 
-        public static int DarkMagicCinderDamage => 185;
+        public static int DarkMagicCinderDamage => 174;
 
-        public static int DarkMagicFireballDamage => 190;
+        public static int DarkMagicFireballDamage => 178;
 
-        public static int RockPillarDamage => 190;
+        public static int RockPillarDamage => 178;
 
-        public static int FlamePillarDamage => 215;
+        public static int FlamePillarDamage => 200;
 
         public const int AttackDelay = 135;
 

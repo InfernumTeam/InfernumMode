@@ -100,13 +100,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType.SpiritPetal,
         ];
 
-        public static int SoulDamage => 280;
+        public static int SoulDamage => 230;
 
-        public static int PhantoplasmShotDamage => 280;
+        public static int PhantoplasmShotDamage => 230;
 
-        public static int GhostlyVortexDamage => 285;
+        public static int GhostlyVortexDamage => 235;
 
-        public static int CirclingPhantoplasmShotDamage => 300;
+        public static int CirclingPhantoplasmShotDamage => 250;
 
         public const int DeathTimerIndex = 6;
 

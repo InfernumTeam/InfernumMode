@@ -65,15 +65,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const float BorderWidth = 6000f;
 
-        public static int PrismaticBoltDamage => ShouldBeEnraged ? 350 : 185;
+        public static int PrismaticBoltDamage => ShouldBeEnraged ? 240 : 170;
 
-        public static int LanceDamage => ShouldBeEnraged ? 375 : 190;
+        public static int LanceDamage => ShouldBeEnraged ? 250 : 175;
 
-        public static int SwordDamage => ShouldBeEnraged ? 400 : 200;
+        public static int SwordDamage => ShouldBeEnraged ? 250 : 175;
 
-        public static int SmallLaserbeamDamage => ShouldBeEnraged ? 600 : 250;
+        public static int SmallLaserbeamDamage => ShouldBeEnraged ? 400 : 200;
 
-        public static int LaserbeamDamage => ShouldBeEnraged ? 800 : 400;
+        public static int LaserbeamDamage => ShouldBeEnraged ? 600 : 300;
 
         public static EmpressOfLightAttackType[] Phase1AttackCycle =>
         [

@@ -116,17 +116,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const int SkullWasTakenIndex = 10;
 
-        public static int AcidDropDamage => 135;
+        public static int AcidDropDamage => 124;
 
-        public static int AcidBubbleDamage => 135;
+        public static int AcidBubbleDamage => 124;
 
-        public static int SulphuricGasDamage => 135;
+        public static int SulphuricGasDamage => 124;
 
-        public static int BodySpikeDamage => 140;
+        public static int BodySpikeDamage => 130;
 
-        public static int SulphurousRockDamage => 140;
+        public static int SulphurousRockDamage => 130;
 
-        public static int SulphuricTornadoDamage => 250;
+        public static int SulphuricTornadoDamage => 200;
 
         public static List<VerletSimulatedSegmentInfernum> WormSegments
         {

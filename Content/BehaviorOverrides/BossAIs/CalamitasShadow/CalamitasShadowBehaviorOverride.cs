@@ -164,23 +164,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Phase3LifeRatio
         ];
 
-        public static int DarkMagicFlameDamage => 160;
+        public static int DarkMagicFlameDamage => 130;
 
-        public static int CatharsisSoulDamage => 160;
+        public static int CatharsisSoulDamage => 130;
 
-        public static int BrimstoneSlashDamage => 165;
+        public static int BrimstoneSlashDamage => 134;
 
-        public static int BrimstoneBombDamage => 165;
+        public static int BrimstoneBombDamage => 138;
 
-        public static int BrimstoneDartDamage => 165;
+        public static int BrimstoneDartDamage => 138;
 
-        public static int ShadowSparkDamage => 165;
+        public static int ShadowSparkDamage => 138;
 
-        public static int BrimstoneMeteorDamage => 165;
+        public static int BrimstoneMeteorDamage => 138;
 
-        public static int DashFireDamage => 170;
+        public static int DashFireDamage => 142;
 
-        public static int EntropyBeamDamage => 240;
+        public static int EntropyBeamDamage => 180;
 
         public static float ArmLength => 12f;
 

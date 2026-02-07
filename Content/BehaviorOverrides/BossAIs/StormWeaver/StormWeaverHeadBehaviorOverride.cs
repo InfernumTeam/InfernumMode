@@ -74,13 +74,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ModContent.NPCType<CloudElemental>(),
         ];
 
-        public static int SparkDamage => 275;
+        public static int SparkDamage => 230;
 
-        public static int FrostWaveDamage => 275;
+        public static int FrostWaveDamage => 230;
 
-        public static int LightningDamage => 275;
+        public static int LightningDamage => 230;
 
-        public static int WindGustDamage => 300;
+        public static int WindGustDamage => 250;
 
         public const int FogInterpolantIndex = 6;
 

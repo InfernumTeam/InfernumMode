@@ -31,29 +31,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
     public static class BereftVassalComboAttackManager
     {
-        public static int SparkDamage => 185;
+        public static int SparkDamage => 180;
 
-        public static int WaterSpearDamage => 190;
+        public static int WaterSpearDamage => 180;
 
-        public static int SandBlastDamage => 190;
+        public static int SandBlastDamage => 180;
 
-        public static int SandBlobDamage => 190;
+        public static int SandBlobDamage => 180;
 
-        public static int WaveDamage => 190;
+        public static int WaveDamage => 180;
 
-        public static int DustDevilDamage => 195;
+        public static int DustDevilDamage => 184;
 
-        public static int LightningDamage => 205;
+        public static int LightningDamage => 188;
 
-        public static int SpearDamage => 215;
+        public static int SpearDamage => 195;
 
-        public static int WaterSliceDamage => 230;
+        public static int WaterSliceDamage => 200;
 
-        public static int WaterBeamDamage => 275;
+        public static int WaterBeamDamage => 240;
 
-        public static int WaterTorrentDamage => 275;
+        public static int WaterTorrentDamage => 240;
 
-        public static int PressureSandnadoDamage => 300;
+        public static int PressureSandnadoDamage => 260;
 
         public static BereftVassalFightState FightState
         {

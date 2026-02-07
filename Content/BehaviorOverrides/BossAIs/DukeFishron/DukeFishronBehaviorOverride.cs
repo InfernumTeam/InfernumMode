@@ -155,13 +155,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         #region AI
 
-        public static int ChargeTyphoonDamage => 190;
+        public static int ChargeTyphoonDamage => 170;
 
-        public static int SmallWaveDamage => 190;
+        public static int SmallWaveDamage => 170;
 
-        public static int TornadoDamage => 250;
+        public static int TornadoDamage => 220;
 
-        public static int TidalWaveDamage => 275;
+        public static int TidalWaveDamage => 240;
 
         public override bool PreAI(NPC npc)
         {

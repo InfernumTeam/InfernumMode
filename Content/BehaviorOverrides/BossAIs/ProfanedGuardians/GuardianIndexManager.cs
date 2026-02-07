@@ -112,25 +112,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static Vector2 HealerStartingHoverPosition => CrystalPosition + new Vector2(200f, -65f);
 
         // Damage fields.
-        public const int ProfanedRockDamage = 200;
+        public const int ProfanedRockDamage = 180;
 
-        public const int MagicShotDamage = 220;
+        public const int MagicShotDamage = 190;
 
-        public const int HolyCrossDamage = 250;
+        public const int HolyCrossDamage = 200;
 
-        public const int HolySpearDamage = 250;
+        public const int HolySpearDamage = 200;
 
-        public const int LingeringFireDamage = 275;
+        public const int LingeringFireDamage = 220;
 
-        public const int CommanderSpearDamage = 300;
+        public const int CommanderSpearDamage = 240;
 
-        public const int SunExplosionDamage = 300;
+        public const int SunExplosionDamage = 240;
 
-        public const int HolyFireBeamDamage = 375;
+        public const int HolyFireBeamDamage = 300;
 
-        public const int LavaPillarDamage = 450;
+        public const int LavaPillarDamage = 350;
 
-        public const int HolySpinningFireBeamDamage = 500;
+        public const int HolySpinningFireBeamDamage = 380;
         #endregion
 
         #region Indexes

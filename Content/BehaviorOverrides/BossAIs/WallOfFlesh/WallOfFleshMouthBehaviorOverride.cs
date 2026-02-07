@@ -18,11 +18,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public const float Phase2LifeRatio = 0.45f;
 
-        public static int EyeLaserDamage => 100;
+        public static int EyeLaserDamage => 92;
 
-        public static int FleshTentacleDamage => 105;
+        public static int FleshTentacleDamage => 98;
 
-        public static int FireBeamDamage => 185;
+        public static int FireBeamDamage => 150;
 
         public override float[] PhaseLifeRatioThresholds =>
         [

@@ -39,15 +39,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         #region AI
 
-        public static int ElectricBoltDamage => 90;
+        public static int ElectricBoltDamage => 80;
 
-        public static int BloodSpitDamage => 95;
+        public static int BloodSpitDamage => 85;
 
-        public static int IchorSpitDamage => 95;
+        public static int IchorSpitDamage => 85;
 
-        public static int PsionicOrbDamage => 100;
+        public static int PsionicOrbDamage => 90;
 
-        public static int PsionicLightningBoltDamage => 140;
+        public static int PsionicLightningBoltDamage => 120;
 
         public override bool PreAI(NPC npc)
         {

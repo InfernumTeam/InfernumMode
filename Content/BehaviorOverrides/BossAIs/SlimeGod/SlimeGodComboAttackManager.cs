@@ -33,9 +33,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
     public static class SlimeGodComboAttackManager
     {
-        public static int GroundSlimeDamage => 95;
+        public static int GroundSlimeDamage => 85;
 
-        public static int SlimeGlobDamage => 95;
+        public static int SlimeGlobDamage => 85;
 
         public static int FirstSlimeToSummonIndex => WorldGen.crimson ? CalamityGlobalNPC.slimeGodRed : CalamityGlobalNPC.slimeGodPurple;
 

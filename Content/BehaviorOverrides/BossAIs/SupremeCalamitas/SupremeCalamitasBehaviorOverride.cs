@@ -153,37 +153,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static int BrimstoneDartDamage => 540;
+        public static int BrimstoneDartDamage => 420;
 
-        public static int BrimstoneHellblastDamage => 540;
+        public static int BrimstoneHellblastDamage => 420;
 
-        public static int BrothersProjectileDamage => 540;
+        public static int BrothersProjectileDamage => 420;
 
-        public static int CondemnationArrowDamage => 540;
+        public static int CondemnationArrowDamage => 420;
 
-        public static int DarkMagicFlameDamage => 540;
+        public static int DarkMagicFlameDamage => 420;
 
-        public static int SepulcherBoneDamage => 540;
+        public static int SepulcherBoneDamage => 420;
 
-        public static int ShadowBoltDamage => 540;
+        public static int ShadowBoltDamage => 420;
 
-        public static int GigablastDamage => 600;
+        public static int GigablastDamage => 450;
 
-        public static int LostSoulDamage => 600;
+        public static int LostSoulDamage => 450;
 
-        public static int ShadowBlastDamage => 600;
+        public static int ShadowBlastDamage => 450;
 
-        public static int DemonicExplosionDamage => 650;
+        public static int DemonicExplosionDamage => 480;
 
-        public static int SepulcherSoulBombDamage => 650;
+        public static int SepulcherSoulBombDamage => 480;
 
-        public static int SuicideBomberDemonDamage => 650;
+        public static int SuicideBomberDemonDamage => 480;
 
-        public static int FlameOverloadBeamDamage => 900;
+        public static int FlameOverloadBeamDamage => 550;
 
-        public static int FlamePillarDamage => 900;
+        public static int FlamePillarDamage => 550;
 
-        public static int RancorLaserbeamDamage => 900;
+        public static int RancorLaserbeamDamage => 550;
 
         public static bool ShadowDemonCanAttack => SCal?.ai[0] >= 50f;
 

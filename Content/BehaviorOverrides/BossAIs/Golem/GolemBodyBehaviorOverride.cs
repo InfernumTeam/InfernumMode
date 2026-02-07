@@ -68,21 +68,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Phase3LifeRatio
         ];
 
-        public static int FireCrystalDamage => 185;
+        public static int FireCrystalDamage => 160;
 
-        public static int FistBulletDamage => 185;
+        public static int FistBulletDamage => 160;
 
-        public static int LaserDamage => 185;
+        public static int LaserDamage => 160;
 
-        public static int SpikeTrapDamage => 190;
+        public static int SpikeTrapDamage => 164;
 
-        public static int SpikeTrapFloorDamage => 250;
+        public static int SpikeTrapFloorDamage => 200;
 
-        public static int EnrageFireballDamage => 300;
+        public static int EnrageFireballDamage => 240;
 
-        public static int EyeLaserRayDamage => 300;
+        public static int EyeLaserRayDamage => 240;
 
-        public static int BodyLaserRayDamage => 320;
+        public static int BodyLaserRayDamage => 260;
 
         public static NPC GetLeftFist(NPC npc) => Main.npc[(int)npc.Infernum().ExtraAI[0]];
 

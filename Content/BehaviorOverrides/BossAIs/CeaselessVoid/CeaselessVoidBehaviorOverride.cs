@@ -161,17 +161,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public const float DarkEnergyOffsetRadius = 1200f;
 
-        public static int DarkEnergyDamage => 275;
+        public static int DarkEnergyDamage => 230;
 
-        public static int RubbleDamage => 275;
+        public static int RubbleDamage => 230;
 
-        public static int OtherworldlyBoltDamage => 275;
+        public static int OtherworldlyBoltDamage => 230;
 
-        public static int EnergyPulseDamage => 275;
+        public static int EnergyPulseDamage => 230;
 
-        public static int VortexTearDamage => 300;
+        public static int VortexTearDamage => 250;
 
-        public static int DarkEnergyTorrentDamage => 350;
+        public static int DarkEnergyTorrentDamage => 300;
 
         public override bool PreAI(NPC npc)
         {

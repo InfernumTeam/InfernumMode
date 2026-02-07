@@ -45,15 +45,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public override int NPCOverrideType => ModContent.NPCType<OldDukeBoss>();
 
-        public static int HomingAcidDamage => 300;
+        public static int HomingAcidDamage => 235;
 
-        public static int HomingToothDamage => 300;
+        public static int HomingToothDamage => 235;
 
-        public static int GoreDamage => 335;
+        public static int GoreDamage => 250;
 
-        public static int SulphuricBlobDamage => 335;
+        public static int SulphuricBlobDamage => 250;
 
-        public static int VortexDamage => 500;
+        public static int VortexDamage => 350;
 
         public const float Phase2LifeRatio = 0.75f;
 

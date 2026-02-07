@@ -34,11 +34,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #endregion
 
         #region AI
-        public static int ToothDamage => 75;
+        public static int ToothDamage => 65;
 
-        public static int SittingBloodDamage => 80;
+        public static int SittingBloodDamage => 70;
 
-        public static int BloodShotDamage => 80;
+        public static int BloodShotDamage => 70;
 
         public const int GleamTime = 45;
 

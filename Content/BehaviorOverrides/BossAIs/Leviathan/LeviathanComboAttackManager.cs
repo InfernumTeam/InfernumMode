@@ -29,19 +29,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
     public static class LeviathanComboAttackManager
     {
-        public static int WaterSpearDamage => 170;
+        public static int WaterSpearDamage => 150;
 
-        public static int LullabyDamage => 170;
+        public static int LullabyDamage => 150;
 
-        public static int FrostMistDamage => 175;
+        public static int FrostMistDamage => 155;
 
-        public static int LeviathanVomitDamage => 175;
+        public static int LeviathanVomitDamage => 155;
 
-        public static int AquaticAberrationDamage => 190;
+        public static int AquaticAberrationDamage => 160;
 
-        public static int AtlantisSpearDamage => 195;
+        public static int AtlantisSpearDamage => 164;
 
-        public static int LeviathanMeteorDamage => 195;
+        public static int LeviathanMeteorDamage => 164;
 
         public static NPC LeaderOfFight
         {

@@ -29,15 +29,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
 
-        public static int CursedCinderDamage => 90;
+        public static int CursedCinderDamage => 77;
 
-        public static int ShadeNimbusDamage => 90;
+        public static int ShadeNimbusDamage => 77;
 
-        public static int CorruptThornVineDamage => 95;
+        public static int CorruptThornVineDamage => 80;
 
-        public static int CursedFlameBombDamage => 95;
+        public static int CursedFlameBombDamage => 80;
 
-        public static int ShockwaveDamage => 140;
+        public static int ShockwaveDamage => 110;
 
         // This is applicable to all split worms as well.
         // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).

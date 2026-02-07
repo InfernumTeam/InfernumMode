@@ -43,22 +43,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public const int PostBattleMusicLength = 5120;
 
         // Projectile damage values.
-        public const int NormalShotDamage = 540;
+        public const int NormalShotDamage = 460;
 
-        public const int StrongerNormalShotDamage = 560;
+        public const int StrongerNormalShotDamage = 480;
 
-        public const int AresEnergySlashDamage = 640;
+        public const int AresEnergySlashDamage = 520;
 
-        public const int PowerfulShotDamage = 850;
+        public const int PowerfulShotDamage = 550;
 
         // Contact damage values.
-        public const int AresEnergyKatanaContactDamage = 650;
+        public const int AresEnergyKatanaContactDamage = 600;
 
-        public const int TwinsChargeContactDamage = 600;
+        public const int TwinsChargeContactDamage = 550;
 
-        public const int ThanatosHeadDamage = 800;
+        public const int ThanatosHeadDamage = 640;
 
-        public const int ThanatosHeadDamageMaximumOverdrive = 960;
+        public const int ThanatosHeadDamageMaximumOverdrive = 720;
 
         // Exo Mech text colors.
         public static readonly Color ApolloTextColor = new(44, 172, 36);

@@ -95,23 +95,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         #region AI
 
-        public static int IceShardDamage => 185;
+        public static int IceShardDamage => 172;
 
-        public static int LightBurstDamage => 195;
+        public static int LightBurstDamage => 178;
 
-        public static int IceMassDamage => 195;
+        public static int IceMassDamage => 178;
 
-        public static int FireballDamage => 195;
+        public static int FireballDamage => 178;
 
-        public static int LightningDamage => 200;
+        public static int LightningDamage => 182;
 
-        public static int ShadowFireballDamage => 200;
+        public static int ShadowFireballDamage => 182;
 
-        public static int DarkPulseDamage => 200;
+        public static int DarkPulseDamage => 182;
 
-        public static int FireBeamDamage => 250;
+        public static int FireBeamDamage => 200;
 
-        public static int DoomBeamDamage => 300;
+        public static int DoomBeamDamage => 240;
 
         public override bool PreAI(NPC npc)
         {

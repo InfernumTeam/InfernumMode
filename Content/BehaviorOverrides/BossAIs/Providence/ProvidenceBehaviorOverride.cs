@@ -205,27 +205,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const float DeathAnimationLifeRatio = 0.04f;
 
-        public static int CrystalShardDamage => IsEnraged ? 450 : 265;
+        public static int CrystalShardDamage => IsEnraged ? 380 : 220;
 
-        public static int CinderDamage => IsEnraged ? 420 : 240;
+        public static int CinderDamage => IsEnraged ? 370 : 210;
 
-        public static int SmallLavaBlobDamage => IsEnraged ? 420 : 240;
+        public static int SmallLavaBlobDamage => IsEnraged ? 370 : 210;
 
-        public static int BasicFireballDamage => IsEnraged ? 450 : 265;
+        public static int BasicFireballDamage => IsEnraged ? 380 : 220;
 
-        public static int BigFireballDamage => IsEnraged ? 490 : 300;
+        public static int BigFireballDamage => IsEnraged ? 400 : 240;
 
-        public static int HolySpearDamage => IsEnraged ? 500 : 300;
+        public static int HolySpearDamage => IsEnraged ? 430 : 250;
 
-        public static int HolyCrossDamage => IsEnraged ? 450 : 275;
+        public static int HolyCrossDamage => IsEnraged ? 400 : 240;
 
-        public static int CrystalMagicDamage => IsEnraged ? 450 : 275;
+        public static int CrystalMagicDamage => IsEnraged ? 400 : 240;
 
-        public static int CrystalSpikeDamage => IsEnraged ? 500 : 300;
+        public static int CrystalSpikeDamage => IsEnraged ? 430 : 250;
 
-        public static int MagicRockDamage => IsEnraged ? 450 : 275;
+        public static int MagicRockDamage => IsEnraged ? 400 : 240;
 
-        public static int MagicLaserbeamDamage => IsEnraged ? 1000 : 500;
+        public static int MagicLaserbeamDamage => IsEnraged ? 600 : 325;
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
 

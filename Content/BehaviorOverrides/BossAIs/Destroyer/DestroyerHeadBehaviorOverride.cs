@@ -78,11 +78,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.RegularCharge,
         ];
 
-        public const int EnergySparkDamage = 135;
+        public const int EnergySparkDamage = 124;
 
-        public const int PierceLaserbeamDamage = 135;
+        public const int PierceLaserbeamDamage = 124;
 
-        public const int EnergyBombDamage = 175;
+        public const int EnergyBombDamage = 140;
 
         public const int BodySegmentCount = 60;
 

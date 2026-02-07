@@ -58,23 +58,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         // This exists primarily for mecha mayhem compatibility.
         public static bool CanPerformCameraEffects => !NPC.AnyNPCs(NPCID.TheDestroyer) && !NPC.AnyNPCs(NPCID.Spazmatism) && !NPC.AnyNPCs(NPCID.Retinazer);
 
-        public const int MetalSpikeDamage = 135;
+        public const int MetalSpikeDamage = 124;
 
-        public const int SkullDamage = 135;
+        public const int SkullDamage = 124;
 
-        public const int SmallLaserDamage = 135;
+        public const int SmallLaserDamage = 124;
 
-        public const int ElectricBoltDamage = 140;
+        public const int ElectricBoltDamage = 128;
 
-        public const int MissileDamage = 140;
+        public const int MissileDamage = 130;
 
-        public const int TeslaBombDamage = 140;
+        public const int TeslaBombDamage = 130;
 
-        public const int SawSparkDamage = 150;
+        public const int SawSparkDamage = 134;
 
-        public const int TeslaCloudDamage = 150;
+        public const int TeslaCloudDamage = 134;
 
-        public const int DeathrayDamage = 250;
+        public const int DeathrayDamage = 200;
 
         public const int CannonsShouldNotFireIndex = 0;
 

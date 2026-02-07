@@ -53,13 +53,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         #endregion Loading
 
         #region AI
-        public static int KunaiDamage => 275;
+        public static int KunaiDamage => 230;
 
-        public static int ScytheDamage => 275;
+        public static int ScytheDamage => 230;
 
-        public static int ShadowSlashDamage => 300;
+        public static int ShadowSlashDamage => 250;
 
-        public static int CosmicExplosionDamage => 350;
+        public static int CosmicExplosionDamage => 300;
 
         public const float Phase2LifeRatio = 0.7f;
 

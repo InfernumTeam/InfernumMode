@@ -111,11 +111,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         #region AI
 
-        public static int RedSparkDamage => 225;
+        public static int RedSparkDamage => 200;
 
-        public static int FeatherDamage => 250;
+        public static int FeatherDamage => 230;
 
-        public static int RedLightningDamage => 250;
+        public static int RedLightningDamage => 230;
 
         public const int TransitionTime = ScreamTime + 15;
 

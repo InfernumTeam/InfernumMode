@@ -48,11 +48,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static int Phase2TransitionDuration => 180;
 
-        public static int PetalDamage => 160;
+        public static int PetalDamage => 150;
 
-        public static int SporeGasDamage => 165;
+        public static int SporeGasDamage => 155;
 
-        public static int NettlevineArenaSeparatorDamage => 215;
+        public static int NettlevineArenaSeparatorDamage => 180;
 
         public override bool PreAI(NPC npc)
         {

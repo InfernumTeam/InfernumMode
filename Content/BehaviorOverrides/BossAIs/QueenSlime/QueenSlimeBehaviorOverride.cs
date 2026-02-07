@@ -27,25 +27,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
     {
         public override int NPCOverrideType => NPCID.QueenSlimeBoss;
 
-        public static int FallingGelDamage => 125;
+        public static int FallingGelDamage => 110;
 
-        public static int SlimeMinionDamage => 125;
+        public static int SlimeMinionDamage => 110;
 
-        public static int SmallCrystalSpikeDamage => 125;
+        public static int SmallCrystalSpikeDamage => 110;
 
-        public static int SolidCrystalDamage => 125;
+        public static int SolidCrystalDamage => 110;
 
-        public static int JewelBeamDamage => 130;
+        public static int JewelBeamDamage => 114;
 
-        public static int HallowBladeDamage => 135;
+        public static int HallowBladeDamage => 114;
 
-        public static int SplitFormDamage => 135;
+        public static int SplitFormDamage => 114;
 
-        public static int LargeCrystalSpikeDamage => 185;
+        public static int LargeCrystalSpikeDamage => 160;
 
-        public static int AimedLaserbeamDamage => 160;
+        public static int AimedLaserbeamDamage => 140;
 
-        public static int GiantHallowLaserbeamDamage => 225;
+        public static int GiantHallowLaserbeamDamage => 180;
 
         public const float Phase2LifeRatio = 0.625f;
 

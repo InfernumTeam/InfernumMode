@@ -24,15 +24,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
     {
         public override int NPCOverrideType => ModContent.NPCType<CryogenBoss>();
 
-        public const int IceRainDamage = 130;
+        public const int IceRainDamage = 115;
 
-        public const int IceBombDamage = 135;
+        public const int IceBombDamage = 118;
 
-        public const int IcicleSpikeDamage = 135;
+        public const int IcicleSpikeDamage = 118;
 
-        public const int AuroraSpiritDamage = 140;
+        public const int AuroraSpiritDamage = 122;
 
-        public const int IcePillarDamage = 150;
+        public const int IcePillarDamage = 130;
 
         public const float Phase2LifeRatio = 0.9f;
 

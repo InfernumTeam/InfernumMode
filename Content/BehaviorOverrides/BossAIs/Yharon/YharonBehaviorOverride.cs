@@ -353,17 +353,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         // The closer to 1 this value is, the quicker his charges will be.
         public const float PostChargeDecelerationFactor = 0.42f;
 
-        public const int RegularFireballDamage = 500;
+        public const int RegularFireballDamage = 400;
 
-        public const int FlamethrowerDamage = 550;
+        public const int FlamethrowerDamage = 420;
 
-        public const int InfernadoDamage = 550;
+        public const int InfernadoDamage = 420;
 
-        public const int HeatFlashFireballDamage = 575;
+        public const int HeatFlashFireballDamage = 500;
 
-        public const int DeathAnimationFireballDamage = 600;
+        public const int DeathAnimationFireballDamage = 550;
 
-        public const int FlameVortexDamage = 750;
+        public const int FlameVortexDamage = 600;
 
         #region Loading
         public override void Load()

@@ -28,8 +28,15 @@ namespace InfernumMode.Content.UI
                 if (value)
                 {
                     CalamityWorld.revenge = true;
-                    Main.GameMode = BackBoneGameModeID;
-                }      
+                    if (!Main.GameModeInfo.IsJourneyMode)
+                    {
+                        Main.GameMode = BackBoneGameModeID;
+                    }
+                    else
+                    {
+                        AlignJourneyDifficultySlider();
+                    }
+                }
                 if (Main.netMode != NetmodeID.SinglePlayer)
                     PacketManager.SendPacket<InfernumModeActivityPacket>();
             }

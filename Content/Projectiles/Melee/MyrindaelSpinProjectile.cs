@@ -199,7 +199,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
             Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
-            GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
+            GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2($"Images/Extra_{ExtrasID.FlameLashTrailShape}");
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseSecondaryColor(secondaryColor);
             GameShaders.Misc["CalamityMod:ExobladePierce"].Apply();

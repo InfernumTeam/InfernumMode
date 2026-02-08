@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
                 npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/CeaselessVoid");
             else
-                npc.ModNPC.Music = MusicID.Boss3;
+                npc.ModNPC.Music = MusicID.Boss3; // also use ModSceneEffect here
 
             npc.lifeMax /= 2;
             npc.aiStyle = -1;

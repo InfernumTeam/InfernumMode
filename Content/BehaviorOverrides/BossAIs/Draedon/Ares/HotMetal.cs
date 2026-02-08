@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
             TrailDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].UseImage1("Images/Extra_189");
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].UseImage1($"Images/Extra_{ExtrasID.FlameLashTrailShape}");
             TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 25);
         }
     }

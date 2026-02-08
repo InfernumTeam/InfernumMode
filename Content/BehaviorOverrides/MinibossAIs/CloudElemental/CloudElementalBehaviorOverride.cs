@@ -301,9 +301,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
         {
             Texture2D texture;
             if ((AttackTypes)npc.ai[1] == AttackTypes.LightningShotgun)
-                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/NormalNPCs/ThiccWaifuAttack").Value;
+                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/NormalNPCs/CloudElementalAttack").Value;
             else
-                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/NormalNPCs/ThiccWaifu").Value;
+                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/NormalNPCs/CloudElemental").Value;
 
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;

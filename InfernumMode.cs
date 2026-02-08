@@ -136,13 +136,13 @@ namespace InfernumMode
                 InfernumEffectsRegistry.LoadEffects();
             }
 
-            if (Main.netMode != NetmodeID.Server)
+            /*if (Main.netMode != NetmodeID.Server)
             {
                 Main.QueueMainThreadAction(() =>
                 {
                     CalamityMod.Call("LoadParticleInstances", this);
                 });
-            }
+            }*/
 
             // This is now the official way to add difficulties. A Mod.Call also exists, but this is a bit more efficient.
             InfernumDifficulty difficulty = new();

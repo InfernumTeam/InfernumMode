@@ -188,10 +188,10 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 for (int i = 2; i <= 4; i++)
                 {
-                    if (Type == InfernumMode.CalamityMod.Find<ModGore>("Hive" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("Hive").Type)
+                    if ((InfernumMode.CalamityMod.TryFind("Hive" + i, out ModGore HiveX) && HiveX.Type == Type) || (InfernumMode.CalamityMod.TryFind("Hive", out ModGore Hive) && Hive.Type == Type))
                         return Main.maxGore;
 
-                    else if (Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA").Type)
+                    else if ((InfernumMode.CalamityMod.TryFind("ProfanedGuardianBossA" + i, out ModGore guardsAX) && guardsAX.Type == Type) || (InfernumMode.CalamityMod.TryFind("ProfanedGuardianBossA", out ModGore guardsA) && guardsA.Type == Type))
                         return Main.maxGore;
                 }
             }

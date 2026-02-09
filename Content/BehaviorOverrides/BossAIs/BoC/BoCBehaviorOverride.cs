@@ -39,13 +39,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         #region AI
 
-        public static int ElectricBoltDamage => 80;
+        public static int ElectricBoltDamage => 85;
 
-        public static int BloodSpitDamage => 85;
+        public static int BloodSpitDamage => 90;
 
-        public static int IchorSpitDamage => 85;
+        public static int IchorSpitDamage => 90;
 
-        public static int PsionicOrbDamage => 90;
+        public static int PsionicOrbDamage => 95;
 
         public static int PsionicLightningBoltDamage => 120;
 

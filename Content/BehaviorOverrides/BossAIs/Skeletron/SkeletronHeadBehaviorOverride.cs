@@ -34,9 +34,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
-        public static int ShadowflameFireballDamage => 82;
+        public static int ShadowflameFireballDamage => 85;
 
-        public static int SkullDamage => 88;
+        public static int SkullDamage => 92;
 
         public static int ShadowflameFireballArenaDamage => 120;
 

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             SummonVultures
         }
 
-        public static int SandBlastDamage => 65;
+        public static int SandBlastDamage => 60;
 
         public static int SandnadoDamage => 80;
 

@@ -29,13 +29,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
 
-        public static int CursedCinderDamage => 77;
+        public static int CursedCinderDamage => 85;
 
-        public static int ShadeNimbusDamage => 77;
+        public static int ShadeNimbusDamage => 85;
 
-        public static int CorruptThornVineDamage => 80;
+        public static int CorruptThornVineDamage => 90;
 
-        public static int CursedFlameBombDamage => 80;
+        public static int CursedFlameBombDamage => 90;
 
         public static int ShockwaveDamage => 110;
 

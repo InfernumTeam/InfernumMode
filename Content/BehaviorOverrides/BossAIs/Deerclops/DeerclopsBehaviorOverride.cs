@@ -87,11 +87,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             DeerclopsAttackState.WideIcicles,
         ];
 
-        public static int ShadowHandDamage => 85;
+        public static int ShadowHandDamage => 90;
 
-        public static int IcicleDamage => 90;
+        public static int IcicleDamage => 95;
 
-        public static int RubbleDamage => 90;
+        public static int RubbleDamage => 95;
 
         public static int EyeLaserbeamDamage => 125;
 

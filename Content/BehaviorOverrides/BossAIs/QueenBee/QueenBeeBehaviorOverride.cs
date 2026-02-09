@@ -36,15 +36,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         #region AI
 
-        public static int TinyBeeDamage => 80;
+        public static int TinyBeeDamage => 85;
 
-        public static int ConvergingHornetDamage => 85;
+        public static int ConvergingHornetDamage => 90;
 
-        public static int HoneyBlastDamage => 85;
+        public static int HoneyBlastDamage => 90;
 
-        public static int HornetHiveDamage => 85;
+        public static int HornetHiveDamage => 90;
 
-        public static int StingerDamage => 90;
+        public static int StingerDamage => 95;
 
         public const float FinalPhaseLifeRatio = 0.225f;
 

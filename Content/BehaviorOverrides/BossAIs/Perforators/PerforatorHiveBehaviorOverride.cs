@@ -39,15 +39,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             IchorFountainCharge
         }
 
-        public static int ToothBallDamage => 75;
+        public static int ToothBallDamage => 80;
 
-        public static int CrimeraWallDamage => 80;
+        public static int CrimeraWallDamage => 85;
 
-        public static int BloodSpitDamage => 85;
+        public static int BloodSpitDamage => 90;
 
-        public static int IchorBlobDamage => 85;
+        public static int IchorBlobDamage => 90;
 
-        public static int IchorSpitDamage => 85;
+        public static int IchorSpitDamage => 90;
 
         public const int DeathTimerIndex = 5;
 

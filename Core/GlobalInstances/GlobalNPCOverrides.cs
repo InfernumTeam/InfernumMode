@@ -198,6 +198,9 @@ namespace InfernumMode.Core.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
+            // no shark
+            CalamityNaturalSpawnBossNPC.sharkKillCount = 0;
+
             OnKillEvent?.Invoke(npc);
 
             // Trigger achievement checks.

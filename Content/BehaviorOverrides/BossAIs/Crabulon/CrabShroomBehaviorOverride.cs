@@ -23,6 +23,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
             // revert cal buff
             npc.lifeMax = 15;
+            // revert cal 2.1 nerf
+            if (npc.damage < 31)
+                npc.damage = 31;
             if (BossRushEvent.BossRushActive)
                 npc.lifeMax = 8000;
 

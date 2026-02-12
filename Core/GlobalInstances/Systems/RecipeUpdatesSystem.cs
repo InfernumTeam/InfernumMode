@@ -83,7 +83,7 @@ namespace InfernumMode.Content.Items
 
             Recipe.Create(ModContent.ItemType<BallOFugu>()).
                 AddIngredient(ItemID.Bone, 15).
-                AddIngredient<UrchinStinger>(20).
+                AddIngredient<UrchinStinger>().
                 AddIngredient<SulphuricScale>(5).
                 AddIngredient<AbyssGravel>(10).
                 AddTile(TileID.Anvils).

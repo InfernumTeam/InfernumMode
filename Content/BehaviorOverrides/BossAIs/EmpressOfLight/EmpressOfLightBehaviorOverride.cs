@@ -203,7 +203,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             if (ShouldBeEnraged)
+            {
                 npc.Calamity().CurrentlyEnraged = true;
+                if (npc.Infernum().EmpressCanDropTerraprisma != false)
+                    npc.Infernum().EmpressCanDropTerraprisma = true;
+            }
+            else
+            {
+                npc.Infernum().EmpressCanDropTerraprisma = false;
+            }
 
             switch ((EmpressOfLightAttackType)attackType)
             {
@@ -1725,6 +1733,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer >= deathAnimationTime)
             {
                 npc.active = false;
+                if (npc.Infernum().EmpressCanDropTerraprisma == true)
+                    npc.ai[3] = 2f;
                 npc.NPCLoot();
             }
         }

@@ -57,6 +57,8 @@ namespace InfernumMode.Core.GlobalInstances
 
         public bool HasResetHP;
 
+        public bool? EmpressCanDropTerraprisma;
+
         // I'll be fucking damned if this isn't enough.
         public float[] ExtraAI = new float[TotalExtraAISlots];
 

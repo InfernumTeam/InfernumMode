@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Determine whether Providence was defeated at night first. Her infernal relic will give a baffled comment if this happens.
             if (npc.type == ModContent.NPCType<ProvidenceBoss>())
             {
-                if (!Main.dayTime && !WorldSaveSystem.HasBeatenInfernumProvRegularly)
+                if (IsEnraged && !WorldSaveSystem.HasBeatenInfernumProvRegularly)
                     WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = true;
                 WorldSaveSystem.HasBeatenInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
@@ -227,7 +227,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static int MagicLaserbeamDamage => IsEnraged ? 600 : 325;
 
-        public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
+        public static bool IsEnraged => 
+            (CalamityGlobalNPC.holyBoss != -1 && Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[WasSummonedAtNightFlagIndex] == 1f) 
+            || BossRushEvent.BossRushActive;
 
         public static bool SyncAttacksWithMusic => false;//Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
 
@@ -315,9 +317,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
             ref float deathAnimationGlowIntensity = ref npc.Infernum().ExtraAI[DeathAnimationGlowIntensityIndex];
 
-            bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
-            bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
-            bool shouldDespawnBecauseOfTime = (shouldDespawnAtNight || shouldDespawnAtDay) && !BossRushEvent.BossRushActive;
+            //bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
+            //bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
+            //bool shouldDespawnBecauseOfTime = (shouldDespawnAtNight || shouldDespawnAtDay) && !BossRushEvent.BossRushActive;
             bool inDeathCutscene = attackType == (int)ProvidenceAttackType.CrystalForm;
 
             Vector2 crystalCenter = npc.Center + new Vector2(8f, 56f);
@@ -333,6 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.dontTakeDamage = false;
             npc.Calamity().DR = BossRushEvent.BossRushActive ? 0.65f : 0.3f;
             npc.Calamity().KillTime = 0;
+            //ProvidenceBoss.shouldDrawInfernoBorder = false; // Maybe necessary?
             npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = hasCompletedCycle == 1f ? CocoonDefenseAfterFullCycle : CocoonDefense;
@@ -424,6 +427,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Be enraged at night.
             npc.Calamity().CurrentlyEnraged = IsEnraged;
+            npc.ModNPC<ProvidenceBoss>().hasBeenGivenFullPower = IsEnraged;
 
             // Enable the distortion filter if it isnt active and the player's config permits it.
             if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
@@ -446,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             CalamityGlobalNPC.holyBoss = npc.whoAmI;
 
             // Despawn if the players are dead or if the time changed.
-            if (!target.dead && !shouldDespawnBecauseOfTime)
+            if (!target.dead/* && !shouldDespawnBecauseOfTime*/)
                 npc.timeLeft = 1800;
             else
             {

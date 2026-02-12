@@ -292,6 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.defense = 50;
             npc.DR_NERD(0.3f);
             npc.Opacity = 0f;
+            npc.Calamity().KillTime = 0;
         }
 
         public override bool PreAI(NPC npc)
@@ -331,6 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.defense = 50;
             npc.dontTakeDamage = false;
             npc.Calamity().DR = BossRushEvent.BossRushActive ? 0.65f : 0.3f;
+            npc.Calamity().KillTime = 0;
             npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = hasCompletedCycle == 1f ? CocoonDefenseAfterFullCycle : CocoonDefense;

@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
             // If none was found or it was too far away, despawn.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || Main.dayTime || !Main.player[npc.target].active)
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
                 DoBehavior_Despawn(npc);
                 return false;

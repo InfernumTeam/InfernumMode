@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
             GlobalNPCOverrides.AstrumAureus = npc.whoAmI;
 
-            bool enraged = enrageCountdown > 0f || Main.dayTime;
+            bool enraged = enrageCountdown > 0f;
 
             // Handle enrage interactions.
             if (enraged)

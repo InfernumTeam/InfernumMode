@@ -2681,14 +2681,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             yield return n => "Mods.InfernumMode.PetDialog.ProvidenceTip1";
             yield return n => "Mods.InfernumMode.PetDialog.ProvidenceTip2";
-            yield return n =>
+            /*yield return n =>
             {
                 if (Main.dayTime && Main.time >= Main.dayLength - 3600D)
                     return "Mods.InfernumMode.PetDialog.ProvidenceDuskWarningTip";
                 if (!Main.dayTime && Main.time >= Main.nightLength - 3600D)
                     return "Mods.InfernumMode.PetDialog.ProvidenceDawnWarningTip";
                 return string.Empty;
-            };
+            };*/
         }
         #endregion Tips
     }

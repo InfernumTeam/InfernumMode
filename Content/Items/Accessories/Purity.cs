@@ -51,6 +51,7 @@ namespace InfernumMode.Content.Items.Accessories
                     if (!stealthStrike)
                         player.Player.GetAttackSpeed<GenericDamageClass>() += 0.4f;
                     player.Player.buffImmune[ModContent.BuffType<Nightwither>()] = true;
+                    calP.grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
                 }
             };
 

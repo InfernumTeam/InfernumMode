@@ -204,7 +204,6 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == ModContent.NPCType<Dragonfolly>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DragonfollyRelic>());
 
-            // Providence only needs the wings added, as she drops the shield due to the temple being in hell.
             if (npc.type == ModContent.NPCType<Providence>())
             {
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && !Main.dayTime, ModContent.ItemType<ProfanedCrystalDye>(), 1, 4, 5);

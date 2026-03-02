@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.Ores;
@@ -9,8 +8,6 @@ using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
-using System;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,6 +19,7 @@ namespace InfernumMode.Content.Items.Accessories
     {
         public const string FieldName = "Purity";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0350:Use implicitly typed lambda")]
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
@@ -32,26 +30,25 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 if (player.GetValue<bool>(FieldName))
                 {
+                    Player p = player.Player;
+                    float bonus = 1.4f;
                     // Everything but summoner.
-                    player.Player.GetDamage<MeleeDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<MeleeNoSpeedDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<RangedDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<MagicDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<MagicSummonHybridDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<SummonMeleeSpeedDamageClass>() *= 1.4f;
-                    player.Player.GetDamage<RogueDamageClass>() *= 1.4f;
+                    p.GetDamage<MeleeDamageClass>() *= bonus;
+                    p.GetDamage<MeleeNoSpeedDamageClass>() *= bonus;
+                    p.GetDamage<RangedDamageClass>() *= bonus;
+                    p.GetDamage<MagicDamageClass>() *= bonus;
+                    p.GetDamage<MagicSummonHybridDamageClass>() *= bonus;
+                    p.GetDamage<SummonMeleeSpeedDamageClass>() *= bonus;
+                    p.GetDamage<RogueDamageClass>() *= bonus;
 
-                    var heldItem = player.Player.HeldItem;
-                    var calPlayer = player.Player.Calamity();
-                    var UpdateStealthGenStats = typeof(CalamityPlayer).GetMethod("UpdateStealthGenStats", BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
-                    bool stealthStrike = calPlayer.rogueStealth > calPlayer.rogueStealthMax * (float)UpdateStealthGenStats?.Invoke(calPlayer, null) / 120f; // make sure it doesn't never give attack speed due to stealth gen
-                    if (heldItem != null)
-                        stealthStrike &= heldItem.CountsAsClass<RogueDamageClass>();
-                        
+                    float currentStealth = InfernumMode.CalamityMod?.Call("GetCurrentStealth", p) is float f ? f : 1f;
+                    bool stealthStrike = currentStealth > 0f && p.HeldItem.CountsAsClass<RogueDamageClass>();
+
                     if (!stealthStrike)
-                        player.Player.GetAttackSpeed<GenericDamageClass>() += 0.4f;
-                    player.Player.buffImmune[ModContent.BuffType<Nightwither>()] = true;
-                    calP.grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
+                        p.GetAttackSpeed<GenericDamageClass>() += bonus - 1f;
+
+                    p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
+                    p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
                 }
             };
 

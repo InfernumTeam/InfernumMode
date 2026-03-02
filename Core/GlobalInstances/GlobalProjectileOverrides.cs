@@ -3,7 +3,6 @@ using System.IO;
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;

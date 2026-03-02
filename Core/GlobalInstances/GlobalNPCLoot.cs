@@ -3,6 +3,7 @@ using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.Furniture.Trophies;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
@@ -206,7 +207,7 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Providence>())
             {
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && !Main.dayTime, ModContent.ItemType<ProfanedCrystalDye>(), 1, 4, 5);
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[6] == 1f, ModContent.ItemType<ProfanedCrystalDye>(), 1, 4, 5);
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
             }
 

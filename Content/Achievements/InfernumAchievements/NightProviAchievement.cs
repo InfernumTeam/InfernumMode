@@ -50,7 +50,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             if (CalamityGlobalNPC.holyBoss != -1)
             {
                 // If at any point it is day, invalidate them completeling the achievement.
-                if (Main.dayTime)
+                if (Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[6] == 0f)
                     HasBeenDay = true;
             }
             else

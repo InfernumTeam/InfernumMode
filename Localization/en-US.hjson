@@ -315,6 +315,11 @@ Mods: {
 					Label: Ceaseless Void Camera
 					Tooltip: Determines whether Ceaseless Void changes the behavior of the camera during the fight.
 				}
+
+				CustomAbyssGeneration: {
+					Label: Custom Abyss Generation
+					Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
+				}
 			}
 		}
 

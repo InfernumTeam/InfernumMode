@@ -12,6 +12,7 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BossBars;
 using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
+using InfernumMode.Core;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
@@ -150,8 +151,11 @@ namespace InfernumMode
             DifficultyModeSystem.CalculateDifficultyData();
 
             // Ensure the dungeon IL edit uses infernum's larger size.
-            ILChanges.DungeonHallXLimitOverride = CustomAbyss.MaxAbyssWidth + 100;
-            ILChanges.DungeonBaseXLimitOverride = CustomAbyss.MaxAbyssWidth + 200;
+            if (InfernumConfig.Instance.CustomAbyssGeneration)
+            {
+                ILChanges.DungeonHallXLimitOverride = CustomAbyss.MaxAbyssWidth + 100;
+                ILChanges.DungeonBaseXLimitOverride = CustomAbyss.MaxAbyssWidth + 200;
+            }
         }
 
         public override void PostSetupContent()

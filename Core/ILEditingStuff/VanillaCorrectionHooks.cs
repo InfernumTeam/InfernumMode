@@ -782,7 +782,12 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         void ICustomDetourProvider.ModifyMethods() => HookHelper.ModifyMethodWithDetour(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), ChangeAbyssGen);
 
-        internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
+        internal static void ChangeAbyssGen(Action orig)
+        {
+            if (InfernumConfig.Instance.CustomAbyssGeneration)
+                CustomAbyss.Generate();
+            else orig();
+        }
     }
 
     public class GetRidOfDesertNuisancesHook : ILEditProvider
@@ -840,6 +845,8 @@ namespace InfernumMode.Core.ILEditingStuff
         }
         private bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
         {
+            if (!WorldSaveSystem.InPostAEWUpdateWorld) 
+                return orig(player, out playerYTileCoords);
             Point point = player.Center.ToTileCoordinates();
             playerYTileCoords = point.Y;
 
@@ -960,6 +967,8 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
+            if (!InfernumConfig.Instance.CustomAbyssGeneration)
+                return;
             // Prevent the Dungeon's halls from getting anywhere near the Abyss.
             var cursor = new ILCursor(il);
 

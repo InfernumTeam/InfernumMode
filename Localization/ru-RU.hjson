@@ -315,6 +315,11 @@ Mods: {
 					Label: Камеры Неусмиримой пустоты
 					Tooltip: Определяет, будет ли Неусмиримая пустота менять поведение камеры во время битвы.
 				}
+
+				CustomAbyssGeneration: {
+					// Label: Custom Abyss Generation
+					// Tooltip: ""
+				}
 			}
 		}
 

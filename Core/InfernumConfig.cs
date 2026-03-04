@@ -32,6 +32,11 @@ namespace InfernumMode.Core
         [DefaultValue(true)]
         public bool CameraAnimations { get; set; }
 
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(true)]
+        [ReloadRequired]
+        public bool CustomAbyssGeneration { get; set; }
+
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => false;
     }
 }

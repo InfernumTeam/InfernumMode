@@ -1,5 +1,6 @@
-﻿using InfernumMode.Core.GlobalInstances;
-using Terraria;
+﻿using CalamityMod.DataStructures;
+using CalamityMod.Systems.Collections;
+using InfernumMode.Content.Items.Weapons.Summoner;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,9 +12,20 @@ namespace InfernumMode.Content.Buffs
 
         public const int CritChance = 10;
 
-        public override void SetStaticDefaults() => BuffID.Sets.IsATagBuff[Type] = true;
+        private static readonly SummonTag Perditus = new(ModContent.ItemType<Perditus>())
+        {
+            FlatTagDamage = TagDamage,
+            TagCritChance = CritChance / 100f, // 0.1f
+            AutoDrawTooltip = false
+        };
 
-        public override void Load()
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsATagBuff[Type] = true;
+            CalamityBuffSets.SummonTagDebuff.Add(Type, Perditus);
+        }
+
+        /*public override void Load()
         {
             GlobalNPCOverrides.ModifyHitByProjectileEvent += WhipTagStuff;
         }
@@ -32,6 +44,6 @@ namespace InfernumMode.Content.Buffs
 
             if (Main.rand.Next(0, 101) < CritChance)
                 modifiers.SetCrit();
-        }
+        }*/
     }
 }

@@ -297,8 +297,9 @@ namespace InfernumMode.Core.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
                 BalancingChangesManager.ApplyFromProjectile(npc, ref modifiers, projectile);
 
-            foreach (ModifyHitByProjectileDelegate subscription in ModifyHitByProjectileEvent.GetInvocationList().Cast<ModifyHitByProjectileDelegate>())
-                subscription.Invoke(npc, projectile, ref modifiers);
+            if (ModifyHitByProjectileEvent != null)
+                foreach (ModifyHitByProjectileDelegate subscription in ModifyHitByProjectileEvent.GetInvocationList().Cast<ModifyHitByProjectileDelegate>())
+                    subscription.Invoke(npc, projectile, ref modifiers);
         }
 
         public override bool CheckDead(NPC npc)

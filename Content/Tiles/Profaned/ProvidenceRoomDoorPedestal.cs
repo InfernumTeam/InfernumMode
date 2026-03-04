@@ -13,6 +13,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -140,7 +141,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             // Hurt the player if they touch the spikes.
             if (Main.LocalPlayer.Hitbox.Intersects(area))
             {
-                Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason($"{Main.LocalPlayer.name} was somehow impaled by a pillar of crystals."), 100, 0);
+                Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey(Language.GetTextValue("Biomes.DeathByThousandCrystals"), Main.LocalPlayer.name)), 100, 0);
                 Main.LocalPlayer.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
             if (!SoundEngine.TryGetActiveSound(ShimmerID, out var _))

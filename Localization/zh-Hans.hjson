@@ -191,6 +191,7 @@ Mods: {
 			ProfanedTempleBiome: {
 				DisplayName: 亵渎神庙
 				TownNPCDialogueName: 亵渎神庙
+				// DeathByThousandCrystals: "{0} was somehow impaled by a pillar of crystals"
 			}
 		}
 

@@ -191,6 +191,7 @@ Mods: {
 			ProfanedTempleBiome: {
 				DisplayName: Profaned Temple
 				TownNPCDialogueName: the Profaned Temple Biome
+				DeathByThousandCrystals: "{0} was somehow impaled by a pillar of crystals"
 			}
 		}
 

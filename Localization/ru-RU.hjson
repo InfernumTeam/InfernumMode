@@ -191,6 +191,7 @@ Mods: {
 			ProfanedTempleBiome: {
 				DisplayName: Осквернённый храм
 				TownNPCDialogueName: биом осквернённого храма
+				// DeathByThousandCrystals: "{0} was somehow impaled by a pillar of crystals"
 			}
 		}
 

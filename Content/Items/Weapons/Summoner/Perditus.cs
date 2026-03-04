@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Items.Weapons.Summoner
     {
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PerditusTagBuff.TagDamage, PerditusTagBuff.CritChance);
 
-        // 23 whip tag, 10% crit.
+        // 10 whip tag, 10% crit.
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.SummonMeleeSpeed;

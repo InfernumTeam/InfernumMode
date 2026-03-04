@@ -8,11 +8,11 @@ namespace InfernumMode.Content.Buffs
 {
     public class PerditusTagBuff : ModBuff
     {
-        public const int TagDamage = 23;
+        public const int TagDamage = 10;
 
         public const int CritChance = 10;
 
-        private static readonly SummonTag Perditus = new(ModContent.ItemType<Perditus>())
+        public static readonly SummonTag PerditusTag = new(ModContent.ItemType<Perditus>())
         {
             FlatTagDamage = TagDamage,
             TagCritChance = CritChance / 100f, // 0.1f
@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Buffs
         public override void SetStaticDefaults()
         {
             BuffID.Sets.IsATagBuff[Type] = true;
-            CalamityBuffSets.SummonTagDebuff.Add(Type, Perditus);
+            CalamityBuffSets.SummonTagDebuff.Add(Type, PerditusTag);
         }
 
         /*public override void Load()

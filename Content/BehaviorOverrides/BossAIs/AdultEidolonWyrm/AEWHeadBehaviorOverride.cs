@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalamityMod;
-using CalamityMod.Items.SummonItems;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
@@ -23,7 +23,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.Graphics.Light;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -205,6 +204,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const float Phase4LifeRatio = 0.15f;
 
         public static Color LoreTooltipColor => new(107, 101, 180);
+
+        public override void Load()
+        {
+            InfernumPlayer.OnHitByNPCEvent += OnHitByNPC;
+        }
+
+        public static void OnHitByNPC(InfernumPlayer player, NPC nPC, Player.HurtInfo hurtInfo)
+        {
+            if (!InfernumMode.CanUseCustomAIs || nPC.type != ModContent.NPCType<PrimordialWyrmHead>())
+                return;
+            Player p = player.Player;
+            if (p.FindBuffIndex(ModContent.BuffType<HadopelagicPressure>()) is int i && i != -1 && p.buffTime[i] == 1200)
+            {
+                p.DelBuff(i); // Remove absurd on hit debuff
+            }
+        }
 
         public override void SetDefaults(NPC npc)
         {

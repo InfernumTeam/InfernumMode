@@ -29,14 +29,12 @@ namespace InfernumMode.Content.Tiles.Profaned
 
         public override void SetStaticDefaults()
         {
+            // Apparently this is necessary in multiplayer for some reason???
             MinPick = int.MaxValue;
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
             Main.tileNoAttach[ModContent.TileType<ProfanedCrystal>()] = false;
-
-            // Apparently this is necessary in multiplayer for some reason???
-            MinPick = int.MaxValue;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
             TileObjectData.newTile.Width = Width;

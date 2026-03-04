@@ -831,6 +831,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 npc.ai[0] = (int)SkeletronAttackType.DeathAnimation;
                 npc.ai[1] = 0f;
             }
+            else return true;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 

@@ -96,7 +96,7 @@ namespace InfernumMode.Content.Tiles.Profaned
                 shatterTimer = 0;
 
             if (shatterTimer == 2)
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 2f });
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShatterSound with { Volume = 2f, PauseBehavior = PauseBehavior.PauseWithGame });
 
             // Do some screen shake anticipation effects.
             if (close && DownedBossSystem.downedGuardians)
@@ -139,15 +139,16 @@ namespace InfernumMode.Content.Tiles.Profaned
             Rectangle area = new((int)top.X - Width * 8 + horizontalBuffer / 2, (int)top.Y, Width * 16 - horizontalBuffer, verticalOffset);
 
             // Hurt the player if they touch the spikes.
-            if (Main.LocalPlayer.Hitbox.Intersects(area))
+            Player lP = Main.LocalPlayer;
+            if (!lP.dead && !lP.ghost && lP.Hitbox.Intersects(area))
             {
-                Main.LocalPlayer.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey(Language.GetTextValue("Biomes.DeathByThousandCrystals"), Main.LocalPlayer.name)), 100, 0);
-                Main.LocalPlayer.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
+                lP.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.InfernumMode.Biomes.ProfanedTempleBiome.DeathByThousandCrystals", Main.LocalPlayer.name)), 100, 0);
+                lP.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
             if (!SoundEngine.TryGetActiveSound(ShimmerID, out var _))
             {
                 if (!WorldSaveSystem.HasProvidenceDoorShattered)
-                    ShimmerID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.1f }, bottom);
+                    ShimmerID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.1f, PauseBehavior = PauseBehavior.PauseWithGame }, bottom);
             }
         }
 

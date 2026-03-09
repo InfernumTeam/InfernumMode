@@ -240,10 +240,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 target.ignoreWater = true;
 
                 // Give targets infinite flight time.
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
-                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
                         continue;
 
                     player.DoInfiniteFlightCheck(Color.Lime);
@@ -1701,10 +1700,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void ApplySulphuricPoisoningBoostToPlayersInArea(Vector2 center, float radius, float boostFactor)
         {
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
-                if (!p.active || p.dead)
+                if (p.dead || p.ghost)
                     continue;
 
                 if (LumUtils.CircularHitboxCollision(center, radius, p.Hitbox))

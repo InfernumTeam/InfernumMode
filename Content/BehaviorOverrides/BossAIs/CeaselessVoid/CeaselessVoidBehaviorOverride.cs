@@ -322,20 +322,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             for (int i = 0; i < Chains.Count; i++)
             {
                 // Check to see if a player is moving through the chains.
-                for (int j = 0; j < Main.maxPlayers; j++)
+                foreach (Player p in Main.ActivePlayers)
                 {
-                    Player p = Main.player[j];
-                    if (!p.active || p.dead)
+                    if (p.dead) // No ghost check here. Poltergeist.
                         continue;
 
                     MoveChainBasedOnEntity(Chains[i], p, npc);
                 }
 
-                for (int j = 0; j < Main.maxProjectiles; j++)
+                foreach (Projectile proj in Main.ActiveProjectiles)
                 {
-                    Projectile proj = Main.projectile[j];
-
-                    if (!proj.active || proj.hostile)
+                    if (proj.hostile)
                         continue;
 
                     MoveChainBasedOnEntity(Chains[i], proj, npc);
@@ -530,10 +527,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyBurstTip3");
 
             // Grant the targets infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                Player player = Main.player[i];
-                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
                 player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
@@ -765,10 +761,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             if (attackTimer <= chargeUpDelay)
             {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
-                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    if (player.dead || !npc.WithinRange(player.Center, 10000f))
                         continue;
 
                     player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
@@ -1153,10 +1148,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             float burstAcceleration = 1.023f;
 
             // Grant the target infinite flight time so that they don't run out and take an unfair hit.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                Player player = Main.player[i];
-                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                if (player.dead || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
                 player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
@@ -1244,9 +1238,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Suck the player in towards the Ceaseless Void.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
+                if (p.dead || p.ghost)
+                    continue;
 
                 for (int j = 0; j < 10; j++)
                 {

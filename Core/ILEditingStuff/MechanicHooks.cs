@@ -498,12 +498,12 @@ namespace InfernumMode.Core.ILEditingStuff
 
             // Draw forcefields to the render target.
             Main.spriteBatch.Begin();
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                if (!Main.player[i].active || Main.player[i].outOfRange || Main.player[i].dead)
+                if (player.outOfRange || player.dead || player.ghost)
                     continue;
 
-                DrawForcefield(Main.player[i]);
+                DrawForcefield(player);
             }
             Main.spriteBatch.End();
             device.SetRenderTargets(bindings);

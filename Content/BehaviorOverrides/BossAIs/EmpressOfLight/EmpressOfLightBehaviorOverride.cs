@@ -193,10 +193,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Give targets infinite flight time.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                Player player = Main.player[i];
-                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
                 player.DoInfiniteFlightCheck(Color.White);

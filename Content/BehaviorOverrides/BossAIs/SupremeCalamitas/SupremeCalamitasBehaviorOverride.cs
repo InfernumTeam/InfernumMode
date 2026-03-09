@@ -2083,10 +2083,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Give the target infinite flight time.
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
-                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
                         continue;
 
                     player.DoInfiniteFlightCheck(Color.Red);
@@ -2188,11 +2187,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Give the target infinite flight time.
-                // Give the target infinite flight time.
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
-                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
                         continue;
 
                     player.DoInfiniteFlightCheck(Color.Red);

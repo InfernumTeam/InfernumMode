@@ -59,14 +59,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             if (target.Center.Y <= (Main.maxTilesY - 300f) * 16f)
             {
                 int newTarget = -1;
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    if (!Main.player[i].active || Main.player[i].dead)
+                    if (player.dead || player.ghost)
                         continue;
 
-                    if (Main.player[i].Center.Y > (Main.maxTilesY - 300f) * 16f)
+                    if (player.Center.Y > (Main.maxTilesY - 300f) * 16f)
                     {
-                        newTarget = i;
+                        newTarget = player.whoAmI;
                         break;
                     }
                 }

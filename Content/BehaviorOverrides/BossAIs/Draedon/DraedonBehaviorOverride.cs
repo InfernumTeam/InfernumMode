@@ -525,12 +525,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             // Check to see if any player has completed the Lab Rat and defeat all bosses achievement.
             bool allExosCondition = false;
             bool allBossesCondition = false;
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                if (!Main.player[i].active)
-                    continue;
-
-                Player p = Main.player[i];
                 foreach (var achievement in p.GetModPlayer<AchievementPlayer>().AchievementInstances)
                 {
                     if (achievement.GetType() == typeof(ExoPathAchievement) && achievement.IsCompleted)

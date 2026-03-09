@@ -144,9 +144,8 @@ namespace InfernumMode.Core.GlobalInstances
             if (!npc.Infernum().TotalPlayersAtStart.HasValue)
             {
                 int activePlayerCount = 0;
-                for (int i = 0; i < Main.maxPlayers; i++)
-                    if (Main.player[i].active)
-                        activePlayerCount++;
+                foreach (Player _ in Main.ActivePlayers)
+                    activePlayerCount++;
 
                 npc.Infernum().TotalPlayersAtStart = activePlayerCount;
                 npc.netUpdate = true;
@@ -209,12 +208,8 @@ namespace InfernumMode.Core.GlobalInstances
             OnKillEvent?.Invoke(npc);
 
             // Trigger achievement checks.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player player in Main.ActivePlayers)
             {
-                if (!Main.player[i].active)
-                    continue;
-
-                Player player = Main.player[i];
                 AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.NPCKill, npc.whoAmI);
             }
 

@@ -284,14 +284,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 new Boss(ModContent.NPCType<DevourerofGodsHead>(), TimeChangeContext.Day, type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
-                    for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
+                    foreach (Player player2 in Main.ActivePlayers)
                     {
-                        if (Main.player[playerIndex].active)
-                        {
-                            Player player2 = Main.player[playerIndex];
-                            if (player2.FindBuffIndex(ModContent.BuffType<DoGExtremeGravity>()) > -1)
-                                player2.ClearBuff(ModContent.BuffType<DoGExtremeGravity>());
-                        }
+                        if (player2.FindBuffIndex(ModContent.BuffType<DoGExtremeGravity>()) > -1)
+                            player2.ClearBuff(ModContent.BuffType<DoGExtremeGravity>());
                     }
 
                     SoundEngine.PlaySound(DevourerofGodsHead.SpawnSound, player.Center);
@@ -402,15 +398,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         internal static void BringPlayersBackToSpawn()
         {
-            // Post-Wall of Flesh teleport back to spawn.
-            for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
+            // Teleport players back to spawn.
+            foreach (Player player in Main.ActivePlayers)
             {
-                bool appropriatePlayer = Main.myPlayer == playerIndex;
-                if (Main.player[playerIndex].active && appropriatePlayer)
-                {
-                    Main.player[playerIndex].Spawn(PlayerSpawnContext.RecallFromItem);
-                    SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, Main.player[playerIndex].Center);
-                }
+                int floorX = Main.spawnTileX;
+                int floorY = Main.spawnTileY;
+                bool num = player.Spawn_GetPositionAtWorldSpawn(ref floorX, ref floorY);
+                CalamityPlayer.ModTeleport(player, new(floorX, floorY), false, TeleportationStyleID.TeleportationPotion);
+                SoundEngine.PlaySound(TeleportSound with { Volume = 1.6f }, player.Center);
             }
         }
 

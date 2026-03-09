@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -34,18 +35,24 @@ namespace InfernumMode.Content.Tiles.Profaned
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
             Tile t = Framing.GetTileSafely(i, j);
 
             if (closer && t.TileFrameX == 18 && t.TileFrameY == 18)
             {
                 Vector2 spawnPosition = new Point(i, j).ToWorldCoordinates();
 
-                if (Main.LocalPlayer.WithinRange(spawnPosition, 100f))
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    if (Main.myPlayer == 0)
+                    if (player.dead || player.ghost)
+                        continue;
+                    if (player.WithinRange(spawnPosition, 100f))
+                    {
                         Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
-
-                    WorldGen.KillTile(i, j);
+                        WorldGen.KillTile(i, j);
+                        break;
+                    }
                 }
             }
         }

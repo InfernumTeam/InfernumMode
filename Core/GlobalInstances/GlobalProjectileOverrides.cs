@@ -233,17 +233,16 @@ namespace InfernumMode.Core.GlobalInstances
             // Make the boss rush end thing create an infernal chalice as well as the rock.
             if (projectile.type == ModContent.ProjectileType<BossRushEndEffectThing>())
             {
-                for (int i = Main.maxPlayers - 1; i >= 0; i--)
+                if (projectile.owner == Main.myPlayer)
                 {
-                    Player p = Main.player[i];
-                    if (p is null || !p.active)
-                        continue;
-
-                    int notRock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
-                    if (Main.netMode == NetmodeID.Server)
+                    foreach (Player p in Main.ActivePlayers)
                     {
-                        Main.timeItemSlotCannotBeReusedFor[notRock] = 54000;
-                        NetMessage.SendData(MessageID.InstancedItem, i, -1, null, notRock);
+                        int notRock = Item.NewItem(p.GetSource_Misc("CalamityMod_BossRushRock"), (int)p.position.X, (int)p.position.Y, p.width, p.height, ModContent.ItemType<DemonicChaliceOfInfernum>());
+                        if (notRock < Main.maxItems && Main.netMode == NetmodeID.Server)
+                        {
+                            Main.timeItemSlotCannotBeReusedFor[notRock] = 54000;
+                            NetMessage.SendData(MessageID.InstancedItem, p.whoAmI, -1, null, notRock);
+                        }
                     }
                 }
             }

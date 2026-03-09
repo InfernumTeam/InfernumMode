@@ -17,10 +17,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 return;
 
             Vector2 signusSpawnPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(4380f, 1600f);
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
-                if (!p.dead && p.active && !CalamityPlayer.areThereAnyDamnBosses && p.Infernum_Biome().ZoneProfaned && p.WithinRange(signusSpawnPosition, 2000f))
+                if (!p.dead && !p.ghost && !CalamityPlayer.areThereAnyDamnBosses && p.Infernum_Biome().ZoneProfaned && p.WithinRange(signusSpawnPosition, 2000f))
                 {
                     int signus = NPC.NewNPC(new EntitySource_WorldEvent(), (int)signusSpawnPosition.X, (int)signusSpawnPosition.Y, ModContent.NPCType<Signus>(), 0, 0f, 0f, 0f, 1f);
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, signus);

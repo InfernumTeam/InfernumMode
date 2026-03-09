@@ -27,10 +27,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero || WaitingForPlayersToLeaveArchives || BossRushEvent.BossRushActive)
                 return;
 
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
-                if (!p.dead && p.active && !CalamityPlayer.areThereAnyDamnBosses && p.ZoneDungeon && p.WithinRange(voidSpawnPosition, 2000f) && CalamityGlobalNPC.voidBoss == -1)
+                if (!p.dead && !p.ghost && !CalamityPlayer.areThereAnyDamnBosses && p.ZoneDungeon && p.WithinRange(voidSpawnPosition, 2000f) && CalamityGlobalNPC.voidBoss == -1)
                 {
                     int ceaselessVoid = NPC.NewNPC(new EntitySource_WorldEvent(), (int)voidSpawnPosition.X, (int)voidSpawnPosition.Y, ModContent.NPCType<CeaselessVoid>(), 0, 0f, 0f, 0f, 1f);
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, ceaselessVoid);

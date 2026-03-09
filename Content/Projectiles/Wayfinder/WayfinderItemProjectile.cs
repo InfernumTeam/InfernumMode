@@ -111,27 +111,18 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public override void OnKill(int timeLeft)
         {
-            if (Main.myPlayer != Projectile.owner)
+            if (Projectile.owner != Main.myPlayer)
                 return;
-
-            // If server-side, then the item must be spawned for each client individually.
-            int itemID = ModContent.ItemType<WayfinderItem>();
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            foreach (Player player in Main.ActivePlayers)
             {
+                int itemID = ModContent.ItemType<WayfinderItem>();
                 int item = Item.NewItem(Projectile.GetSource_Loot(), Projectile.Center, itemID, 1, true, -1);
-                Main.timeItemSlotCannotBeReusedFor[item] = 18000;
-                for (int i = 0; i < Main.maxPlayers; ++i)
+                if (item < Main.maxItems && Main.netMode == NetmodeID.Server)
                 {
-                    if (Main.player[i].active)
-                        NetMessage.SendData(MessageID.InstancedItem, i, -1, null, item);
+                    Main.timeItemSlotCannotBeReusedFor[item] = 18000;
+                    NetMessage.SendData(MessageID.InstancedItem, player.whoAmI, -1, null, item);
                 }
-
-                Main.item[item].active = false;
             }
-
-            // Otherwise just drop the item.
-            else
-                Item.NewItem(Projectile.GetSource_Loot(), Projectile.Center, itemID, 1, true, -1);
         }
         #endregion
 

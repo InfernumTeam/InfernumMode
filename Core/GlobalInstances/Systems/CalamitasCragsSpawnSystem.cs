@@ -30,10 +30,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             while (calSpawnPosition.X >= 1600f && Utilities.GetGroundPositionFrom(calSpawnPosition).Distance(calSpawnPosition) >= 50f)
                 calSpawnPosition.X -= 16f;
 
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
-                if (!p.dead && p.active && !CalamityPlayer.areThereAnyDamnBosses && p.Calamity().ZoneCalamity && p.WithinRange(calSpawnPosition, 1800f) && !p.WithinRange(calSpawnPosition, 1000f))
+                if (!p.dead && !p.ghost && !CalamityPlayer.areThereAnyDamnBosses && p.Calamity().ZoneCalamity && p.WithinRange(calSpawnPosition, 1800f) && !p.WithinRange(calSpawnPosition, 1000f))
                 {
                     Utilities.NewProjectileBetter(calSpawnPosition, Vector2.Zero, ModContent.ProjectileType<CalamitasCutsceneProj>(), 0, 0f);
                     WorldSaveSystem.MetCalamitasAtCrags = true;

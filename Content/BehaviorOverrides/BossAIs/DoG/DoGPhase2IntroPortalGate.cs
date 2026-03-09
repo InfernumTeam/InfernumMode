@@ -119,9 +119,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
+                    if (player.dead) // No ghost check here.
+                        continue;
                     float pushSpeed = Lerp(0f, 45f, Utils.GetLerpValue(3800f, 250f, Projectile.Distance(player.Center), true));
                     player.velocity -= player.SafeDirectionTo(Projectile.Center) * pushSpeed;
                 }

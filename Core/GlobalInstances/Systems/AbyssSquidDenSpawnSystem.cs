@@ -25,10 +25,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 RespawnColossalSquid();
 
             int squidID = ModContent.NPCType<GiantSquid>();
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player p in Main.ActivePlayers)
             {
-                Player p = Main.player[i];
-                if (p.dead || !p.active)
+                if (p.dead || p.ghost)
                     continue;
 
                 if (!p.Calamity().ZoneAbyss)

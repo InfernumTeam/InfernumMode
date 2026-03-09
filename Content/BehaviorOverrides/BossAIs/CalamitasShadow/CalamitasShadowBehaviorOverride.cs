@@ -249,10 +249,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Apply hexes to the target.
             if (GetHexNames(out string hexName, out string hexName2))
             {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                foreach (Player player in Main.ActivePlayers)
                 {
-                    Player player = Main.player[i];
-                    if (!player.active || player.dead)
+                    if (player.dead || player.ghost)
                         continue;
 
                     player.Infernum_CalShadowHex().ActivateHex(hexName);

@@ -318,7 +318,7 @@ Mods: {
 
 				CustomAbyssGeneration: {
 					// Label: Custom Abyss Generation
-					// Tooltip: ""
+					// Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
 				}
 			}
 		}
@@ -698,6 +698,11 @@ Mods: {
 				不消耗
 				'''
 
+			ProfanedCore: {
+				SummoningText: 在地狱最右侧亵渎神庙中的圣坛使用，召唤亵渎天神
+				// EnrageText: Enrages when summoned during nighttime
+			}
+
 			ProfanedShard: {
 				SummoningText: 在地狱最右侧亵渎花园的悬崖上使用，召唤亵渎守卫
 				GardenWarning:
@@ -708,7 +713,6 @@ Mods: {
 			}
 
 			EyeofDesolation.SummoningText: 在夜晚使用时召唤{0}
-			ProfanedCore.SummoningText: 在地狱最右侧亵渎神庙中的圣坛使用，召唤亵渎天神
 			RuneofKos.DeveloperText: 无尽虚空只能在废弃档案室中战斗
 
 			SandstormsCore: {

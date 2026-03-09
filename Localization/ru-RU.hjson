@@ -318,7 +318,7 @@ Mods: {
 
 				CustomAbyssGeneration: {
 					// Label: Custom Abyss Generation
-					// Tooltip: ""
+					// Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
 				}
 			}
 		}
@@ -698,6 +698,11 @@ Mods: {
 				Не тратится
 				'''
 
+			ProfanedCore: {
+				SummoningText: Призывает Провиденс при использовании на алтаре в осквернённом храме в правом конце преисподней
+				// EnrageText: Enrages when summoned during nighttime
+			}
+
 			ProfanedShard: {
 				SummoningText: Призывает Осквернённых стражей при использовании на утёсе в осквернённом саду в правом конце преисподней
 				GardenWarning:
@@ -708,7 +713,6 @@ Mods: {
 			}
 
 			EyeofDesolation.SummoningText: Призывает Забытую тень Каламитас при использовании ночью
-			ProfanedCore.SummoningText: Призывает Провиденс при использовании на алтаре в осквернённом храме в правом конце преисподней
 			RuneofKos.DeveloperText: Неусмиримая пустота может быть призвана только в архивах
 
 			SandstormsCore: {

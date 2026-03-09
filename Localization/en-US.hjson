@@ -698,6 +698,11 @@ Mods: {
 				Not consumable
 				'''
 
+			ProfanedCore: {
+				SummoningText: Summons Providence when used at the altar in the profaned temple at the far right of the underworld
+				EnrageText: Enrages when summoned during nighttime
+			}
+
 			ProfanedShard: {
 				SummoningText: Summons the Profaned Guardians when used on the cliff in the left of profaned garden at the far right of the underworld
 				GardenWarning:
@@ -708,7 +713,6 @@ Mods: {
 			}
 
 			EyeofDesolation.SummoningText: Summons the {0} when used during nighttime
-			ProfanedCore.SummoningText: Summons Providence when used at the altar in the profaned temple at the far right of the underworld
 			RuneofKos.DeveloperText: The Ceaseless Void can only be fought in the Archives
 
 			SandstormsCore: {

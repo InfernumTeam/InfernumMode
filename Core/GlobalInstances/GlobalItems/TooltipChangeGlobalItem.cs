@@ -103,6 +103,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             {
                 LocalizedText summoningText = Utilities.GetLocalization("Items.ProfanedCore.SummoningText");
                 replaceTooltipText("Tooltip0", summoningText.Value);
+                LocalizedText enrageText = Utilities.GetLocalization("Items.ProfanedCore.EnrageText");
+                replaceTooltipText("Tooltip1", enrageText.Value);
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<MarkofProvidence>() && WorldSaveSystem.ForbiddenArchiveCenter.X != 0)

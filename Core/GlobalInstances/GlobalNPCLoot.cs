@@ -188,7 +188,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<LunaticCultistRelic>());
 
             if (npc.type == ModContent.NPCType<AstrumDeusHead>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<AstrumDeusRelic>());
+                npcLoot.AddIf((info) => InfernumMode.CanUseCustomAIs && !AstrumDeusHead.ShouldNotDropThings(info.npc), ModContent.ItemType<AstrumDeusRelic>());
 
             if (npc.type == ModContent.NPCType<BereftVassal>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BereftVassalRelic>());

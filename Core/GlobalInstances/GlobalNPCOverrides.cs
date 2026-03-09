@@ -185,11 +185,14 @@ namespace InfernumMode.Core.GlobalInstances
             // Disable the effects of certain unpredictable freeze debuffs.
             // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
             // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
-            npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
+            npc.Calamity().debuffResistanceTimer = 2;
+            /*npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
             npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
             npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
             npc.buffImmune[BuffID.Webbed] = true;
+            npc.buffImmune[ModContent.BuffType<PearlAura>()] = true;
+            npc.buffImmune[ModContent.BuffType<TrueVulnerabilityHex>()] = true;*/
 
             return result;  
         }

@@ -56,7 +56,7 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCID.KingSlime, new PierceResistBalancingRule(0.67f)),
 
                 // Negate the Crabulon true melee resistance from base Calamity
-                new NPCBalancingChange(NPCType<Crabulon>(), new TrueMeleeBalancingRule(2f)),
+                new NPCBalancingChange(NPCType<Crabulon>(), new TrueMeleeBalancingRule(1.25f)),
 
                 // Eater of Worlds.
                 new NPCBalancingChange(NPCID.EaterofWorldsBody, Do(eowIsSplitRequirement, new PierceResistBalancingRule(0.55f))),

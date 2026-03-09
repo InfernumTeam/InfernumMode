@@ -149,6 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 return false;
             }
 
+            bool splitting = false;
             if (npc.ai[2] >= 2f)
             {
                 npc.boss = true;
@@ -156,8 +157,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 if (npc.Infernum().ExtraAI[10] == 0f)
                 {
                     npc.Infernum().ExtraAI[10] = 1f;
-                    if (!BossRushEvent.BossRushActive)
-                        npc.NPCLoot();
+                    /*if (!BossRushEvent.BossRushActive)
+                        npc.NPCLoot();*/
                 }
             }
 
@@ -165,9 +166,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             {
                 npc.Infernum().ExtraAI[10] = 1f;
                 HandleSplit(npc, ref npc.ai[2]);
+                splitting = true;
             }
 
-            return npc.ai[2] >= 2f;
+            return npc.ai[2] >= 2f && !splitting;
         }
 
         #region Attacks

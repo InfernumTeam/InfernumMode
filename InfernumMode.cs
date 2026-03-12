@@ -3,6 +3,7 @@ global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
 using System.IO;
+using System.Runtime.CompilerServices;
 using CalamityMod.ILEditing;
 using CalamityMod.NPCs;
 using CalamityMod.Systems;
@@ -22,6 +23,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+[assembly: InternalsVisibleTo("InfernalEclipseAPI")]
 namespace InfernumMode
 {
     public class InfernumMode : Mod

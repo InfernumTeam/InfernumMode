@@ -229,7 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             int deathAnimationLength = 230;
 
             // Constantly get the ninja.
-            NPC ninjaNPC = null;
+            NPC? ninjaNPC = null;
             for (int i = 0; i < Main.npc.Length; i++)
             {
                 if (Main.npc[i].type == ModContent.NPCType<Ninja>())
@@ -441,7 +441,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     SelectNextAttack(npc);
                     if (performingDeathAnimation)
                     {
-                        NPC ninjaNPC = null;
+                        NPC? ninjaNPC = null;
                         for (int i = 0; i < Main.npc.Length; i++)
                         {
                             if (Main.npc[i].type == ModContent.NPCType<Ninja>())

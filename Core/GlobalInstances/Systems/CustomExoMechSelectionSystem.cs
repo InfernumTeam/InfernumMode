@@ -16,7 +16,7 @@ using Terraria.UI.Chat;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
 {
-    public class CustomExoMechSelectionSystem : ModSystem
+    internal sealed class CustomExoMechSelectionSystem : ModSystem
     {
         public static ExoMech? PrimaryMechToSummon
         {
@@ -30,9 +30,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
-        private static readonly MethodInfo? ExoMechSelectionUIDraw = typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags);
+        public static MethodInfo? ExoMechSelectionUIDraw = typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags);
 
-        private static ILHook? DrawSelectionUI_IL_Hook;
+        public static ILHook? DrawSelectionUI_IL_Hook;
 
         public override void OnModUnload()
         {
@@ -44,7 +44,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
-        internal static void DrawSelectionUI(ILContext context)
+        public static void DrawSelectionUI(ILContext context)
         {
             ILCursor cursor = new(context);
             cursor.EmitDelegate(DrawWrapper);

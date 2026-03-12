@@ -19,11 +19,11 @@ namespace InfernumMode.Core.OverridingSystem
         internal static void LoadAll()
         {
            
-            BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count, "InfernumMode/NPCBehaviorOverride").CreateCustomSet<NPCBehaviorOverrideContainer>(null);
+            BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count, "InfernumMode/NPCBehaviorOverride").CreateCustomSet<NPCBehaviorOverrideContainer>(null!);
 
             foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {
-                NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type);
+                NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type)!;
 
                 bool hasPreAI = false;
                 var preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);

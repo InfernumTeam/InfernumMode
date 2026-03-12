@@ -9,13 +9,13 @@ namespace InfernumMode.Common.UtilityMethods
 {
     public static class OldOnesArmyMinibossChanges
     {
-        private static readonly MethodInfo oldOnesArmyStatusMethod = typeof(DD2Event).GetMethod("GetInvasionStatus", Utilities.UniversalBindingFlags);
+        private static readonly MethodInfo? oldOnesArmyStatusMethod = typeof(DD2Event).GetMethod("GetInvasionStatus", Utilities.UniversalBindingFlags);
 
         public static void GetOldOnesArmyStatus(out int currentWave, out int requiredKillCount, out int currentKillCount, bool currentlyInCheckProgress = false)
         {
             currentWave = requiredKillCount = currentKillCount = 0;
             object[] parameters = [currentWave, requiredKillCount, currentKillCount, currentlyInCheckProgress];
-            oldOnesArmyStatusMethod.Invoke(null, parameters);
+            oldOnesArmyStatusMethod?.Invoke(null, parameters);
             currentWave = (int)parameters[0];
             requiredKillCount = (int)parameters[1];
             currentKillCount = (int)parameters[2];

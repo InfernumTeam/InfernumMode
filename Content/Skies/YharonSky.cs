@@ -71,7 +71,7 @@ namespace InfernumMode.Content.Skies
             private set;
         } = [];
 
-        public static readonly MethodInfo DrawSunAndMoonMethod = typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags);
+        public static readonly MethodInfo? DrawSunAndMoonMethod = typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags);
 
         public override void Activate(Vector2 position, params object[] args) => isActive = true;
 
@@ -188,7 +188,7 @@ namespace InfernumMode.Content.Skies
 
             // Draw the regular sun on top of everything else.
             var sceneArea = ManipulateSunPositionHook.SunSceneArea;
-            DrawSunAndMoonMethod.Invoke(Main.instance,
+            DrawSunAndMoonMethod?.Invoke(Main.instance,
             [
                 sceneArea,
                 Color.White * intensity,

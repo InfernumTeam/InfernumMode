@@ -921,7 +921,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 }
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)])!);
             cursor.Emit(OpCodes.Ret);
         }
     }
@@ -1066,8 +1066,8 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void MakeMapGlitchInLayer4Abyss_IL(ILContext context)
         {
             ILCursor cursor = new(context);
-            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", [typeof(Color), typeof(float)]);
-            ConstructorInfo colorConstructor = typeof(Color).GetConstructor([typeof(int), typeof(int), typeof(int), typeof(int)]);
+            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", [typeof(Color), typeof(float)])!;
+            ConstructorInfo colorConstructor = typeof(Color).GetConstructor([typeof(int), typeof(int), typeof(int), typeof(int)])!;
 
             // ==== APPLY EFFECT TO FULLSCREEN MAP =====
 
@@ -1467,7 +1467,7 @@ namespace InfernumMode.Core.ILEditingStuff
             if (cursor.TryGotoNext(MoveType.After, i => i.MatchCall<Color>("get_White")))
             {
                 cursor.Emit(OpCodes.Pop);
-                cursor.EmitCall(typeof(AntiFlashbangSupportHook).GetMethod("DrawColor", Utilities.UniversalBindingFlags));
+                cursor.EmitCall(typeof(AntiFlashbangSupportHook).GetMethod("DrawColor", Utilities.UniversalBindingFlags)!);
             }
         }
     }

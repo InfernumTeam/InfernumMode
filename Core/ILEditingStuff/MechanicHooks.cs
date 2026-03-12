@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;
@@ -17,8 +13,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Schematics;
-using CalamityMod.Systems;
-using CalamityMod.Tiles.Abyss;
+using CalamityMod.World;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.UtilityMethods;
@@ -37,12 +32,16 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
 using Luminance.Core.Graphics;
-using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
 using SubworldLibrary;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -51,48 +50,72 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public sealed class NerfAdrenalineHook : ILEditProvider, ICustomDetourProvider
+    internal sealed class NerfAdrenalineHook : ModSystem
     {
+        #region Hooks
+        public static MethodInfo? CalApplyRippersToDamageMethod = typeof(CalamityUtils).GetMethod("ApplyRippersToDamage", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalApplyRippersToDamageMethod(CalamityPlayer mp, bool trueMelee, ref float damageMult);
+        public Hook? CalApplyRippersToDamage_Detour_Hook;
+
+        public static MethodInfo? CalGetAdrenalineDamageMethod = typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags);
+        public delegate float Orig_CalGetAdrenalineDamageMethod(CalamityPlayer mp);
+        public Hook? CalGetAdrenalineDamage_Detour_Hook;
+
+        public static MethodInfo? CalModifyHitNPCWithItemMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithItem", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalModifyHitNPCWithItemMethod(CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers);
+        public Hook? CalModifyHitNPCWithItem_Detour_Hook;
+
+        public static MethodInfo? CalModifyHitNPCWithProjMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithProj", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalModifyHitNPCWithProjMethod(CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers);
+        public Hook? CalModifyHitNPCWithProj_Detour_Hook;
+
+        public static MethodInfo? UpdateRippers = typeof(CalamityPlayer).GetMethod("UpdateRippers", Utilities.UniversalBindingFlags);
+        public static ILHook? NerfAdrenaline_IL_Hook;
+        #endregion
+
         internal static bool ShouldGetRipperDamageModifiers
         {
             get;
             set;
         }
 
-        void ICustomDetourProvider.ModifyMethods()
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(CalGetAdrenalineDamageMethod, NerfAdrenalineHook.NerfAdrenDamageMethod);
-            HookHelper.ModifyMethodWithDetour(CalApplyRippersToDamageMethod, NerfAdrenalineHook.ApplyRippersToDamageDetour);
-            HookHelper.ModifyMethodWithDetour(CalModifyHitNPCWithItemMethod, NerfAdrenalineHook.ModifyHitNPCWithItemDetour);
-            HookHelper.ModifyMethodWithDetour(CalModifyHitNPCWithProjMethod, NerfAdrenalineHook.ModifyHitNPCWithProjDetour);
-        }
-
-        public override void Subscribe(ManagedILEdit edit) => UpdateRippers += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => UpdateRippers -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
-        {
-            ILCursor c = new(il);
-
-            if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<CalamityPlayer>("adrenaline")))
-                return;
-            if (!c.TryGotoPrev(MoveType.After, i => i.MatchLdloc(out _)))
-                return;
-
-            // This mechanic is ridiculous.
-            c.EmitDelegate(() =>
+            if (CalApplyRippersToDamageMethod != null)
             {
-                return InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f;
-            });
-            c.Emit(OpCodes.Div);
-        }
+                CalApplyRippersToDamage_Detour_Hook = new(CalApplyRippersToDamageMethod, NerfAdrenalineHook.ApplyRippersToDamageDetour);
+                CalApplyRippersToDamage_Detour_Hook?.Apply();
+            }
 
-        internal static void ApplyRippersToDamageDetour(Orig_CalApplyRippersToDamageMethod orig, CalamityPlayer mp, bool trueMelee, ref float damageMult)
+            if (CalGetAdrenalineDamageMethod != null)
+            {
+                CalGetAdrenalineDamage_Detour_Hook = new(CalGetAdrenalineDamageMethod, NerfAdrenalineHook.NerfAdrenDamageMethod);
+                CalGetAdrenalineDamage_Detour_Hook?.Apply();
+            }
+
+            if (CalModifyHitNPCWithItemMethod != null)
+            {
+                CalModifyHitNPCWithItem_Detour_Hook = new(CalModifyHitNPCWithItemMethod, NerfAdrenalineHook.ModifyHitNPCWithItemDetour);
+                CalModifyHitNPCWithItem_Detour_Hook?.Apply();
+            }
+
+            if (CalModifyHitNPCWithProjMethod != null)
+            {
+                CalModifyHitNPCWithProj_Detour_Hook = new(CalModifyHitNPCWithProjMethod, NerfAdrenalineHook.ModifyHitNPCWithProjDetour);
+                CalModifyHitNPCWithProj_Detour_Hook?.Apply();
+            }
+
+            if (UpdateRippers != null)
+            {
+                NerfAdrenaline_IL_Hook = new(UpdateRippers, NerfAdrenaline_IL);
+                NerfAdrenaline_IL_Hook?.Apply();
+            }
+        }
+        #region Methods
+        public static void ApplyRippersToDamageDetour(Orig_CalApplyRippersToDamageMethod orig, CalamityPlayer mp, bool trueMelee, ref float damageMult)
         {
             if (!InfernumMode.CanUseCustomAIs || ShouldGetRipperDamageModifiers)
             {
@@ -101,7 +124,7 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
-        internal static void ModifyHitNPCWithItemDetour(Orig_CalModifyHitNPCWithItemMethod orig, CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers)
+        public static void ModifyHitNPCWithItemDetour(Orig_CalModifyHitNPCWithItemMethod orig, CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (!InfernumMode.CanUseCustomAIs)
             {
@@ -117,7 +140,7 @@ namespace InfernumMode.Core.ILEditingStuff
             modifiers.SourceDamage += damageMult;
         }
 
-        internal static void ModifyHitNPCWithProjDetour(Orig_CalModifyHitNPCWithProjMethod orig, CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
+        public static void ModifyHitNPCWithProjDetour(Orig_CalModifyHitNPCWithProjMethod orig, CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
         {
             try
             {
@@ -140,13 +163,13 @@ namespace InfernumMode.Core.ILEditingStuff
             modifiers.SourceDamage += damageMult;
         }
 
-        internal static float NerfAdrenDamageMethod(Orig_CalGetAdrenalineDamageMethod orig, CalamityPlayer mp)
+        public static float NerfAdrenDamageMethod(Orig_CalGetAdrenalineDamageMethod orig, CalamityPlayer mp)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return orig(mp);
 
             float adrenalineBoost = BalancingChangesManager.AdrenalineDamageBoost;
-            
+
             if (mp.adrenalineBoostOne)
                 adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
             if (mp.adrenalineBoostTwo)
@@ -156,15 +179,30 @@ namespace InfernumMode.Core.ILEditingStuff
 
             return adrenalineBoost;
         }
+
+        public static void NerfAdrenaline_IL(ILContext context)
+        {
+            ILCursor c = new(context);
+
+            if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<CalamityPlayer>("adrenaline")))
+                return;
+            if (!c.TryGotoPrev(MoveType.After, i => i.MatchLdloc(out _)))
+                return;
+
+            // This mechanic is ridiculous.
+            c.EmitDelegate(() =>
+            {
+                return InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f;
+            });
+            c.Emit(OpCodes.Div);
+        }
+        #endregion
     }
 
-    public sealed class RenameGreatSandSharkHook : IExistingDetourProvider
+    internal sealed class RenameGreatSandSharkHook : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_Lang.GetNPCNameValue += RenameGSS;
-
-        void IExistingDetourProvider.Unsubscribe() => On_Lang.GetNPCNameValue -= RenameGSS;
-
-        private string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
+        public override void Load() => On_Lang.GetNPCNameValue += RenameGSS;
+        public static string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
         {
             if (netID == ModContent.NPCType<GreatSandShark>() && InfernumMode.CanUseCustomAIs)
                 return GreatSandSharkBehaviorOverride.NewName.Value;
@@ -173,14 +211,15 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class MakeHooksInteractWithPlatforms : ILEditProvider
+    internal sealed class MakeHooksInteractWithPlatforms : ModSystem
     {
-        internal static NPC[] GetPlatforms(Projectile projectile)
+        #region Utils
+        public static NPC[] GetPlatforms(Projectile projectile)
         {
             return [.. Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center))];
         }
 
-        internal static bool PlatformRequirement(Projectile projectile)
+        public static bool PlatformRequirement(Projectile projectile)
         {
             // I don't know what the problem is. I'm sorry.
             if (Main.netMode != NetmodeID.SinglePlayer)
@@ -195,13 +234,13 @@ namespace InfernumMode.Core.ILEditingStuff
             return attachedPlatforms.Length >= 1;
         }
 
-        internal static void HandleAttachment(Projectile projectile)
+        public static void HandleAttachment(Projectile projectile)
         {
             if (PlatformRequirement(projectile) && projectile.ai[0] != 2f)
                 projectile.Center = Vector2.Lerp(projectile.Center, GetPlatforms(projectile)[0].Center, 0.3f);
         }
 
-        internal static void AdjustHitPlatformCoords(Projectile projectile, ref int x, ref int y)
+        public static void AdjustHitPlatformCoords(Projectile projectile, ref int x, ref int y)
         {
             // I don't know what the problem is. I'm sorry.
             if (Main.netMode != NetmodeID.SinglePlayer)
@@ -217,19 +256,24 @@ namespace InfernumMode.Core.ILEditingStuff
         }
 
         public delegate void PlatformCoordsDelegate(Projectile projectile, ref int x, ref int y);
+        #endregion
 
-        public override void Subscribe(ManagedILEdit edit) => IL_Projectile.AI_007_GrapplingHooks += edit.SubscriptionWrapper;
+        public override void OnModLoad() => IL_Projectile.AI_007_GrapplingHooks += MakeHooksInteractWithPlatforms_IL;
 
-        public override void Unsubscribe(ManagedILEdit edit) => IL_Projectile.AI_007_GrapplingHooks -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static void MakeHooksInteractWithPlatforms_IL(ILContext context)
         {
-            ILCursor c = new(il);
+            ILCursor c = new(context);
 
             if (!c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<WorldGen>("GetTileVisualHitbox")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchCallOrCallvirt<WorldGen>(\"GetTileVisualHitbox\")");
                 return;
+            }
             if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<Projectile>("damage")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchStfld<Projectile>(\"damage\")");
                 return;
+            }
 
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate(HandleAttachment);
@@ -239,7 +283,10 @@ namespace InfernumMode.Core.ILEditingStuff
 
             // Move to the instance of local loading that determines if the hook should return and AND it ensure that the platform requirement is met.
             if (!c.TryGotoNext(MoveType.After, i => i.MatchLdloc(out _)))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdloc(out _)");
                 return;
+            }
 
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate<Func<Projectile, bool>>(p => !PlatformRequirement(p));
@@ -269,20 +316,32 @@ namespace InfernumMode.Core.ILEditingStuff
             for (int i = 0; i < 2; i++)
             {
                 if (!c.TryGotoNext(MoveType.After, i => i.MatchLdfld<Player>("grapCount")))
+                {
+                    InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdfld<Player>(\"grapCount\")");
                     return;
+                }
             }
 
             // Get the label to jump to.
             if (!c.TryGotoPrev(MoveType.After, i => i.MatchInitobj<Tile>()))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchInitobj<Tile>()");
                 return;
+            }
 
             if (!c.TryGotoPrev(MoveType.Before, i => i.MatchLdsflda<Main>("tile")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdsflda<Main>(\"tile\")");
                 return;
+            }
 
             // Delete the stupid fucking tile null check since it fucks up the search process and does literally nothing now.
             int start = c.Index;
             if (!c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Tilemap>("set_Item")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchCallOrCallvirt<Tilemap>(\"set_Item\")");
                 return;
+            }
             int end = c.Index;
             c.Goto(start);
             c.RemoveRange(end - start);
@@ -293,15 +352,27 @@ namespace InfernumMode.Core.ILEditingStuff
             int xLocalIndex = 0;
             int yLocalIndex = 0;
             if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdloc(out xLocalIndex)))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdloc(out xLocalIndex)");
                 return;
+            }
             if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdloc(out yLocalIndex)))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdloc(out yLocalIndex)");
                 return;
+            }
 
             int afterLocalIndicesIndex = c.Index;
             if (!c.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Player>("IsBlacklistedForGrappling")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchCallOrCallvirt<Player>(\"IsBlacklistedForGrappling\")");
                 return;
+            }
             if (!c.TryGotoNext(MoveType.Before, i => i.MatchLdsfld<Main>("player")))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdsfld<Main>(\"player\")");
                 return;
+            }
             var tileHitLogic = c.DefineLabel();
             c.MarkLabel(tileHitLogic);
             c.Emit(OpCodes.Ldarg_0);
@@ -312,9 +383,15 @@ namespace InfernumMode.Core.ILEditingStuff
             // Finally, leave the conditional hell and hook to a default(Vector2) outside of the loop to create the jump/XY change.
             c.Index = afterLocalIndicesIndex;
             if (!c.TryGotoPrev(MoveType.After, i => i.MatchInitobj<Vector2>()))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchInitobj<Vector2>()");
                 return;
+            }
             if (!c.TryGotoPrev(MoveType.Before, i => i.MatchLdloca(out _)))
+            {
+                InfernumMode.Instance.Logger.Error("MakeHooksInteractWithPlatforms ILEdit failed MatchLdloca(out _)");
                 return;
+            }
 
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate(PlatformRequirement);
@@ -328,15 +405,13 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class DisableMoonLordBuildingHook : ILEditProvider
+    internal sealed class DisableMoonLordBuildingHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => IL_Player.ItemCheck += edit.SubscriptionWrapper;
+        public override void OnModLoad() => IL_Player.ItemCheck += DisableMoonLordBuilding_IL;
 
-        public override void Unsubscribe(ManagedILEdit edit) => IL_Player.ItemCheck -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static void DisableMoonLordBuilding_IL(ILContext context)
         {
-            var c = new ILCursor(il);
+            var c = new ILCursor(context);
 
             if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
                 return;
@@ -349,11 +424,9 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class ChangeHowMinibossesSpawnInDD2EventHook : IExistingDetourProvider
+    internal sealed class ChangeHowMinibossesSpawnInDD2EventHook : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
-
-        void IExistingDetourProvider.Unsubscribe() => On_DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
+        public override void Load() => On_DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
 
         private static int GiveDD2MinibossesPointPriority(On_DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
@@ -364,24 +437,20 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class AllowSandstormInColosseumHook : IExistingDetourProvider
+    internal sealed class AllowSandstormInColosseumHook : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
-
-        void IExistingDetourProvider.Unsubscribe() => On_Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
+        public override void Load() => On_Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
 
         private static bool LetSandParticlesAppear(On_Sandstorm.orig_ShouldSandstormDustPersist orig)
         {
-            return orig() || SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening;
+            return orig() || (SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening);
         }
 
     }
 
-    public sealed class DrawVoidBackgroundDuringMLFightHook : IExistingDetourProvider
+    internal sealed class DrawVoidBackgroundDuringMLFightHook : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_Main.DrawSurfaceBG += PrepareShaderForBG;
-
-        void IExistingDetourProvider.Unsubscribe() => On_Main.DrawSurfaceBG -= PrepareShaderForBG;
+        public override void Load() => On_Main.DrawSurfaceBG += PrepareShaderForBG;
 
         public static void PrepareShaderForBG(On_Main.orig_DrawSurfaceBG orig, Main self)
         {
@@ -424,36 +493,32 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class DrawCherishedSealocketHook : IExistingDetourProvider
+    internal sealed class DrawCherishedSealocketHook : ModSystem
     {
         public static ManagedRenderTarget PlayerForcefieldTarget
         {
             get;
-            internal set;
+            set;
         }
 
         public static ArmorShaderData ForcefieldShader
         {
             get;
-            internal set;
+            set;
         }
 
-        void IExistingDetourProvider.Subscribe()
+        public override void Load()
         {
+            DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
+
             On_Main.CheckMonoliths += PrepareSealocketTarget;
             On_Main.DrawInfernoRings += DrawForcefields;
-            DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
+
             if (Main.netMode != NetmodeID.Server)
                 Main.QueueMainThreadAction(() => PlayerForcefieldTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget));
         }
 
-        void IExistingDetourProvider.Unsubscribe()
-        {
-            On_Main.CheckMonoliths -= PrepareSealocketTarget;
-            On_Main.DrawInfernoRings -= DrawForcefields;
-            DyeFindingSystem.FindDyeEvent -= FindSealocketItemDyeShader;
-        }
-
+        #region Methods
         private void DrawForcefields(On_Main.orig_DrawInfernoRings orig, Main self)
         {
             Main.LocalPlayer.Infernum_CalShadowHex().DrawAllHexes();
@@ -475,7 +540,7 @@ namespace InfernumMode.Core.ILEditingStuff
             float shieldScale = sealocketForcefieldOpacity.Value * 0.3f;
             Vector2 shieldSize = Vector2.One * shieldScale * 512f;
             Rectangle shaderArea = Utils.CenteredRectangle(PlayerForcefieldTarget.Target.Size(), shieldSize);
-            
+
             if (sealocketForcefieldOpacity.Value >= 0.01f && forcefieldDissipationInterpolant.Value < 0.99f)
                 ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget.Target, Vector2.Zero, shaderArea, Color.White));
             Main.spriteBatch.Draw(PlayerForcefieldTarget.Target, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, PlayerForcefieldTarget.Target.Size() * 0.5f, 1f, 0, 0f);
@@ -485,7 +550,7 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(self);
         }
 
-        private void PrepareSealocketTarget(On_Main.orig_CheckMonoliths orig)
+        private static void PrepareSealocketTarget(On_Main.orig_CheckMonoliths orig)
         {
             orig();
 
@@ -537,15 +602,23 @@ namespace InfernumMode.Core.ILEditingStuff
             if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
                 ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
         }
+        #endregion
     }
 
-    public sealed class LetAresHitPlayersHook : ICustomDetourProvider
+    internal sealed class LetAresHitPlayersHook : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static MethodInfo? AresBodyCanHitPlayer = typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_AresBodyCanHitPlayer(AresBody self, Player target, ref int cooldownSlot);
+        public static Hook? LetAresHitPlayers_Detour_Hook;
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(AresBodyCanHitPlayer, AresBodyCanHitPlayer_Detour);
+            if (AresBodyCanHitPlayer != null)
+            {
+                LetAresHitPlayers_Detour_Hook = new(AresBodyCanHitPlayer, AresBodyCanHitPlayer_Detour);
+                LetAresHitPlayers_Detour_Hook?.Apply();
+            }
         }
-        private static bool AresBodyCanHitPlayer_Detour(Orig_AresBodyCanHitPlayer orig, AresBody self, Player target, ref int cooldownSlot)
+        public bool AresBodyCanHitPlayer_Detour(Orig_AresBodyCanHitPlayer orig, AresBody self, Player target, ref int cooldownSlot)
         {
             bool value = orig(self, target, ref cooldownSlot);
             if (InfernumMode.CanUseCustomAIs)
@@ -554,15 +627,13 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class DisableWaterEffectsInFightsHook : ILEditProvider
+    internal sealed class DisableWaterEffectsInFightsHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => IL_Player.Update += edit.SubscriptionWrapper;
+        public override void Load() => IL_Player.Update += DisableWaterEffectsInFights;
 
-        public override void Unsubscribe(ManagedILEdit edit) => IL_Player.Update -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static void DisableWaterEffectsInFights(ILContext context)
         {
-            ILCursor c = new(il);
+            ILCursor c = new(context);
 
             c.GotoNext(MoveType.After, i => i.MatchCall<Collision>("WetCollision"));
             c.EmitDelegate(() =>
@@ -580,8 +651,9 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    /*public sealed class MakeSulphSeaWaterEasierToSeeInHook : ILEditProvider, IExistingDetourProvider
+    /*public sealed class MakeSulphSeaWaterEasierToSeeInHook : ModSystem
     {
+        public static ILHook? MakeSulphSeaWaterEasierToSeeIn_IL_Hook;
         internal static int SulphurWaterIndex
         {
             get;
@@ -591,24 +663,20 @@ namespace InfernumMode.Core.ILEditingStuff
         // WHY IS THIS SO LAGGY WHAT THE ACTUAL FUCK???
         public static bool CanUseHighQualityWater => false;
 
-        void IExistingDetourProvider.Subscribe() => Terraria.Graphics.Light.On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
+        public override void Load() => On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
 
-        void IExistingDetourProvider.Unsubscribe() => Terraria.Graphics.Light.On_TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
-
-        public override void Subscribe(ManagedILEdit edit)
+        public override void OnModLoad()
         {
             if (Main.netMode != NetmodeID.Server)
                 SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
 
-            ModifySulphuricWaterColor += edit.SubscriptionWrapper;
+            MakeSulphSeaWaterEasierToSeeIn_IL_Hook = new(ModifySulphuricWaterColor, MakeSulphSeaWaterEasierToSeeIn_IL);
 
         }
 
-        public override void Unsubscribe(ManagedILEdit edit) => ModifySulphuricWaterColor -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static void MakeSulphSeaWaterEasierToSeeIn_IL(ILContext context)
         {
-            ILCursor c = new(il);
+            ILCursor c = new(context);
             c.EmitDelegate(() =>
             {
                 if (!CanUseHighQualityWater)
@@ -651,15 +719,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }*/
 
-    public sealed class ChangeRuneOfKosCanUseHook : ILEditProvider
+    internal sealed class ChangeRuneOfKosCanUseHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => RuneOfKosCanUseItem += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => RuneOfKosCanUseItem -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? RuneOfKosCanUseItem = typeof(MarkofProvidence).GetMethod("CanUseItem", Utilities.UniversalBindingFlags);
+        public static ILHook? ChangeRuneOfKosCanUse_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (RuneOfKosCanUseItem != null)
+            {
+                ChangeRuneOfKosCanUse_IL_Hook = new(RuneOfKosCanUseItem, ChangeRuneOfKosCanUse_IL);
+                ChangeRuneOfKosCanUse_IL_Hook?.Apply();
+            }
+        }
+
+        public static void ChangeRuneOfKosCanUse_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Player player) =>
             {
@@ -671,15 +746,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class ChangeRuneOfKosUseItemHook : ILEditProvider
+    internal sealed class ChangeRuneOfKosUseItemHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => RuneOfKosUseItem += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => RuneOfKosUseItem -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? RuneOfKosUseItem = typeof(MarkofProvidence).GetMethod("UseItem", Utilities.UniversalBindingFlags);
+        public static ILHook? ChangeRuneOfKosUseItem_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (RuneOfKosUseItem != null)
+            {
+                ChangeRuneOfKosUseItem_IL_Hook = new(RuneOfKosUseItem, ChangeRuneOfKosUse_IL);
+                ChangeRuneOfKosUseItem_IL_Hook?.Apply();
+            }
+        }
+
+        public static void ChangeRuneOfKosUse_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Player player) =>
             {
@@ -767,15 +849,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class StoreForbiddenArchivePositionHook : ILEditProvider
+    internal sealed class StoreForbiddenArchivePositionHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => PlaceForbiddenArchive += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => PlaceForbiddenArchive -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? PlaceForbiddenArchive = typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags);
+        public static ILHook? StoreForbiddenArchivePosition_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (PlaceForbiddenArchive != null)
+            {
+                StoreForbiddenArchivePosition_IL_Hook = new(PlaceForbiddenArchive, StoreForbiddenArchivePosition_IL);
+                StoreForbiddenArchivePosition_IL_Hook?.Apply();
+            }
+        }
+
+        public static void StoreForbiddenArchivePosition_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
 
             int xLocalIndex = 0;
             int yLocalIndex = 0;
@@ -807,15 +896,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class ChangeProfanedShardCanUseHook : ILEditProvider
+    internal sealed class ChangeProfanedShardCanUseHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => ProfanedShardCanUseItem += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => ProfanedShardCanUseItem -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? ProfanedShardCanUseItem = typeof(ProfanedShard).GetMethod("CanUseItem", Utilities.UniversalBindingFlags);
+        public static ILHook? ChangeProfanedShardCanUse_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (ProfanedShardCanUseItem != null)
+            {
+                ChangeProfanedShardCanUse_IL_Hook = new(ProfanedShardCanUseItem, ChangeProfanedShardCanUse_IL);
+                ChangeProfanedShardCanUse_IL_Hook?.Apply();
+            }
+        }
+
+        public static void ChangeProfanedShardCanUse_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Player player) =>
             {
@@ -836,15 +932,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class ChangeProfanedShardUseHook : ILEditProvider
+    internal sealed class ChangeProfanedShardUseHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => ProfanedShardUseItem += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => ProfanedShardUseItem -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? ProfanedShardUseItem = typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags);
+        public static ILHook? ChangeProfanedShardUse_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (ProfanedShardUseItem != null)
+            {
+                ChangeProfanedShardUse_IL_Hook = new(ProfanedShardUseItem, ChangeProfanedShardUse_IL);
+                ChangeProfanedShardUse_IL_Hook?.Apply();
+            }
+        }
+
+        public static void ChangeProfanedShardUse_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Player player) =>
             {
@@ -870,15 +973,23 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class StopCultistShieldDrawingHook : ILEditProvider
+    internal sealed class StopCultistShieldDrawingHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => CalGlobalNPCPostDraw += edit.SubscriptionWrapper;
+        public static MethodInfo? CalGlobalNPCPostDraw = typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags);
+        public static ILHook? StopCultistShieldDrawing_IL_Hook;
 
-        public override void Unsubscribe(ManagedILEdit edit) => CalGlobalNPCPostDraw -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (CalGlobalNPCPostDraw != null)
+            {
+                StopCultistShieldDrawing_IL_Hook = new(CalGlobalNPCPostDraw, CalGlobalNPCPostDraw_IL);
+                StopCultistShieldDrawing_IL_Hook?.Apply();
+            }
+        }
+
+        public static void CalGlobalNPCPostDraw_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
 
             // Make the type checks check a negative number, which they will never match.
             if (cursor.TryGotoNext(MoveType.After, c => c.MatchLdcI4(439)))
@@ -895,13 +1006,11 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public sealed class MakeAquaticScourgeSpitOutDropsHook : IExistingDetourProvider
+    internal sealed class MakeAquaticScourgeSpitOutDropsHook : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
+        public override void Load() => On_CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
 
-        void IExistingDetourProvider.Unsubscribe() => On_CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
-
-        private void ThrowItemsOut(On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
+        public static void ThrowItemsOut(On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
         {
             orig(npc, itemIndex);
             if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && InfernumMode.CanUseCustomAIs)

@@ -6,12 +6,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
-using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
 {
@@ -27,6 +28,19 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             set;
+        }
+
+        private static readonly MethodInfo? ExoMechSelectionUIDraw = typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags);
+
+        private static ILHook? DrawSelectionUI_IL_Hook;
+
+        public override void OnModUnload()
+        {
+            if (ExoMechSelectionUIDraw != null)
+            {
+                DrawSelectionUI_IL_Hook = new(ExoMechSelectionUIDraw, DrawSelectionUI);
+                DrawSelectionUI_IL_Hook?.Apply();
+            }
         }
 
         internal static void DrawSelectionUI(ILContext context)
@@ -196,8 +210,5 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             return hoveringOverIcon;
         }
 
-        public override void OnModLoad() => ExoMechSelectionUIDraw += DrawSelectionUI;
-
-        public override void Unload() => ExoMechSelectionUIDraw -= DrawSelectionUI;
     }
 }

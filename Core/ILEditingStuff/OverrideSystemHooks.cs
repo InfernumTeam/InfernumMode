@@ -1,26 +1,63 @@
-﻿using System.Linq;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.UI;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.Balancing;
-using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoMod.RuntimeDetour;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
-using static InfernumMode.Core.ILEditingStuff.HookManager;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class OverrideSystemHooks : ICustomDetourProvider
+    internal sealed class OverrideSystemHooks : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static MethodInfo? FindFrameMethod = typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+        public delegate void Orig_FindFrameDelegate(NPC npc, int frameHeight);
+        public static Hook? FindFrame_Detour_Hook;
+
+        public static MethodInfo? CalamityGlobalNPCPreAIMethod = typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_CalPreAIDelegate(CalamityGlobalNPC self, NPC npc);
+        public static Hook? CalPreAI_Detour_Hook;
+
+        public static MethodInfo? CalGlobalNPCPredrawMethod = typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
+        public static Hook? CalGlobalNPCPredraw_Detour_Hook;
+
+        public static MethodInfo? CalGlobalNPCPostdrawMethod = typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalGlobalNPCPostdrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
+        public static Hook? CalGlobalNPCPostdraw_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
-            HookHelper.ModifyMethodWithDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
-            HookHelper.ModifyMethodWithDetour(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
-            HookHelper.ModifyMethodWithDetour(CalGlobalNPCPostdrawMethod, OverrideSystemHooks.CalGlobalNPCPostdrawDetourMethod);
+            if (FindFrameMethod != null)
+            {
+                FindFrame_Detour_Hook = new(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
+                FindFrame_Detour_Hook?.Apply();
+            }
+
+            if (CalamityGlobalNPCPreAIMethod != null)
+            {
+                CalPreAI_Detour_Hook = new(CalamityGlobalNPCPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
+                CalPreAI_Detour_Hook?.Apply();
+            }
+
+            if (CalGlobalNPCPredrawMethod != null)
+            {
+                CalGlobalNPCPredraw_Detour_Hook = new(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
+                CalGlobalNPCPredraw_Detour_Hook?.Apply();
+            }
+
+            if (CalGlobalNPCPostdrawMethod != null)
+            {
+                CalGlobalNPCPostdraw_Detour_Hook = new(CalGlobalNPCPostdrawMethod, OverrideSystemHooks.CalGlobalNPCPostdrawDetourMethod);
+                CalGlobalNPCPostdraw_Detour_Hook?.Apply();
+            }
+
             InternalBalancingManager.AfterHPBalancingEvent += InternalBalancingManager_AfterHPBalancingEvent;
         }
 

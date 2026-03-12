@@ -1,43 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.PrimordialWyrm;
-using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
-using Luminance.Core.Balancing;
-using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
 using ReLogic.Content;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class PermitOldDukeRainHook : ILEditProvider
+    internal sealed class PermitOldDukeRainHook : ModSystem
     {
-        public override void Subscribe(ManagedILEdit edit) => CalamityWorldPostUpdate += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => CalamityWorldPostUpdate -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        public static MethodInfo? CalamityWorldPostUpdate = typeof(WorldMiscUpdateSystem).GetMethod("PostUpdateWorld", Utilities.UniversalBindingFlags);
+        public static ILHook? PermitOldDukeRain_IL_Hook;
+        public override void OnModLoad()
         {
-            ILCursor cursor = new(il);
+            if (CalamityWorldPostUpdate != null)
+            {
+                PermitOldDukeRain_IL_Hook = new(CalamityWorldPostUpdate, PermitOldDukeRain_IL);
+                PermitOldDukeRain_IL_Hook?.Apply();
+            }
+        }
+
+        public static void PermitOldDukeRain_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
 
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStsfld<Main>("raining")))
                 return;
@@ -54,13 +57,11 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class AchievementMenuUIHookEdit : IExistingDetourProvider
+    internal sealed class AchievementMenuUIHookEdit : ModSystem
     {
         private static bool justHovered;
 
-        void IExistingDetourProvider.Subscribe() => On_AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
-
-        void IExistingDetourProvider.Unsubscribe() => On_AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
+        public override void Load() => On_AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
 
         private void AchievementAdvisor_DrawOneAchievement(On_AchievementAdvisor.orig_DrawOneAchievement orig, AchievementAdvisor self, SpriteBatch spriteBatch, Vector2 position, bool large)
         {
@@ -183,11 +184,9 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class SoundVolumeFalloffHookEdit : IExistingDetourProvider
+    internal sealed class SoundVolumeFalloffHookEdit : ModSystem
     {
-        void IExistingDetourProvider.Subscribe() => On_ActiveSound.Update += ActiveSound_Update;
-
-        void IExistingDetourProvider.Unsubscribe() => On_ActiveSound.Update -= ActiveSound_Update;
+        public override void Load() => On_ActiveSound.Update += ActiveSound_Update;
 
         private static List<string> SoundStylesToEdit =>
         [
@@ -247,14 +246,22 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DisableAbyssLayer1PoisonHook : ICustomDetourProvider
+    internal sealed class DisableAbyssLayer1PoisonHook : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static MethodInfo? CalUpdateBadLifeRegenMethod = typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalUpdateBadLifeRegenMethod(CalamityPlayer self);
+        public static Hook? DisableAbyssLayer1Poison_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(CalUpdateBadLifeRegenMethod, UpdateBadLifeRegen_Detour);
+            if (CalUpdateBadLifeRegenMethod != null)
+            {
+                DisableAbyssLayer1Poison_Detour_Hook = new(CalUpdateBadLifeRegenMethod, UpdateBadLifeRegen_Detour);
+                DisableAbyssLayer1Poison_Detour_Hook?.Apply();
+            }
         }
 
-        private void UpdateBadLifeRegen_Detour(Orig_CalUpdateBadLifeRegenMethod orig, CalamityPlayer self)
+        public void UpdateBadLifeRegen_Detour(Orig_CalUpdateBadLifeRegenMethod orig, CalamityPlayer self)
         {
             bool abyssalDivingSuit = self.abyssalDivingSuit; // Save old value to reset after
             if (self.ZoneAbyssLayer1)
@@ -266,11 +273,19 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DisableAbyssEffectsDuringWyrm : ICustomDetourProvider
+    internal sealed class DisableAbyssEffectsDuringWyrm : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static MethodInfo? CalAbyssEffectsMethod = typeof(CalamityPlayer).GetMethod("AbyssEffects", LumUtils.UniversalBindingFlags);
+        public delegate void Orig_CalAbyssEffectsMethod(CalamityPlayer self);
+        public static Hook? DisableAbyssEffectsDuringWyrm_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(CalAbyssEffectsMethod, AbyssEffects_Detour);
+            if (CalAbyssEffectsMethod != null)
+            {
+                DisableAbyssEffectsDuringWyrm_Detour_Hook = new(CalAbyssEffectsMethod, AbyssEffects_Detour);
+                DisableAbyssEffectsDuringWyrm_Detour_Hook?.Apply();
+            }
         }
 
         private void AbyssEffects_Detour(Orig_CalAbyssEffectsMethod orig, CalamityPlayer self)
@@ -290,11 +305,14 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DisableDoGSkyHook : ICustomDetourProvider
+    /*internal sealed class DisableDoGSkyHook : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static Hook? DisableDoGSky_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            //HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
+            DisableDoGSky_Detour_Hook = new(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
+            DisableDoGSky_Detour_Hook?.Apply();
         }
         private bool CalDoGSkyUpdateDoGIndex_Detour(Orig_CalDoGSkyUpdateDoGIndex orig, DoGSky self)
         {
@@ -304,13 +322,21 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             return orig(self);
         }
-    }
+    }*/
 
-    public class AvoidLabGardenIntersectHook : ICustomDetourProvider
+    internal sealed class AvoidLabGardenIntersectHook : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static MethodInfo? CalShouldAvoidLocation = typeof(DraedonStructures).GetMethod("ShouldAvoidLocation", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_CalShouldAvoidLocation(Point placementPoint, bool careAboutLava = true);
+        public static Hook? AvoidLabGardenIntersect_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            HookHelper.ModifyMethodWithDetour(CalShouldAvoidLocation, CalShouldAvoidLocation_Detour);
+            if (CalShouldAvoidLocation != null)
+            {
+                AvoidLabGardenIntersect_Detour_Hook = new(CalShouldAvoidLocation, CalShouldAvoidLocation_Detour);
+                AvoidLabGardenIntersect_Detour_Hook?.Apply();
+            }
         }
         public static bool CalShouldAvoidLocation_Detour(Orig_CalShouldAvoidLocation orig, Point placementPoint, bool careAboutLava = true)
         {
@@ -320,11 +346,14 @@ namespace InfernumMode.Core.ILEditingStuff
             return value;
         }
     }
-    public class DisableGSSMessageHook : ICustomDetourProvider
+    /*internal sealed class DisableGSSMessageHook : ModSystem
     {
-        void ICustomDetourProvider.ModifyMethods()
+        public static Hook? DisableGSSMessage_Detour_Hook;
+
+        public override void OnModLoad()
         {
-            //HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
+            DisableGSSMessage_Detour_Hook = new(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
+            DisableGSSMessage_Detour_Hook?.Apply();
         }
         public static void CalDisplayLocalizedText_Detour(Orig_CalDisplayLocalizedText orig, string key, Color? textColor = null)
         {
@@ -332,5 +361,5 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
             orig(key, textColor);
         }
-    }
+    }*/
 }

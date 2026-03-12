@@ -39,24 +39,28 @@ namespace InfernumMode.Core.ILEditingStuff
                 FindFrame_Detour_Hook = new(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
                 FindFrame_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalamityGlobalNPCPreAIMethod != null)
             {
                 CalPreAI_Detour_Hook = new(CalamityGlobalNPCPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
                 CalPreAI_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalGlobalNPCPredrawMethod != null)
             {
                 CalGlobalNPCPredraw_Detour_Hook = new(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
                 CalGlobalNPCPredraw_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalGlobalNPCPostdrawMethod != null)
             {
                 CalGlobalNPCPostdraw_Detour_Hook = new(CalGlobalNPCPostdrawMethod, OverrideSystemHooks.CalGlobalNPCPostdrawDetourMethod);
                 CalGlobalNPCPostdraw_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             InternalBalancingManager.AfterHPBalancingEvent += InternalBalancingManager_AfterHPBalancingEvent;
         }

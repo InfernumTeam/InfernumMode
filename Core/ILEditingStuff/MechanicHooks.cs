@@ -89,30 +89,35 @@ namespace InfernumMode.Core.ILEditingStuff
                 CalApplyRippersToDamage_Detour_Hook = new(CalApplyRippersToDamageMethod, NerfAdrenalineHook.ApplyRippersToDamageDetour);
                 CalApplyRippersToDamage_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalGetAdrenalineDamageMethod != null)
             {
                 CalGetAdrenalineDamage_Detour_Hook = new(CalGetAdrenalineDamageMethod, NerfAdrenalineHook.NerfAdrenDamageMethod);
                 CalGetAdrenalineDamage_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalModifyHitNPCWithItemMethod != null)
             {
                 CalModifyHitNPCWithItem_Detour_Hook = new(CalModifyHitNPCWithItemMethod, NerfAdrenalineHook.ModifyHitNPCWithItemDetour);
                 CalModifyHitNPCWithItem_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalModifyHitNPCWithProjMethod != null)
             {
                 CalModifyHitNPCWithProj_Detour_Hook = new(CalModifyHitNPCWithProjMethod, NerfAdrenalineHook.ModifyHitNPCWithProjDetour);
                 CalModifyHitNPCWithProj_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (UpdateRippers != null)
             {
                 NerfAdrenaline_IL_Hook = new(UpdateRippers, NerfAdrenaline_IL);
                 NerfAdrenaline_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
         #region Methods
         public static void ApplyRippersToDamageDetour(Orig_CalApplyRippersToDamageMethod orig, CalamityPlayer mp, bool trueMelee, ref float damageMult)
@@ -617,6 +622,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 LetAresHitPlayers_Detour_Hook = new(AresBodyCanHitPlayer, AresBodyCanHitPlayer_Detour);
                 LetAresHitPlayers_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
         public bool AresBodyCanHitPlayer_Detour(Orig_AresBodyCanHitPlayer orig, AresBody self, Player target, ref int cooldownSlot)
         {
@@ -730,6 +736,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeRuneOfKosCanUse_IL_Hook = new(RuneOfKosCanUseItem, ChangeRuneOfKosCanUse_IL);
                 ChangeRuneOfKosCanUse_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeRuneOfKosCanUse_IL(ILContext context)
@@ -757,6 +764,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeRuneOfKosUseItem_IL_Hook = new(RuneOfKosUseItem, ChangeRuneOfKosUse_IL);
                 ChangeRuneOfKosUseItem_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeRuneOfKosUse_IL(ILContext context)
@@ -860,6 +868,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 StoreForbiddenArchivePosition_IL_Hook = new(PlaceForbiddenArchive, StoreForbiddenArchivePosition_IL);
                 StoreForbiddenArchivePosition_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void StoreForbiddenArchivePosition_IL(ILContext context)
@@ -907,6 +916,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeProfanedShardCanUse_IL_Hook = new(ProfanedShardCanUseItem, ChangeProfanedShardCanUse_IL);
                 ChangeProfanedShardCanUse_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeProfanedShardCanUse_IL(ILContext context)
@@ -943,6 +953,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeProfanedShardUse_IL_Hook = new(ProfanedShardUseItem, ChangeProfanedShardUse_IL);
                 ChangeProfanedShardUse_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeProfanedShardUse_IL(ILContext context)
@@ -985,6 +996,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 StopCultistShieldDrawing_IL_Hook = new(CalGlobalNPCPostDraw, CalGlobalNPCPostDraw_IL);
                 StopCultistShieldDrawing_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void CalGlobalNPCPostDraw_IL(ILContext context)

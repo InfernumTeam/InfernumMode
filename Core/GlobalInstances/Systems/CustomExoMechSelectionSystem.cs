@@ -41,6 +41,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 DrawSelectionUI_IL_Hook = new(ExoMechSelectionUIDraw, DrawSelectionUI);
                 DrawSelectionUI_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         internal static void DrawSelectionUI(ILContext context)

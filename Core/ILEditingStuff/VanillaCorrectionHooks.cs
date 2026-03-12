@@ -216,6 +216,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 MoveDraedonHellLab_IL_Hook = new(PlaceHellLab, MoveDraedonHellLab_IL);
                 MoveDraedonHellLab_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void MoveDraedonHellLab_IL(ILContext context)
@@ -279,6 +280,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 MakeCheeseSulphSeaCavesBigger_IL_Hook = new(GenerateSulphSeaCheeseCaves, MakeCheeseSulphSeaCavesBigger_IL);
                 MakeCheeseSulphSeaCavesBigger_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void MakeCheeseSulphSeaCavesBigger_IL(ILContext context)
@@ -317,6 +319,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 MakeSpaghettiSulphSeaCavesBigger_IL_Hook = new(GenerateSulphSeaSpaghettiCaves, MakeSpaghettiSulphSeaCavesBigger_IL);
                 MakeSpaghettiSulphSeaCavesBigger_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void MakeSpaghettiSulphSeaCavesBigger_IL(ILContext context)
@@ -561,6 +564,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 GetRidOfYharonOnHitDebuffs_IL_Hook = new(YharonOnHitPlayer, GetRidOfYharonOnHitDebuffs_IL);
                 GetRidOfYharonOnHitDebuffs_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void GetRidOfYharonOnHitDebuffs_IL(ILContext context)
@@ -582,6 +586,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 GetRidOfSCalOnHitDebuffs_IL_Hook = new(SCalOnHitPlayer, GetRidOfSCalOnHitDebuffs_IL);
                 GetRidOfSCalOnHitDebuffs_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void GetRidOfSCalOnHitDebuffs_IL(ILContext context)
@@ -603,6 +608,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeBossRushTiers_IL_Hook = new(BossRushTier, ChangeBossRushTiers_IL);
                 ChangeBossRushTiers_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeBossRushTiers_IL(ILContext context)
@@ -647,6 +653,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeExoMechBackgroundColor_IL_Hook = new(ExoMechTileTileColor, ChangeExoMechBackgroundColor_IL);
                 ChangeExoMechBackgroundColor_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeExoMechBackgroundColor_IL(ILContext context)
@@ -677,6 +684,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 DisableExoMechsSkyInBR_IL_Hook = new(ExoMechsSkyIsActive, DisableExoMechsSkyInBR_IL);
                 DisableExoMechsSkyInBR_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void DisableExoMechsSkyInBR_IL(ILContext context)
@@ -747,6 +755,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ReducePlayerDashDelay_IL_Hook = new(DashMovement, ReducePlayerDashDelay_IL);
                 ReducePlayerDashDelay_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ReducePlayerDashDelay_IL(ILContext context)
@@ -855,6 +864,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ReplaceAbyssWorldgen_Detour_Hook = new(PlaceAbyssMethod, ChangeAbyssGen);
                 ReplaceAbyssWorldgen_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeAbyssGen(Orig_Abyss_PlaceAbyss orig)
@@ -877,6 +887,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 GetRidOfDesertNuisances_IL_Hook = new(DesertScourgeItemUseItem, GetRidOfDesertNuisances_IL);
                 GetRidOfDesertNuisances_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void GetRidOfDesertNuisances_IL(ILContext context)
@@ -949,30 +960,35 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeAbyssRequirement_Detour_Hook = new(MeetsBaseAbyssRequirementMethod, ChangeAbyssRequirement);
                 ChangeAbyssRequirement_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (IsBiomeActive1Method != null)
             {
                 ChangeLayer1Requirement_Detour_Hook = new(IsBiomeActive1Method, ChangeLayer1Requirement);
                 ChangeLayer1Requirement_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (IsBiomeActive2Method != null)
             {
                 ChangeLayer2Requirement_Detour_Hook = new(IsBiomeActive2Method, ChangeLayer2Requirement);
                 ChangeLayer2Requirement_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (IsBiomeActive3Method != null)
             {
                 ChangeLayer3Requirement_Detour_Hook = new(IsBiomeActive3Method, ChangeLayer3Requirement);
                 ChangeLayer3Requirement_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (IsBiomeActive4Method != null)
             {
                 ChangeLayer4Requirement_Detour_Hook = new(IsBiomeActive4Method, ChangeLayer4Requirement);
                 ChangeLayer4Requirement_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
         public bool ChangeAbyssRequirement(Orig_AbyssLayer1Biome_MeetsBaseAbyssRequirement orig, Player player, out int playerYTileCoords)
         {
@@ -1129,6 +1145,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeBRSkyColor_IL_Hook = new(BRSkyColor, ChangeBRSkyColor_IL);
                 ChangeBRSkyColor_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeBRSkyColor_IL(ILContext context)
@@ -1156,6 +1173,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeBREyeTexture_IL_Hook = new(BRXerocEyeTexure, ChangeBREyeTexture_IL);
                 ChangeBREyeTexture_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void ChangeBREyeTexture_IL(ILContext context)
@@ -1218,18 +1236,21 @@ namespace InfernumMode.Core.ILEditingStuff
                 ChangeSCalSkyRequirements_Detour_Hook = new(SCalBackgroundSceneSpecialVisualsMethod, ChangeSCalSkyRequirements);
                 ChangeSCalSkyRequirements_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (CalamitasCloneBackgroundSceneSpecialVisualsMethod != null)
             {
                 ChangeCalCloneSkyRequirements_Detour_Hook = new(CalamitasCloneBackgroundSceneSpecialVisualsMethod, ChangeCalCloneSkyRequirements);
                 ChangeCalCloneSkyRequirements_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
 
             if (YharonBackgroundSceneSpecialVisualsMethod != null)
             {
                 ChangeSCalSkyRequirements_Detour_Hook = new(YharonBackgroundSceneSpecialVisualsMethod, ChangeYharonSkyRequirements);
                 ChangeYharonSkyRequirements_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
         private bool NoScreenShader(On_FilterManager.orig_CanCapture orig, FilterManager self)
         {
@@ -1276,6 +1297,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 AdjustASWaterPoisonTimers_IL_Hook = new(UpdateBadLifeRegen, AdjustASWaterPoisonTimers_IL);
                 AdjustASWaterPoisonTimers_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void AdjustASWaterPoisonTimers_IL(ILContext context)
@@ -1414,6 +1436,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 MakeEternityOP_IL_Hook = new(EternityHexAI, MakeEternityOP_IL);
                 MakeEternityOP_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void MakeEternityOP_IL(ILContext context)

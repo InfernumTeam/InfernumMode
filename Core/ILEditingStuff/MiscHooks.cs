@@ -36,6 +36,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 PermitOldDukeRain_IL_Hook = new(CalamityWorldPostUpdate, PermitOldDukeRain_IL);
                 PermitOldDukeRain_IL_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public static void PermitOldDukeRain_IL(ILContext context)
@@ -259,6 +260,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 DisableAbyssLayer1Poison_Detour_Hook = new(CalUpdateBadLifeRegenMethod, UpdateBadLifeRegen_Detour);
                 DisableAbyssLayer1Poison_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         public void UpdateBadLifeRegen_Detour(Orig_CalUpdateBadLifeRegenMethod orig, CalamityPlayer self)
@@ -286,6 +288,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 DisableAbyssEffectsDuringWyrm_Detour_Hook = new(CalAbyssEffectsMethod, AbyssEffects_Detour);
                 DisableAbyssEffectsDuringWyrm_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
 
         private void AbyssEffects_Detour(Orig_CalAbyssEffectsMethod orig, CalamityPlayer self)
@@ -337,6 +340,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 AvoidLabGardenIntersect_Detour_Hook = new(CalShouldAvoidLocation, CalShouldAvoidLocation_Detour);
                 AvoidLabGardenIntersect_Detour_Hook?.Apply();
             }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
         public static bool CalShouldAvoidLocation_Detour(Orig_CalShouldAvoidLocation orig, Point placementPoint, bool careAboutLava = true)
         {

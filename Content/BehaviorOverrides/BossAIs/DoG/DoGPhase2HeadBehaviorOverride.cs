@@ -242,8 +242,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGChargeGate>());
                 }
 
-                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DoGHead6", Color.Cyan);
-                DialogueDisplaySystem.StartDialogue("Mods.CalamityMod.DevourerOfGods.Head", npc, 5, 120, false, new BossText());
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DoGPhase3", Color.Cyan);
+                DialogueDisplaySystem.StartDialogue("Mods.CalamityMod.DevourerOfGods.Phases", npc, 3, 120, false, new BossText());
                 npc.netUpdate = true;
             }
 

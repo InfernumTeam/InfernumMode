@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             Projectile.timeLeft = 470;
             Projectile.penetrate = -1;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
@@ -27,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.penetrate = -1;
             Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

@@ -57,14 +57,14 @@ namespace InfernumMode.Content.WorldGeneration
                 }
 
             }
-            
+
             WorldSaveSystem.BlossomGardenCenter = placementPoint;
 
             bool _ = false;
             PlaceSchematic<Action<Chest>>("BlossomGarden", placementPoint, schematicAnchor, ref _, chest =>
             {
                 for (int i = 0; i < 11; i++)
-                {   
+                {
                     int chestItemIndex = WorldGen.genRand.Next(20);
                     int oldStack = chest.item[chestItemIndex].stack;
                     chest.item[chestItemIndex].SetDefaults(ItemID.OrangeTorch);

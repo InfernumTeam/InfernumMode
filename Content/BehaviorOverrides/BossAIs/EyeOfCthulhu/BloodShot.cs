@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

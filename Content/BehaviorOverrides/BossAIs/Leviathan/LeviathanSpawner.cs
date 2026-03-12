@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.timeLeft = 450;
-            
+
         }
 
         public override void AI()

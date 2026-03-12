@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Skies;
 using InfernumMode.Assets.Sounds;

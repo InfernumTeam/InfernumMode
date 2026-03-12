@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 360;
-            
+
         }
 
         public override void AI()

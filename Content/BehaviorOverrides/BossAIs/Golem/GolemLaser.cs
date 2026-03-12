@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
@@ -26,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Projectile.timeLeft = 240;
             Projectile.Opacity = 0f;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

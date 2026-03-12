@@ -7,7 +7,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
@@ -32,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             Projectile.ignoreWater = true;
             Projectile.hide = true;
             Projectile.timeLeft = 150;
-            
+
         }
 
         public override void AI()

@@ -165,7 +165,7 @@ namespace InfernumMode.Content.UI
                                 CalamityUtils.GetTextValue("BossChecklistIntegration.ProfanedGuardians.EntryName")
                             }
                         };
-                        
+
                         if (bossNameMap.TryGetValue(name, out string value))
                         {
                             name = value;

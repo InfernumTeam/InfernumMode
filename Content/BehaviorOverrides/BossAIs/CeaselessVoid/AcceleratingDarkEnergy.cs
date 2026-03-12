@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.timeLeft = 360;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

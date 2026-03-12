@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Projectile.tileCollide = false;
             Projectile.timeLeft = LaserLifetime;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

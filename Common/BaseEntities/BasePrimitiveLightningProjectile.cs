@@ -46,7 +46,7 @@ namespace InfernumMode.Common.BaseEntities
             Projectile.hostile = true;
             Projectile.extraUpdates = 20;
             Projectile.timeLeft = Projectile.extraUpdates * Lifetime;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

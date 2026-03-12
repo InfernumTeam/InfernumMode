@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using CalamityMod;
-using CalamityMod.Systems.Collections;
+﻿using CalamityMod.Systems.Collections;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using Terraria.ModLoader;
 

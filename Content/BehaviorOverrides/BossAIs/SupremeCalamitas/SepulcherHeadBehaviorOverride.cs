@@ -2,7 +2,6 @@
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

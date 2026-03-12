@@ -2,7 +2,6 @@
 using InfernumMode.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
@@ -25,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.timeLeft = 360;
             Projectile.penetrate = -1;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

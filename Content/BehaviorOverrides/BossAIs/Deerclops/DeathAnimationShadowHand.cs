@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
-            
+
         }
 
         public override void AI()

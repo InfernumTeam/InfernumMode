@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.timeLeft = 300;
             Projectile.MaxUpdates = 2;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

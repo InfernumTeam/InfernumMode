@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
@@ -20,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.timeLeft = 300;
             Projectile.Opacity = 0f;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

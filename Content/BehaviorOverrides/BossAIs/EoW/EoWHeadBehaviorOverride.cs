@@ -460,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public static void SelectNextAttack(NPC npc)
         {
-            
+
             float splitCounter = npc.ai[2];
 
             // Despawn if incorrect amount of heads are alive

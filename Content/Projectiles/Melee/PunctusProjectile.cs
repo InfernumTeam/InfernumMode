@@ -420,7 +420,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Only draw the trail if flying, and homing.
             if (CurrentMode is not UseMode.NormalThrow || CurrentState < UseState.Firing || !ShouldHome)
                 return;
-            
+
             AfterimageDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.

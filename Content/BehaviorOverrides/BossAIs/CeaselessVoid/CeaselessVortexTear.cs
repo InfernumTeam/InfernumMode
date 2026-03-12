@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.hostile = true;
             Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 3;
-            
+
         }
 
         public override void AI()

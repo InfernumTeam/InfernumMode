@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

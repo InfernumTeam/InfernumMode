@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Projectiles;
+﻿using CalamityMod.Projectiles;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;

@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 CalamityGlobalNPC.LeviAndAna = npc.whoAmI;
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.LeviathanFinalPhaseTip");
             }
-            
+
             Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 380f, -45f);
 
             // Do spawn animation stuff.

@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

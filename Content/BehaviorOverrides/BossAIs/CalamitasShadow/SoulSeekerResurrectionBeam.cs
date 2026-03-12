@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

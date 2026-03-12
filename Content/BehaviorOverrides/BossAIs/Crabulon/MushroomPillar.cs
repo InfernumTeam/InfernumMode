@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

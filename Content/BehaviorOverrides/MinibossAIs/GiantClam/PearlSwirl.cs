@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
@@ -24,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             Projectile.tileCollide = false;
             Projectile.timeLeft = 840;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

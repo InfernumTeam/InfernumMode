@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 180;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

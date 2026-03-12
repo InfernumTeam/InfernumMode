@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.tileCollide = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 210;
-            
+
         }
 
         public override void AI()

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -22,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override void AI()

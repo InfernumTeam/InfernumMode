@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

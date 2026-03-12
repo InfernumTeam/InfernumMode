@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -22,14 +20,13 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Core.Balancing
 {
     // This ought to be ported, but at this point I've had enough.
     public static class BalancingChangesManager
-    {       
+    {
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges;
 
         public const float AdrenalineChargeTimeFactor = 1.6f;

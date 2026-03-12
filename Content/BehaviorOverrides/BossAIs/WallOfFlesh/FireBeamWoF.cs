@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             Projectile.timeLeft = 120;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

@@ -9,7 +9,6 @@ using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
@@ -40,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.timeLeft = 9000;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

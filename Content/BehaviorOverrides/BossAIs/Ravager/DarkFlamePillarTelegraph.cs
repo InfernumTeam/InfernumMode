@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
@@ -23,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.hide = true;
-            
+
         }
 
         public override void AI()

@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             ref NPC leftFist = ref Main.npc[(int)LeftFistNPC];
             ref NPC rightFist = ref Main.npc[(int)RightFistNPC];
             ref Player target = ref Main.player[npc.target];
-            
+
             // Fix Miracle Blight crash
             freeHead.buffImmune[ModContent.BuffType<MiracleBlight>()] = true;
             attachedHead.buffImmune[ModContent.BuffType<MiracleBlight>()] = true;

@@ -5,7 +5,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
@@ -36,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.scale = 1f;
             Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(MaxRadius);

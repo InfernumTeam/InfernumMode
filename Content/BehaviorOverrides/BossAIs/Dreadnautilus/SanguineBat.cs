@@ -1,5 +1,4 @@
 ﻿using System;
-using CalamityMod;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             Projectile.timeLeft = 3600;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            
+
         }
 
         public override void AI()
@@ -54,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Prevent bats from bundling together.
             CommonProjectileAI.MinionAntiClump(Projectile, 0.7f);
-            
+
 
             // Determine rotation.
             Projectile.rotation = Math.Abs(Projectile.velocity.X * 0.04f);

@@ -1,8 +1,6 @@
 ﻿using System.Linq;
-using CalamityMod;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
-using CalamityMod.Items.Placeables;
 using CalamityMod.Items.Placeables.Abyss;
 using CalamityMod.Items.Placeables.Furniture;
 using CalamityMod.Items.Placeables.FurnitureAcidwood;

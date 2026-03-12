@@ -1,10 +1,8 @@
 ﻿using System;
 using CalamityMod;
 using CalamityMod.NPCs.DesertScourge;
-using InfernumMode.Assets.BossTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 

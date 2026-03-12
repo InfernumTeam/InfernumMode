@@ -1,8 +1,7 @@
 ﻿using System;
-using CalamityMod.Events;
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
-using CalamityMod.World;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ModLoader;

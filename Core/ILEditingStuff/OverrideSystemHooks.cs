@@ -1,4 +1,6 @@
-﻿using CalamityMod.NPCs;
+﻿using System.Linq;
+using System.Reflection;
+using CalamityMod.NPCs;
 using CalamityMod.UI;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
@@ -6,8 +8,6 @@ using Luminance.Core.Balancing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.RuntimeDetour;
-using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             Projectile.timeLeft = Lifetime;
             Projectile.netImportant = true;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

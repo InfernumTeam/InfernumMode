@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             Projectile.tileCollide = true;
             Projectile.timeLeft = 56;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

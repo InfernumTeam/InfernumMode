@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
@@ -42,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.timeLeft = 240;
             Projectile.alpha = 255;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

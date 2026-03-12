@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
             Projectile.timeLeft = PierceTime + FadeOutTime;
             Projectile.penetrate = -1;
             Projectile.MaxUpdates = 2;
-            
+
         }
 
         public override void AI()

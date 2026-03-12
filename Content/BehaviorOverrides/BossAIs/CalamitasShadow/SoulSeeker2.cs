@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

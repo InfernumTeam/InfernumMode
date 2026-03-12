@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

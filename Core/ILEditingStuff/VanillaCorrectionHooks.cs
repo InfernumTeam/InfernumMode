@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
@@ -35,9 +38,6 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using ReLogic.Content;
 using SubworldLibrary;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

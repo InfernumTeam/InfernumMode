@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
-using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs;
-using CalamityMod;
 using Microsoft.Xna.Framework;
-using Terraria.ID;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {

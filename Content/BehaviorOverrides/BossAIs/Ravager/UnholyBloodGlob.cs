@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

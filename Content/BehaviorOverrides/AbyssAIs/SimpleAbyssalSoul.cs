@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

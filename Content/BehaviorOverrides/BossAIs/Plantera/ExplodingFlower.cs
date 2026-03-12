@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.tileCollide = false;
             Projectile.timeLeft = 150;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

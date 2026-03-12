@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.tileCollide = false;
             Projectile.netImportant = true;
             Projectile.timeLeft = 7200;
-            
+
         }
 
         public override void AI()

@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            
+
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 

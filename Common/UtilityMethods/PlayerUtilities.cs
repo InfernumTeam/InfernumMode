@@ -1,12 +1,7 @@
 ﻿using CalamityMod;
-using CalamityMod.Cooldowns;
 using CalamityMod.Enums;
-using InfernumMode.Content.Cooldowns;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
-using Terraria.Localization;
 
 namespace InfernumMode
 {

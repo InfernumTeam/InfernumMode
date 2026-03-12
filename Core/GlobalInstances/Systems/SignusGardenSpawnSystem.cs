@@ -1,5 +1,4 @@
 ﻿using CalamityMod.CalPlayer;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
 using Terraria;

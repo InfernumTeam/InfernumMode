@@ -7,7 +7,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 
 namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 {
@@ -43,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override bool? CanDamage() => Time > TelegraphTotalTime;

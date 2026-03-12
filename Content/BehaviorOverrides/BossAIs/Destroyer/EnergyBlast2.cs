@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 240;
-            
+
         }
 
         public override void AI()

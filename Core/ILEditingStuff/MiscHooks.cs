@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.PrimordialWyrm;
@@ -13,9 +16,6 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameInput;

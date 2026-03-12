@@ -1,9 +1,5 @@
 ﻿using System;
-using CalamityMod;
-using CalamityMod.NPCs.TownNPCs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

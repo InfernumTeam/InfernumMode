@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) =>

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.BossBars;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.BossBags;
 using InfernumMode.Content.Items.LoreItems;
@@ -19,7 +16,6 @@ using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Content.Items.Weapons.Summoner;
 using InfernumMode.Content.Subworlds;
-using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -2030,7 +2026,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public override bool CheckActive() => false;
     }
 
-    public class BereftVassalBehaviorOverride : NPCBehaviorOverride{
+    public class BereftVassalBehaviorOverride : NPCBehaviorOverride
+    {
         public override int NPCOverrideType => ModContent.NPCType<BereftVassal>();
 
         public const float Phase2LifeRatio = 0.6f;

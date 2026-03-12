@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.Opacity = 0f;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 360;
-            
+
         }
 
         public override void AI()

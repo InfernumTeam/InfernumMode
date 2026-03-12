@@ -5,7 +5,6 @@ using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 using NuclearTerrorNPC = CalamityMod.NPCs.AcidRain.NuclearTerror;
 
@@ -28,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             Projectile.penetrate = -1;
             Projectile.timeLeft = 180;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);

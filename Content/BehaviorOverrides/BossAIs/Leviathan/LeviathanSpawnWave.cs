@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.penetrate = -1;
             Projectile.alpha = 255;
             Projectile.timeLeft = 360;
-            
+
         }
 
         public override void AI()

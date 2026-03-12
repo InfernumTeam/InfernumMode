@@ -4,7 +4,6 @@ using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
@@ -34,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

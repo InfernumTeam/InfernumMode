@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CalamityMod.NPCs.CalClone;
+﻿using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Skies;
 using Terraria;
@@ -11,7 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Tiles.Misc
-{   
+{
     // Ported 1:1 from Calamity source.
     public class ArenaTile : ModTile
     {

@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            
+
         }
 
         public override void AI()

@@ -8,7 +8,6 @@ using Terraria.IO;
 using Terraria.Localization;
 using Terraria.WorldBuilding;
 using static CalamityMod.Schematics.SchematicManager;
-using static tModPorter.ProgressUpdate;
 
 namespace InfernumMode.Content.WorldGeneration
 {

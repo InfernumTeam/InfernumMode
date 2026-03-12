@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
             Projectile.timeLeft = Lifetime;
             Projectile.netImportant = true;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

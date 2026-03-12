@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Dusts;
+﻿using CalamityMod.Dusts;
 using CalamityMod.Tiles;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;

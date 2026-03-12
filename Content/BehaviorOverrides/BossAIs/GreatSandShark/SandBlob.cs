@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.timeLeft = 360;
             Projectile.penetrate = -1;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

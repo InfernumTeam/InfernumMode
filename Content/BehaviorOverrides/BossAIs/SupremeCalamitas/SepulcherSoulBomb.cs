@@ -3,7 +3,6 @@ using System.IO;
 using CalamityMod;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using Luminance.Core.Graphics;

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
@@ -17,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 420;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

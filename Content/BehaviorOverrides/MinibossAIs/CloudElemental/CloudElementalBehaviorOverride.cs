@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using CalamityMod.Buffs.Summon;
-using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.OverridingSystem;

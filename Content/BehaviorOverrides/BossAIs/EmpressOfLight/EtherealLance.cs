@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

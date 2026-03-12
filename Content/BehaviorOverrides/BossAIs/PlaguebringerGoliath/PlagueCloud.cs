@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
@@ -18,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 90;
-            
+
         }
 
         public override void AI()

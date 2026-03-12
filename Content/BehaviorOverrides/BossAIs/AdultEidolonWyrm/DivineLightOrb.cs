@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.tileCollide = false;
             Projectile.timeLeft = 9000;
             Projectile.scale = 0.2f;
-            
+
         }
 
         public override void AI()

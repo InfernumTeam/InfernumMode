@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
-            
+
         }
 
         public override void AI()

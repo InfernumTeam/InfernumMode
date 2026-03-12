@@ -7,7 +7,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -40,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
             Projectile.MaxUpdates = 2;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

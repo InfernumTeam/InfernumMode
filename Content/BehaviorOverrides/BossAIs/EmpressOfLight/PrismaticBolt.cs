@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.timeLeft = 230;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            
+
         }
 
         public override void AI()

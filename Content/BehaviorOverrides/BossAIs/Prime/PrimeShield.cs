@@ -2,7 +2,6 @@
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
@@ -37,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Projectile.hostile = true;
             Projectile.timeLeft = Lifetime;
             Projectile.scale = 0.001f;
-            
+
         }
 
         public override void AI()

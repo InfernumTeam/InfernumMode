@@ -4,7 +4,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
@@ -28,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.tileCollide = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 9000;
-            
+
         }
 
         public override void AI()

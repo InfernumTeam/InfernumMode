@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
@@ -25,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 600;
-            
+
         }
 
         public override void AI()

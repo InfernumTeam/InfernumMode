@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.timeLeft = 60;
             Projectile.Opacity = 0f;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

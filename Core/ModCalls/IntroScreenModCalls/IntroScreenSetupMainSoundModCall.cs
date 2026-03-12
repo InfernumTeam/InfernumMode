@@ -9,10 +9,10 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
     public class IntroScreenSetupMainSoundModCall : ModCall
     {
         public override IEnumerable<string> GetCallCommands()
-		{
-			yield return "IntroScreenSetupMainSound";
-			yield return "SetupMainSound";
-		}
+        {
+            yield return "IntroScreenSetupMainSound";
+            yield return "SetupMainSound";
+        }
 
         public override IEnumerable<Type> GetInputTypes()
         {

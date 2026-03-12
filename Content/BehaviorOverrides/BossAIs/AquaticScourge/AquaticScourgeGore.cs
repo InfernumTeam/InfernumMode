@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.timeLeft = 240;
             Projectile.Opacity = 0f;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

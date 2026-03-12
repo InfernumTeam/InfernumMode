@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

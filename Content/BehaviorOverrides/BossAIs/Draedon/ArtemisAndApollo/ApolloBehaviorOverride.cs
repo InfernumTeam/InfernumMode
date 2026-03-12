@@ -11,7 +11,6 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode;

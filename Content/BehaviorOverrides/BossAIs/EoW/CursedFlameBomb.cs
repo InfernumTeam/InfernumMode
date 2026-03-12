@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Projectile.penetrate = -1;
             Projectile.timeLeft = 150;
             Projectile.Opacity = 0f;
-            
+
         }
 
         public override void AI()

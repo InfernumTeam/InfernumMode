@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
@@ -34,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Projectile.tileCollide = false;
             Projectile.timeLeft = (int)Lifetime;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

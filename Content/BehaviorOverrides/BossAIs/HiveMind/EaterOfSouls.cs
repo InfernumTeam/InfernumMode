@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI() => Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;

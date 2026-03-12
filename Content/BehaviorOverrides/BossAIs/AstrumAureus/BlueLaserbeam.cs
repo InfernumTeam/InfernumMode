@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
@@ -43,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.tileCollide = false;
             Projectile.timeLeft = (int)Lifetime;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

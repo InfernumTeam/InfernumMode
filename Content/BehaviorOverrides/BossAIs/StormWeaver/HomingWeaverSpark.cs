@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.hostile = true;
             Projectile.timeLeft = 300;
             Projectile.Opacity = 0f;
-            
+
         }
 
         public override void AI()

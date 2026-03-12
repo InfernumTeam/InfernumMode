@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 270;
-            
+
         }
 
         public override void AI()

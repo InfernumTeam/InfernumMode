@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.alpha = 100;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 420;
-            
+
         }
 
         public override void AI()

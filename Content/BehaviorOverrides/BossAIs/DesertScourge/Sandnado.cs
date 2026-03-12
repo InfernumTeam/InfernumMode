@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Projectile.penetrate = -1;
             Projectile.timeLeft = 480;
             Projectile.ignoreWater = true;
-            
+
         }
 
         public override void AI()

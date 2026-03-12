@@ -7,7 +7,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
@@ -44,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.MaxUpdates = 2;
-            
+
         }
 
         public override void AI()

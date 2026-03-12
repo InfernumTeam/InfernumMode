@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.tileCollide = false;
             Projectile.timeLeft = 360;
             Projectile.alpha = 255;
-            
+
         }
 
         public override void AI()

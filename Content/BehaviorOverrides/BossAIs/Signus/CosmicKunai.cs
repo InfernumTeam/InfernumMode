@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
@@ -28,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.timeLeft = 240;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

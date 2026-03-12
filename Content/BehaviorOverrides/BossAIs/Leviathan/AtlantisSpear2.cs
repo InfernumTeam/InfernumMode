@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             AIType = ProjectileID.CrystalVileShardShaft;
-            
+
         }
 
         public override void AI()

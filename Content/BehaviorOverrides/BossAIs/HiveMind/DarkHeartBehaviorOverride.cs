@@ -1,21 +1,11 @@
 ﻿using System;
-using CalamityMod;
-using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
-using CalamityMod.NPCs.Providence;
-using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
-using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 

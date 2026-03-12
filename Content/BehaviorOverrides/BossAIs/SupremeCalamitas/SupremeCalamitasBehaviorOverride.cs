@@ -4,14 +4,12 @@ using System.Linq;
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.Graphics.Metaballs;
 using CalamityMod.Items.Mounts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Systems.Mechanic;
-using CalamityMod.Tiles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Fluids;
@@ -302,7 +300,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Handle initializations.
             if (npc.localAI[0] == 0f)
-            {   
+            {
 
                 // Define the arena. This is finely picked to be the same as in death mode.
                 Vector2 arenaArea = new(125f, 125f);
@@ -315,25 +313,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 int width = npc.Infernum().Arena.Width / 2 / 16 + 1;
                 int height = npc.Infernum().Arena.Height / 2 / 16 + 1;
                 for (int x = arenaCenter.X - width; x <= arenaCenter.X + width; x++)
-            {
-                    for (int y = arenaCenter.Y - height; y <= arenaCenter.Y + height; y++)
                 {
+                    for (int y = arenaCenter.Y - height; y <= arenaCenter.Y + height; y++)
+                    {
                         if (!WorldGen.InWorld(x, y, 2))
                             continue;
 
                         if ((x == arenaCenter.X - width || x == arenaCenter.X + width || y == arenaCenter.Y - height || y == arenaCenter.Y + height) && !Main.tile[x, y].HasTile)
-                {
+                        {
                             Main.tile[x, y].TileType = arenaTileType;
                             Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
-                }
+                        }
                         if (Main.netMode == NetmodeID.Server)
-            {
+                        {
                             NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
-            }
+                        }
                         else
-                    {
+                        {
                             WorldGen.SquareTileFrame(x, y, true);
-                    }
+                        }
                     }
                 }
 

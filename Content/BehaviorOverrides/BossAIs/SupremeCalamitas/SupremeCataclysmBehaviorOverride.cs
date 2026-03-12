@@ -1,9 +1,7 @@
 ﻿using System;
 using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             Projectile.timeLeft = 270;
             Projectile.penetrate = -1;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

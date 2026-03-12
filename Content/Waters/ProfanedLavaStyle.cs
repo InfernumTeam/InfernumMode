@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Systems;
-using CalamityMod.Waters;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Terraria;

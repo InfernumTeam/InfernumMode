@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.penetrate = -1;
             Projectile.timeLeft = 180;
             Projectile.scale = 0.01f;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.rotation);

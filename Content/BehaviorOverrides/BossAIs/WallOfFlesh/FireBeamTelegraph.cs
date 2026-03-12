@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 85;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

@@ -4,7 +4,6 @@ using System.Linq;
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
-using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Sounds;

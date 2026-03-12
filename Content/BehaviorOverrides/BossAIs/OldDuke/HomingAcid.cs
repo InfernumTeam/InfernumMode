@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 135;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 360;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

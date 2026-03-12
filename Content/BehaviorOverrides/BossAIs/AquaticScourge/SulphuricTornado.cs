@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override void AI()

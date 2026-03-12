@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
@@ -21,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.timeLeft = 360;
             Projectile.Opacity = 0f;
             Projectile.hide = true;
-            
+
         }
 
         public override void AI()

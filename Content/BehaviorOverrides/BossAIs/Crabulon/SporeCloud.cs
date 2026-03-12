@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Luminance.Core.MenuInfoUI;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.MenuInfoUI;
 
 namespace InfernumMode.Content.UI
 {

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 960;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+
         }
 
         public override void AI()

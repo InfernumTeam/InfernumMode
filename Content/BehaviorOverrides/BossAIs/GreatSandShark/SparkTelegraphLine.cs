@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
@@ -22,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 900;
-            
+
         }
 
         public override void AI()

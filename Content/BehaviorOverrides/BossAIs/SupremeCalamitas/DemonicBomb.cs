@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using CalamityMod;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

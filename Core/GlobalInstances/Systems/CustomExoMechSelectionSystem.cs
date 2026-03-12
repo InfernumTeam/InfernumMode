@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Reflection;
+using CalamityMod;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.UI.DraedonSummoning;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
@@ -7,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;

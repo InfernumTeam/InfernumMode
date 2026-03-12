@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.CalPlayer;
+﻿using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;

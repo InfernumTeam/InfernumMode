@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
@@ -22,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 45;
-            
+
         }
 
         public override void AI()

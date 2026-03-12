@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
             AIType = ProjectileID.CrystalVileShardHead;
-            
+
         }
 
         public override void AI()

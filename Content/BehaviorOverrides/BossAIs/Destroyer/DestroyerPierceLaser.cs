@@ -4,7 +4,6 @@ using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
@@ -37,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.hide = true;
             Projectile.MaxUpdates = 3;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

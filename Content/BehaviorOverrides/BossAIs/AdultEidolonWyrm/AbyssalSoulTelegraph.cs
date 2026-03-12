@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

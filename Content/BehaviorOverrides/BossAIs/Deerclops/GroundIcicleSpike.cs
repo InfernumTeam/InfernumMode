@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
-            
+
         }
 
         public override void AI()

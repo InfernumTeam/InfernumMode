@@ -3,7 +3,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
@@ -30,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
             Projectile.Opacity = 0f;
-            
+
         }
 
         public override void AI()

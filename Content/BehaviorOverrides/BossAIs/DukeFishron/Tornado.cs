@@ -9,7 +9,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
@@ -35,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             Projectile.alpha = 255;
             Projectile.timeLeft = 480;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

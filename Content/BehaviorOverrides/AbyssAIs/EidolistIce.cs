@@ -1,5 +1,4 @@
-﻿using CalamityMod.NPCs;
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

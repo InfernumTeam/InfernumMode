@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.tileCollide = false;
             Projectile.extraUpdates = 5;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

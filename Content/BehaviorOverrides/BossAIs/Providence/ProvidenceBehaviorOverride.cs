@@ -227,8 +227,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static int MagicLaserbeamDamage => IsEnraged ? 600 : 325;
 
-        public static bool IsEnraged => 
-            (CalamityGlobalNPC.holyBoss != -1 && Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[WasSummonedAtNightFlagIndex] == 1f) 
+        public static bool IsEnraged =>
+            (CalamityGlobalNPC.holyBoss != -1 && Main.npc[CalamityGlobalNPC.holyBoss].Infernum().ExtraAI[WasSummonedAtNightFlagIndex] == 1f)
             || BossRushEvent.BossRushActive;
 
         public static bool SyncAttacksWithMusic => false;//Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;

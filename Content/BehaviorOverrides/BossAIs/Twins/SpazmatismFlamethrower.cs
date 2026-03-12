@@ -2,7 +2,6 @@
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
@@ -29,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.penetrate = -3;
             Projectile.MaxUpdates = 10;
             Projectile.timeLeft = Lifetime;
-            
+
         }
 
         public override void AI()

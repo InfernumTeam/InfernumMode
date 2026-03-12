@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
             Projectile.scale = 0.01f;
-            
+
         }
 
         public override void AI()

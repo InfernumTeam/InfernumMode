@@ -4,7 +4,6 @@ using InfernumMode.Assets.ExtraTextures;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
@@ -35,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
-            
+
         }
 
         public override void AI()

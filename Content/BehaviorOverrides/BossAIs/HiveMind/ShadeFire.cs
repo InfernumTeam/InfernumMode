@@ -2,7 +2,6 @@
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
@@ -26,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             Projectile.timeLeft = Lifetime;
             Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

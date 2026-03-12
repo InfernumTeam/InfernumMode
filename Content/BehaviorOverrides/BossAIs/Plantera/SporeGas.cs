@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer)

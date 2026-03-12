@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             Projectile.netImportant = true;
             Projectile.timeLeft = 900;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(SpinOffsetAngle);

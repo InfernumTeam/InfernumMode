@@ -7,9 +7,9 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
     internal class GetInfernumActiveModCall : ModCall
     {
         public override IEnumerable<string> GetCallCommands()
-		{
-			yield return "GetInfernumActive";
-		}
+        {
+            yield return "GetInfernumActive";
+        }
 
         public override IEnumerable<Type> GetInputTypes()
         {

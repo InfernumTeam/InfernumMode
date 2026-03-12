@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 120;
             Projectile.penetrate = -1;
-            
+
         }
 
         public override void AI()

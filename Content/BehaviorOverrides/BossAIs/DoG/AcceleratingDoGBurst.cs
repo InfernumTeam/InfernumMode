@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            
+
         }
 
         public override void AI()

@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+
         }
 
         public override void AI()

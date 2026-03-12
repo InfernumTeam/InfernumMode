@@ -1,5 +1,5 @@
-﻿using CalamityMod.Items.Tools.ClimateChange;
-using CalamityMod;
+﻿using CalamityMod;
+using CalamityMod.Items.Tools.ClimateChange;
 using Microsoft.Xna.Framework;
 using Terraria;
 

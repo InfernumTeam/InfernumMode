@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
@@ -9,7 +8,6 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
-using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
@@ -193,7 +191,7 @@ namespace InfernumMode.Core.GlobalInstances
             npc.buffImmune[ModContent.BuffType<PearlAura>()] = true;
             npc.buffImmune[ModContent.BuffType<TrueVulnerabilityHex>()] = true;*/
 
-            return result;  
+            return result;
         }
 
         public override void OnKill(NPC npc)

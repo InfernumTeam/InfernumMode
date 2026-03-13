@@ -137,7 +137,8 @@ namespace InfernumMode.Core.CrossCompatibility
         {
             try
             {
-                Mod calamity = ModLoader.GetMod("CalamityMod");
+                if (!ModLoader.TryGetMod("CalamityMod", out Mod calamity))
+                    Mod.Logger.Warn("Could not get CalamityMod");
                 Type? calWeakRefSupportType = calamity.Code?.GetType("CalamityMod.WeakReferenceSupport");
 
                 //Calamity makes this really easy on us as they store all their boss checklist keys in a dictionary, then assigns the keys of the bosses from the dictionary value.
@@ -153,7 +154,7 @@ namespace InfernumMode.Core.CrossCompatibility
                 // Apply the changes to the dictionary for whatever cal bosses / mini bosses we want.
                 if (dict.ContainsKey("GreatSandShark"))
                 {
-                    dict["GreatSandShark"] = 17.7f; // right before Bereft Vassal, but still before Moon Lord. Note that this will not prevent it from being marked as defeated if killed during the Bereft Vassal fight and player dies afterwards before defeating Vassal.
+                    dict["GreatSandShark"] = BossChecklistValues["BereftVassal"] - 0.05f; // right before Bereft Vassal, but still before Moon Lord. Note that this will not prevent it from being marked as defeated if killed during the Bereft Vassal fight and player dies afterwards before defeating Vassal.
                     Mod.Logger.Info("Set Calamity GreatSandShark BossChecklist progression value to 17.7f."); //log that we changed the value so we know it works
                 }
                 else

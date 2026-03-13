@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.GreatSandShark;
@@ -50,6 +51,12 @@ namespace InfernumMode.Core.CrossCompatibility
             // After Yharon
             {"PrimordialWyrm", 22.5f }
         };
+
+        public override void Load()
+        {
+            AdjustCalamityEntries();
+        }
+
         public override void PostSetupContent()
         {
             // Stop here if Boss Checklist is not enabled.
@@ -124,6 +131,41 @@ namespace InfernumMode.Core.CrossCompatibility
                     { "overrideHeadTextures", $"{Mod.Name}/Assets/BossTextures/PrimordialWyrm/PrimordialWyrmHead_Head_Boss" }
                 }
             );
+        }
+
+        private void AdjustCalamityEntries()
+        {
+            try
+            {
+                if (!ModLoader.TryGetMod("CalamityMod", out Mod calamity))
+                    Mod.Logger.Warn("Could not get CalamityMod");
+                Type? calWeakRefSupportType = calamity.Code?.GetType("CalamityMod.WeakReferenceSupport");
+
+                //Calamity makes this really easy on us as they store all their boss checklist keys in a dictionary, then assigns the keys of the bosses from the dictionary value.
+                FieldInfo? bossCheckListDictField = calWeakRefSupportType?.GetField("BossChecklistProgressionValues", BindingFlags.NonPublic | BindingFlags.Static);
+
+                //Just a quick check to make sure we actually got the field, and if not log a warning and return to avoid crashing.
+                if (bossCheckListDictField?.GetValue(null) is not Dictionary<string, float> dict)
+                {
+                    Mod.Logger.Warn("BossChecklistProgressionValues is null or of unexpected type.");
+                    return;
+                }
+
+                // Apply the changes to the dictionary for whatever cal bosses / mini bosses we want.
+                if (dict.ContainsKey("GreatSandShark"))
+                {
+                    dict["GreatSandShark"] = BossChecklistValues["BereftVassal"] - 0.05f; // right before Bereft Vassal, but still before Moon Lord. Note that this will not prevent it from being marked as defeated if killed during the Bereft Vassal fight and player dies afterwards before defeating Vassal.
+                    Mod.Logger.Info("Set Calamity GreatSandShark BossChecklist progression value to 17.7f."); //log that we changed the value so we know it works
+                }
+                else
+                {
+                    Mod.Logger.Warn("GreatSandShark key not found in BossChecklistProgressionValues."); //log that we didn't change this value, indicating that Calamity may have updated and changed the key or removed it, so we know to check if this needs to be updated.
+                }
+            }
+            catch (Exception ex)
+            {
+                Mod.Logger.Warn($"Failed to adjust Calamity Boss Checklist entries: {ex}");
+            }
         }
 
         public override void Unload()

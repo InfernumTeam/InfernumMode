@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -303,7 +303,7 @@ Mods: {
 
 				FlashbangOverlays: {
 					Label: Screen Overlays
-					Tooltip: Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.
+					Tooltip: Enables screen ove rlay 'flashbang' effects. This will not directly affect gameplay mechanics.
 				}
 
 				CreditsRecordings: {
@@ -318,7 +318,7 @@ Mods: {
 
 				CustomAbyssGeneration: {
 					Label: Custom Abyss Generation
-					Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
+					Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation.
 				}
 			}
 		}
@@ -2544,6 +2544,7 @@ Mods: {
 		}
 
 		UI: {
+			MenuStyle: Infernum Style
 			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
 			AchievementsHeader: Death Wishes
 			AchievementsLabelText: Next

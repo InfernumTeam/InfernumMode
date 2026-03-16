@@ -11,6 +11,7 @@ using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.MainMenu
@@ -29,7 +30,7 @@ namespace InfernumMode.Content.MainMenu
 
         public const int FlashTime = 35;
 
-        public override string DisplayName => "Infernum Style";
+        public override string DisplayName => Language.GetTextValue("Mods.InfernumMode.UI.MenuStyle");
 
         public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<NullSurfaceBackground>();
 

@@ -2539,6 +2539,7 @@ Mods: {
 		}
 
 		UI: {
+			// MenuStyle: Infernum Style
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个

@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -191,7 +191,7 @@ Mods: {
 			ProfanedTempleBiome: {
 				DisplayName: Осквернённый храм
 				TownNPCDialogueName: биом осквернённого храма
-				// DeathByThousandCrystals: "{0} was somehow impaled by a pillar of crystals"
+				DeathByThousandCrystals: Игрока {0} каким-то образом пронзило башней из кристаллов
 			}
 		}
 
@@ -317,8 +317,8 @@ Mods: {
 				}
 
 				CustomAbyssGeneration: {
-					// Label: Custom Abyss Generation
-					// Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
+					Label: Изменённая бездна
+					Tooltip: Имеет эффект только при генерации мира, включает переработанную генерацию бездны мода Infernum.
 				}
 			}
 		}
@@ -573,7 +573,7 @@ Mods: {
 				'''
 			ProfanedGuardiansIntroScreen.TextToDisplay:
 				'''
-				Последователи Очищения
+				Последовательницы Очищения
 				Осквернённые Стражи
 				'''
 			ProfanedTempleIntroScreen.TextToDisplay:
@@ -700,7 +700,7 @@ Mods: {
 
 			ProfanedCore: {
 				SummoningText: Призывает Провиденс при использовании на алтаре в осквернённом храме в правом конце преисподней
-				// EnrageText: Enrages when summoned during nighttime
+				EnrageText: Разъяряется при призыве ночью
 			}
 
 			ProfanedShard: {
@@ -2556,6 +2556,7 @@ Mods: {
 		}
 
 		UI: {
+			MenuStyle: Стиль Infernum
 			NotExpertWarning: "[c/ff00000:РЕЖИМ ИНФЕРНУМ ДОСТУПЕН ТОЛЬКО В РЕЖИМЕ ЭКСПЕРТА]"
 			AchievementsHeader: Желания смерти
 			AchievementsLabelText: Следующее

@@ -303,7 +303,7 @@
 
 				FlashbangOverlays: {
 					Label: Screen Overlays
-					Tooltip: Enables screen ove rlay 'flashbang' effects. This will not directly affect gameplay mechanics.
+					Tooltip: Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.
 				}
 
 				CreditsRecordings: {

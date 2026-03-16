@@ -318,7 +318,7 @@ Mods: {
 
 				CustomAbyssGeneration: {
 					// Label: Custom Abyss Generation
-					// Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation
+					// Tooltip: Effective only during world generation, enables the Infernum Abyss reworked generation.
 				}
 			}
 		}

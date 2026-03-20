@@ -1,4 +1,4 @@
-﻿Mods: {
+Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -2526,6 +2526,7 @@
 			DraedonDefeat10: In the meantime, I bid you farewell, and good luck in your future endeavors.
 			SCalCongratulations: ... Congratulations.
 			MultiplayerWarning: InfernumMode: Multiplayer is NOT supported, expect things to break and the mod not be fully playable. Do not report MP bugs.
+			Nurse: I cannot help you. Good luck.
 
 			Death: {
 				RedElectrified: "{0} could not withstand the red lightning."

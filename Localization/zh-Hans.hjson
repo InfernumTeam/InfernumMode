@@ -2521,6 +2521,7 @@ Mods: {
 			DraedonDefeat10: 至此，我向你道别，祝你的未来一路顺风。
 			SCalCongratulations: ……恭喜你。
 			MultiplayerWarning: 炼狱模式：不支持多人模式，根据预期，某些东西可能会损坏，并且mod不能完全运行。不要去上报多人bug。
+			// Nurse: I cannot help you. Good luck.
 
 			Death: {
 				RedElectrified: "{0}无法承受住红色闪电的洗礼。"

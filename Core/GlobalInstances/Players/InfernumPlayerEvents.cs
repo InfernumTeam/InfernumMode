@@ -1,6 +1,7 @@
 ﻿using CalamityMod.CalPlayer;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -263,7 +264,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             if (InfernumMode.CanUseCustomAIs && CalamityPlayer.areThereAnyDamnBosses)
             {
-                chatText = "I cannot help you. Good luck.";
+                chatText = Language.GetTextValue("Mods.InfernumMode.Status.Nurse");
                 return false;
             }
             return true;

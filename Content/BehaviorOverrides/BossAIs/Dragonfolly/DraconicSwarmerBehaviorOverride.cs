@@ -77,17 +77,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             // Repel from other swarmers.
             if (attackState is 0f or 1f)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (i == npc.whoAmI || !Main.npc[i].active || Main.npc[i].type != npc.type)
+                    if (n.whoAmI == npc.whoAmI || n.type != npc.type)
                         continue;
 
-                    if (Main.npc[i].WithinRange(npc.Center, npc.width + npc.height))
+                    if (n.WithinRange(npc.Center, npc.width + npc.height))
                     {
-                        Vector2 repelVelocity = npc.SafeDirectionTo(Main.npc[i].Center) * -0.1f;
+                        Vector2 repelVelocity = npc.SafeDirectionTo(n.Center) * -0.1f;
 
                         npc.velocity += repelVelocity;
-                        Main.npc[i].velocity -= repelVelocity;
+                        n.velocity -= repelVelocity;
                     }
                 }
             }
@@ -305,8 +305,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         #region Frames and Drawcode
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             if (!NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Bumblebirb.Dragonfolly>()))
                 return true;
 

@@ -166,11 +166,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     continue;
 
                 bool farFromOtherLimbs = false;
-                for (int j = 0; j < Main.maxNPCs; j++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[j].type != NPC.type || !Main.npc[j].active || j == NPC.whoAmI)
+                    if (n.type != NPC.type || n.whoAmI == NPC.whoAmI)
                         continue;
-                    if (!Main.npc[j].WithinRange(endPosition, 650f) || Main.npc[j].WithinRange(endPosition, 140f))
+                    if (!n.WithinRange(endPosition, 650f) || n.WithinRange(endPosition, 140f))
                     {
                         farFromOtherLimbs = true;
                         break;

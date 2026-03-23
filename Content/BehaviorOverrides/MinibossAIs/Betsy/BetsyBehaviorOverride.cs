@@ -383,8 +383,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             npc.frame.Y = (int)Math.Round(npc.localAI[0]) * frameHeight;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             Texture2D wingsTexture = TextureAssets.Extra[ExtrasID.DD2BetsyWingFront].Value;
             Texture2D armsTexture = TextureAssets.Extra[ExtrasID.DD2BetsyWingBack].Value;

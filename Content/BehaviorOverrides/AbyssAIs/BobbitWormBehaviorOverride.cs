@@ -315,8 +315,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.frame.Y = (int)npc.Infernum().ExtraAI[3] * frameHeight;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Draw segments.
             DrawSegments(npc);
 

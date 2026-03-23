@@ -7,6 +7,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -999,6 +1000,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         #endregion AI and Behaviors
 
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<QueenSlimeRelic>());
+        }
+
+        #endregion Death Effects
+
         #region Drawing and Frames
         public static Vector2 CrownPosition(NPC npc)
         {
@@ -1057,8 +1067,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             return crownPosition;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
 
             int frame = npc.frame.Y / npc.frame.Height;

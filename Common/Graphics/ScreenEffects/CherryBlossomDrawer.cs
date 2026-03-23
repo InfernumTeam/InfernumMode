@@ -66,12 +66,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             // Find all petals.
             int petalID = ModContent.ProjectileType<CherryBlossomPetal>();
             List<Projectile> petals = [];
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                Projectile p = Main.projectile[i];
-
                 // Don't draw projectiles that aren't petals, are dead, or don't belong to the current client (aka don't draw someone else's petals and have them clutter the screen).
-                if (p.type != petalID || !p.active || p.owner != Main.myPlayer)
+                if (p.type != petalID || p.owner != Main.myPlayer)
                     continue;
 
                 petals.Add(p);

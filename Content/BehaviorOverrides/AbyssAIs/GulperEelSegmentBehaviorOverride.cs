@@ -73,8 +73,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override bool PreAI(NPC npc) => DoSegmentingAI(npc);
 
         // Drawing is handled by the head.
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.Opacity = 0f;
             return false;
         }
@@ -87,8 +89,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override bool PreAI(NPC npc) => GulperEelBody1BehaviorOverride.DoSegmentingAI(npc);
 
         // Drawing is handled by the head.
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.Opacity = 0f;
             return false;
         }
@@ -101,8 +105,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override bool PreAI(NPC npc) => GulperEelBody1BehaviorOverride.DoSegmentingAI(npc);
 
         // Drawing is handled by the head.
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.Opacity = 0f;
             return false;
         }

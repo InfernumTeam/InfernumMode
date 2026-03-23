@@ -863,10 +863,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
         {
             // Kill all enemies.
             List<int> enemyTypes = AcidRainEvent.PossibleEnemiesPolter.Select(e => e.Key).ToList();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (!n.active || !enemyTypes.Contains(n.type))
+                if (!enemyTypes.Contains(n.type))
                     continue;
 
                 n.life = 0;
@@ -983,8 +982,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

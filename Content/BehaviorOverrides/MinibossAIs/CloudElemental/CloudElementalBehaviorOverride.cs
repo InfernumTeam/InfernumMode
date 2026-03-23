@@ -295,8 +295,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture;
             if ((AttackTypes)npc.ai[1] == AttackTypes.LightningShotgun)
                 texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/NormalNPCs/CloudElementalAttack").Value;

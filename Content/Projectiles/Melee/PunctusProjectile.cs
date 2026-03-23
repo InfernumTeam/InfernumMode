@@ -303,9 +303,9 @@ namespace InfernumMode.Content.Projectiles.Melee
             if (Main.myPlayer == Owner.whoAmI)
             {
                 int numberOfExistingRocks = 0;
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (!Main.projectile[i].active || Main.projectile[i].owner != Owner.whoAmI || Main.projectile[i].type != ModContent.ProjectileType<PunctusRock>() || Main.projectile[i].ModProjectile is not PunctusRock rock)
+                    if (p.owner != Owner.whoAmI || p.type != ModContent.ProjectileType<PunctusRock>() || p.ModProjectile is not PunctusRock rock)
                         continue;
 
                     if (rock.CurrentState is State.Circling or State.Aiming)

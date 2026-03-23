@@ -245,18 +245,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             get
             {
-                if (GlobalNPCOverrides.Yharon == -1 || !Main.npc[GlobalNPCOverrides.Yharon].active)
+                int index = CalamityGlobalNPC.yharonP2;
+                if (index == -1 || !Main.npc[index].active)
                     return false;
 
-                NPC yharon = Main.npc[GlobalNPCOverrides.Yharon];
-                return yharon.Infernum().ExtraAI[HasEnteredPhase2Index] == 1f && yharon.ai[0] != (int)YharonAttackType.EnterSecondPhase;
+                NPC yharon = Main.npc[index];
+                return yharon.ai[0] != (int)YharonAttackType.EnterSecondPhase;
             }
             set
             {
-                if (GlobalNPCOverrides.Yharon == -1 || !Main.npc[GlobalNPCOverrides.Yharon].active)
+                int index = CalamityGlobalNPC.yharon;
+                if (index == -1 || !Main.npc[index].active)
                     return;
 
-                Main.npc[GlobalNPCOverrides.Yharon].Infernum().ExtraAI[HasEnteredPhase2Index] = value.ToInt();
+                CalamityGlobalNPC.yharonP2 = value ? index : -1;
             }
         }
 
@@ -369,16 +371,62 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public override void Load()
         {
             GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconDuringDesperation;
-            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalYharonDeath;
-            GlobalNPCOverrides.OnKillEvent += DisplayAEWNotificationText;
+            //GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalYharonDeath;
         }
 
-        private void DisplayAEWNotificationText(NPC npc)
+        // DisplayAEWNotificationText
+        public override bool CheckDead(NPC npc)
         {
-            if (DownedBossSystem.downedYharon || npc.type != ModContent.NPCType<YharonBoss>())
-                return;
+            bool value = base.CheckDead(npc);
+            var attackType = (YharonAttackType)npc.ai[0];
+            if (attackType is YharonAttackType.EnterSecondPhase or YharonAttackType.FinalDyingRoar)
+            {// Skip everything if it's being butchered
+                return true;
+            }
+            if (!InSecondPhase || (InSecondPhase && attackType != YharonAttackType.FinalDyingRoar))
+            {// Go to phase 2 if close to death.
+             // Set Yharon's private phase 2 flag that base Calamity uses.
+             // This is necessary to ensure that the special phase 2 name is used.
+                typeof(YharonBoss).GetField("startSecondAI", Utilities.UniversalBindingFlags)?.SetValue(npc.ModNPC, true);
 
-            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.PostYharonWyrmHint", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
+                // Use the awesome vocals music.
+                CalamityGlobalNPC.yharonP2 = npc.whoAmI;
+
+                npc.Infernum().ExtraAI[HasEnteredPhase2Index] = 1f;
+
+                // Enter the second phase animation state.
+                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
+                SelectNextAttack(npc, ref npc.ai[0]);
+                npc.ai[0] = (int)YharonAttackType.EnterSecondPhase;
+
+                // Spawn a lot of cool sparkles.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 180; i++)
+                    {
+                        Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(240f, 240f);
+                        Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(28f, 28f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
+                    }
+                }
+
+                // Activate the invincibility countdown.
+                npc.Infernum().ExtraAI[InvincibilityTimerIndex] = Phase2InvincibilityTime;
+
+                // Say the phase2 joke entry tip.
+                if (npc.HasPlayerTarget)
+                {
+                    Player owner = Main.player[npc.target];
+                    string key = "Mods.InfernumMode.PetDialog.YharonPreHealTip";
+                    HatGirl.SayThingWhileOwnerIsAlive(owner, key);
+                }
+                return false;
+            }
+            if (!DownedBossSystem.downedYharon)
+            {
+                string key = "Mods.InfernumMode.Status.PostYharonWyrmHint";
+                LumUtils.BroadcastLocalizedText(key, Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
+            }
+            return value;
         }
 
         private void DisableMapIconDuringDesperation(NPC npc, ref int index)
@@ -459,49 +507,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[TeleportOffsetAngleIndex];
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[HasGottenNearPlayerIndex];
 
-            // Go to phase 2 if close to death.
-            if (npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 0f && lifeRatio < Phase2LifeRatio)
-            {
-                // Set Yharon's private phase 2 flag that base Calamity uses.
-                // This is necessary to ensure that the special phase 2 name is used.
-                typeof(YharonBoss).GetField("startSecondAI", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
-
-                npc.Infernum().ExtraAI[HasEnteredPhase2Index] = 1f;
-
-                // Enter the second phase animation state.
-                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
-                SelectNextAttack(npc, ref attackType);
-                attackType = (int)YharonAttackType.EnterSecondPhase;
-
-                // Spawn a lot of cool sparkles.
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 180; i++)
-                    {
-                        Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(240f, 240f);
-                        Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(28f, 28f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
-                    }
-                }
-
-                // Use the awesome vocals music.
-                if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/YharonP2");
-                else
-                    npc.ModNPC.Music = MusicID.LunarBoss;
-
-                // Activate the invincibility countdown.
-                invincibilityTime = Phase2InvincibilityTime;
-
-                // Say the phase2 joke entry tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonPreHealTip");
-            }
-
             // Manually set the Yharon index.
             // The global NPC class technically does this on its own but it has a one-frame disparity when it does so.
             // Without this, the subphase table check will fail because none of the conditions will be valid since it checks this variable when running the
             // InSecondPhase property check. Once the table check fails Yharon's AI will throw an exception and the game will delete him from existence.
             // Not an ideal situation.
-            GlobalNPCOverrides.Yharon = npc.whoAmI;
+            CalamityGlobalNPC.yharon = npc.whoAmI;
 
             if (InSecondPhase)
             {
@@ -2007,15 +2018,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Emit very strong fireballs.
-                if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 180f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > preAttackTime + 180f)
                 {
                     for (int i = 0; i < 3; i++)
                         Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(16f, 16f), ModContent.ProjectileType<FlareBomb>(), DeathAnimationFireballDamage, 0f, target.whoAmI, -1f);
                 }
 
-                if (npc.life <= 0)
+                if (npc.life == npc.lifeMax)
                 {
-                    npc.life = 0;
                     npc.HitEffect();
                     npc.checkDead();
                     npc.active = false;
@@ -2047,12 +2057,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 ModContent.ProjectileType<VortexOfFlame>(),
                 ModContent.ProjectileType<RedirectingYharonMeteor>(),
             ];
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
+                if (projectilesToDelete.Contains(p.type))
                 {
-                    Main.projectile[i].active = false;
-                    Main.projectile[i].netUpdate = true;
+                    p.active = false;
+                    p.netUpdate = true;
                 }
             }
         }
@@ -2259,8 +2269,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Main.spriteBatch.ExitShaderRegion();
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             int illusionCount = (int)npc.Infernum().ExtraAI[IllusionCountIndex];
             if (illusionCount > 0)
             {

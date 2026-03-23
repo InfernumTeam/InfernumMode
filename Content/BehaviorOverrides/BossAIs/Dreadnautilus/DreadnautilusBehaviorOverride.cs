@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Items.Materials;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -82,7 +84,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         public override void Load()
         {
             GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
-            //GlobalNPCOverrides.OnKillEvent += SetDowned;
         }
 
         private void UseCustomMapIcon(NPC npc, ref int index)
@@ -92,13 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
         }
 
-        /*private void SetDowned(NPC nPC)
-        {
-            if (nPC.type == NPCID.BloodNautilus && !DownedBossSystem.downedDreadnautilus)
-            {
-                DownedBossSystem.downedDreadnautilus = true;
-            }
-        }*/
+        #region AI
 
         public override bool PreAI(NPC npc)
         {
@@ -932,8 +927,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.netUpdate = true;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DreadnautilusRelic>());
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BloodOrb>(), 1, 85, 105);
+        }
+
+        #endregion Death Effects
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float eyeGleamInterpolant = npc.ai[2];
             float backglowFade = Utils.Remap(eyeGleamInterpolant - 1f, 0f, 0.6f, 0f, 1f);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

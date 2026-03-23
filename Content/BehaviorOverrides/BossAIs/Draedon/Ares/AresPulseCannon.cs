@@ -2,6 +2,9 @@
 using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
@@ -295,6 +298,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             string glowmaskTexturePath = "InfernumMode/Content/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow";
             AresCannonBehaviorOverride.DrawCannon(NPC, glowmaskTexturePath, Color.Violet, lightColor, CoreSpritePosition, EnergyDrawer, SmokeDrawer);
             return false;
+        }
+
+        public override bool PreKill()
+        {
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type != apolloID && n.type != thanatosID && n.type != aresID)
+                    continue;
+
+                totalExoMechs++;
+            }
+
+            if (totalExoMechs >= 2)
+                return false;
+
+            return true;
         }
 
         public override bool CheckDead() => ExoMechManagement.HandleDeathEffects(NPC);

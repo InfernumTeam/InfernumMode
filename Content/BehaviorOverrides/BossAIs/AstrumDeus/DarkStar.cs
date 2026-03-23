@@ -117,14 +117,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Vector2 orthogonalsparkleScale = Vector2.One * Projectile.Opacity * Projectile.scale * 1.4f;
 
             Projectile projectileToConnectTo = null;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].type != Projectile.type || !Main.projectile[i].active || Main.projectile[i].ai[0] != ConstellationIndexToAttachTo)
+                if (p.type != Projectile.type || p.ai[0] != ConstellationIndexToAttachTo)
                 {
                     continue;
                 }
 
-                projectileToConnectTo = Main.projectile[i];
+                projectileToConnectTo = p;
                 break;
             }
 

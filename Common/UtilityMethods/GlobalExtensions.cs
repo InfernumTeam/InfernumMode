@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.GlobalItems;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.OverridingSystem;
 using Terraria;
 
 namespace InfernumMode
@@ -24,5 +25,41 @@ namespace InfernumMode
         public static GlobalNPCOverrides Infernum(this NPC npc) => npc.GetGlobalNPC<GlobalNPCOverrides>();
 
         public static GlobalProjectileOverrides Infernum(this Projectile projectile) => projectile.GetGlobalProjectile<GlobalProjectileOverrides>();
+
+        /// <summary>
+        /// Only for use with the CanOverride extension
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        internal static NPCBehaviorOverride NPCOverride(this object container) => container is NPCBehaviorOverrideContainer c ? c.BehaviorOverride : null!;
+
+        /// <summary>
+        /// Only for use with the CanOverride extension
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        internal static ProjectileBehaviorOverride ProjectileOverride(this object container) => container is ProjectileBehaviorOverride c ? c : null!;
+
+        /// <summary>
+        /// Utility method to speed up common Infernum NPC/Projectile override checks
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        internal static bool CanOverride(Entity entity, out object container)
+        {
+            container = null!;
+            if (!InfernumMode.CanUseCustomAIs)
+                return false;
+
+            if (entity is NPC n)
+                container = NPCBehaviorOverride.BehaviorOverrideSet[n.type];
+            else if (entity is Projectile p)
+                container = ProjectileBehaviorOverride.BehaviorOverrideSet[p.type];
+
+            if (container is null)
+                return false;
+            return true;
+        }
     }
 }

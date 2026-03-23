@@ -98,8 +98,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Calculate the appropriate direction.
             SpriteEffects direction = SpriteEffects.None;
             if (npc.spriteDirection == 1)

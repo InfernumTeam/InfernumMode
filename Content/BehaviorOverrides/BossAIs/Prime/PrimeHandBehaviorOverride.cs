@@ -122,8 +122,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.02f);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float telegraphIntensity = npc.localAI[0];
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 

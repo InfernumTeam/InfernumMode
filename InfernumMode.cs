@@ -169,7 +169,7 @@ namespace InfernumMode
             Utilities.UpdateMapIconList();
             CalamityVanillaAIOverrideNPC.ModifyAIOverride += (context) =>
             {
-                if (CanUseCustomAIs && !DisableModifyAIOverride && context.OverrideToApply != null && NPCBehaviorOverride.BehaviorOverrideSet[context.NPCType] != null)
+                if (CanUseCustomAIs && !DisableModifyAIOverride && context.OverrideToApply != null && NPCBehaviorOverride.Registered(context.NPCType))
                     context.OverrideToApply = null;
             };
         }

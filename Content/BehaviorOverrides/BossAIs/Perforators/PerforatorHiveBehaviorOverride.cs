@@ -11,6 +11,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.BoC;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -1523,8 +1524,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             GeneralParticleHandler.SpawnParticle(blood);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             SpriteEffects direction = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 direction = SpriteEffects.FlipHorizontally;
@@ -1585,6 +1588,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         #endregion
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PerforatorsRelic>());
+        }
+
         public override bool CheckDead(NPC npc)
         {
             // Just die as usual if the Perforator Hive is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill it quickly.

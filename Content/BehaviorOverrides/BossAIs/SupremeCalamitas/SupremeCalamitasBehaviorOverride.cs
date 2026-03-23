@@ -1912,12 +1912,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (currentPhase == 4f)
                 {
                     int shadowHydraID = ModContent.NPCType<ShadowDemon>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].active && Main.npc[i].type == shadowHydraID)
+                        if (n.type == shadowHydraID)
                         {
-                            Main.npc[i].active = false;
-                            Main.npc[i].netUpdate = true;
+                            n.active = false;
+                            n.netUpdate = true;
                         }
                     }
 
@@ -2430,8 +2430,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.frame.Y = (int)npc.frameCounter + (int)frameType * 6;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             if (!InfernumConfig.Instance.ReducedGraphicsConfig)
             {
                 // Create the fire drawer.

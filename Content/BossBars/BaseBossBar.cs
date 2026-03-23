@@ -86,9 +86,9 @@ namespace InfernumMode.Content.BossBars
                 if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return life;
 
-                for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type))
-                        life += Main.npc[i].life;
+                foreach (NPC n in Main.ActiveNPCs)
+                    if (n.life > 0 && value.Contains(n.type))
+                        life += n.life;
 
                 return life;
             }
@@ -110,9 +110,9 @@ namespace InfernumMode.Content.BossBars
                 if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return maxLife;
 
-                for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type))
-                        maxLife += Main.npc[i].lifeMax;
+                foreach (NPC n in Main.ActiveNPCs)
+                    if (n.life > 0 && value.Contains(n.type))
+                        maxLife += n.lifeMax;
 
                 return maxLife;
             }
@@ -128,8 +128,8 @@ namespace InfernumMode.Content.BossBars
                     return true;
                 if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return false;
-                for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && Main.npc[i].Calamity().CurrentlyEnraged)
+                foreach (NPC n in Main.ActiveNPCs)
+                    if (n.life > 0 && value.Contains(n.type) && n.Calamity().CurrentlyEnraged)
                         return true;
                 return false;
             }
@@ -151,9 +151,9 @@ namespace InfernumMode.Content.BossBars
                 {
                     return false;
                 }
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && (Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR || Main.npc[i].Calamity().DR > 0.98f))
+                    if (n.life > 0 && value.Contains(n.type) && (n.Calamity().CurrentlyIncreasingDefenseOrDR || n.Calamity().DR > 0.98f))
                     {
                         return true;
                     }
@@ -178,9 +178,9 @@ namespace InfernumMode.Content.BossBars
                 {
                     return false;
                 }
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && Main.npc[i].dontTakeDamage)
+                    if (n.life > 0 && value.Contains(n.type) && n.dontTakeDamage)
                     {
                         return true;
                     }

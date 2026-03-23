@@ -650,7 +650,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawBrother(npc, spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
+            return DrawBrother(npc, spriteBatch, lightColor);
+        }
         #endregion Frames and Drawcode
     }
 }

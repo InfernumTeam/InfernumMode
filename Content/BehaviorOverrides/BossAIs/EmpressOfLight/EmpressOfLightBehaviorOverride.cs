@@ -1436,12 +1436,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Find the sword that the empress wishes to use.
             // Most of the behavior beyond this point is handled by attacking the sword itself, while the empress simply hovers.
             Projectile swordToUse = null;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].type != swordID || !Main.projectile[i].active || Main.projectile[i].ModProjectile<EmpressSword>().SwordIndex != (int)swordIndexToUse)
+                if (p.type != swordID || p.ModProjectile<EmpressSword>().SwordIndex != (int)swordIndexToUse)
                     continue;
 
-                swordToUse = Main.projectile[i];
+                swordToUse = p;
                 swordToUse.ModProjectile<EmpressSword>().ShouldAttack = true;
                 swordToUse.ModProjectile<EmpressSword>().Time = (int)(attackTimer - attackDelay);
                 break;
@@ -1760,10 +1760,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             for (int j = 0; j < 2; j++)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (projectilesToClearAway.Contains(Main.projectile[i].type) && Main.projectile[i].active)
-                        Main.projectile[i].Kill();
+                    if (projectilesToClearAway.Contains(p.type))
+                        p.Kill();
                 }
             }
         }
@@ -1832,7 +1832,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.graphics.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture").Value;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 

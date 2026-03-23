@@ -260,13 +260,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 0.8f, rainCreationDelay + 5);
 
                 // Bring all segments to the weaver's position for the teleport.
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].realLife == npc.whoAmI)
+                    if (n.realLife == npc.whoAmI)
                     {
-                        Main.npc[i].Infernum().ExtraAI[0] = 36f;
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].netUpdate = true;
+                        n.Infernum().ExtraAI[0] = 36f;
+                        n.Center = npc.Center;
+                        n.netUpdate = true;
                     }
                 }
             }
@@ -278,12 +278,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 if (!npc.WithinRange(player.Center, 1900f) && Main.maxRaining <= 0.01f)
                 {
                     // Delete all segments manually to make sure that they don't create gores when the head disappears.
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].realLife == npc.whoAmI)
+                        if (n.realLife == npc.whoAmI)
                         {
-                            Main.npc[i].active = false;
-                            Main.npc[i].netUpdate = true;
+                            n.active = false;
+                            n.netUpdate = true;
                         }
                     }
 
@@ -324,10 +324,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             if (attackTimer <= 1f || !Main.npc.IndexInRange((int)targetIndex) || !Main.npc[(int)targetIndex].active || !PotentialNPCTargetIDs.Contains(Main.npc[(int)targetIndex].type))
             {
                 List<NPC> potentialTargets = [];
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (!n.active || !PotentialNPCTargetIDs.Contains(n.type) || !n.WithinRange(player.Center, 950f))
+                    if (!PotentialNPCTargetIDs.Contains(n.type) || !n.WithinRange(player.Center, 950f))
                         continue;
 
                     potentialTargets.Add(n);
@@ -693,13 +692,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 0.8f, 25);
 
                 // Bring all segments to the weaver's position for the teleport.
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].realLife == npc.whoAmI)
+                    if (n.realLife == npc.whoAmI)
                     {
-                        Main.npc[i].Infernum().ExtraAI[0] = 36f;
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].netUpdate = true;
+                        n.Infernum().ExtraAI[0] = 36f;
+                        n.Center = npc.Center;
+                        n.netUpdate = true;
                     }
                 }
 
@@ -792,9 +791,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     float sparkSpeed = npc.Distance(target.Center) * 0.0197f + 7f;
                     float aimAtTargetInterpolant = Utils.Remap(npc.Distance(target.Center), 720f, 1400f, 0.1f, 0.85f);
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
                         if (n.realLife != npc.whoAmI || n.WithinRange(target.Center, 380f))
                             continue;
 
@@ -921,10 +919,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     npc.Calamity().dashImmunityTime[target.whoAmI] = 0;
                     target.immuneTime = 0;
                 }
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].realLife == npc.whoAmI)
-                        Main.npc[i].Calamity().dashImmunityTime[target.whoAmI] = 0;
+                    if (n.realLife == npc.whoAmI)
+                        n.Calamity().dashImmunityTime[target.whoAmI] = 0;
                 }
 
                 return;

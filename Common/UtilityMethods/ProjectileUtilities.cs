@@ -18,9 +18,9 @@ namespace InfernumMode
         /// <param name="desiredType">The projectile type to check for.</param>
         public static bool AnyProjectiles(int desiredType)
         {
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == desiredType)
+                if (projectile.type == desiredType)
                     return true;
             }
             return false;
@@ -34,8 +34,9 @@ namespace InfernumMode
         {
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && desiredTypes.Contains(Main.projectile[i].type))
-                    yield return Main.projectile[i];
+                Projectile p = Main.projectile[i];
+                if (p.active && desiredTypes.Contains(p.type))
+                    yield return p;
             }
         }
 
@@ -46,12 +47,10 @@ namespace InfernumMode
         /// <param name="projectileIDs">The projectiles to kill.</param>
         public static void DeleteAllProjectiles(bool setToInactive, params int[] projectileIDs)
         {
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || !projectileIDs.Contains(Main.projectile[i].type))
+                if (!projectileIDs.Contains(p.type))
                     continue;
-
-                Projectile p = Main.projectile[i];
 
                 // Make the projectile fade away instead of dying if it's marked for such behavior.
                 if (p.Infernum().FadesAwayWhenManuallyKilled)
@@ -158,12 +157,12 @@ namespace InfernumMode
                 return identity <= (-1) || identity >= Main.maxProjectiles ? null : Main.projectile[identity];
             }
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].identity != identity || Main.projectile[i].owner != ownerIndex || !Main.projectile[i].active)
+                if (projectile.identity != identity || projectile.owner != ownerIndex)
                     continue;
 
-                return Main.projectile[i];
+                return projectile;
             }
             return null;
         }

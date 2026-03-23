@@ -28,12 +28,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 CheckToResetTimer = false;
                 bool result = false;
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (!Main.projectile[i].active)
-                        continue;
-
-                    if (Main.projectile[i].ModProjectile is not PunctusRock rocks)
+                    if (p.ModProjectile is not PunctusRock rocks)
                         continue;
 
                     if (rocks.CurrentState is PunctusRock.State.Circling or PunctusRock.State.Firing)

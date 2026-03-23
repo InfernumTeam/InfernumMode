@@ -104,8 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Calculate the appropriate direction and various other important draw variables.
             int afterimageCount = 5;
             Vector2 origin = npc.frame.Size() * 0.5f;

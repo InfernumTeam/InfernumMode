@@ -72,18 +72,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 npc.velocity = (npc.velocity * 11f + idealVelocity) / 12f;
 
             float pushAwayFactor = 0.5f;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && i != npc.whoAmI && Main.npc[i].type == npc.type)
+                if (n.whoAmI != npc.whoAmI && n.type == npc.type)
                 {
-                    if (npc.WithinRange(Main.npc[i].Center, 48f))
+                    if (npc.WithinRange(n.Center, 48f))
                     {
-                        if (npc.position.X < Main.npc[i].position.X)
+                        if (npc.position.X < n.position.X)
                             npc.velocity.X -= pushAwayFactor;
                         else
                             npc.velocity.X += pushAwayFactor;
 
-                        if (npc.position.Y < Main.npc[i].position.Y)
+                        if (npc.position.Y < n.position.Y)
                             npc.velocity.Y -= pushAwayFactor;
                         else
                             npc.velocity.Y += pushAwayFactor;
@@ -93,8 +93,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.DrawBackglow(Color.Lime with { A = 0 }, 4f, 0, npc.frame, Main.screenPosition);
             return true;
         }

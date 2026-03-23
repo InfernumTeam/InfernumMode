@@ -777,8 +777,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             return npc.localAI[0].ToRotationVector2() * npc.localAI[1] * 25f - Vector2.UnitY.RotatedBy(npc.rotation) * -direction * 20f;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D pupilTexture = TextureAssets.Extra[ExtrasID.MoonLordEye].Value;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition - (npc.rotation + PiOver2).ToRotationVector2() * npc.spriteDirection * 32f;

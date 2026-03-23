@@ -560,13 +560,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             int darkEnergyTotalLife = 0;
             int darkEnergyTotalMaxLife = 0;
             List<NPC> darkEnergies = [];
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == darkEnergyID)
+                if (n.type == darkEnergyID)
                 {
-                    darkEnergyTotalLife += Main.npc[i].life;
-                    darkEnergyTotalMaxLife = Main.npc[i].lifeMax;
-                    darkEnergies.Add(Main.npc[i]);
+                    darkEnergyTotalLife += n.life;
+                    darkEnergyTotalMaxLife = n.lifeMax;
+                    darkEnergies.Add(n);
                 }
             }
             darkEnergyTotalMaxLife *= totalRings * energyCountPerRing;
@@ -1796,8 +1796,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Draw chains.
             DrawChains(Color.White);
 

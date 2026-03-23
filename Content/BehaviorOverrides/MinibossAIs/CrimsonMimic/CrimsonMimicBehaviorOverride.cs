@@ -205,14 +205,14 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
                     if (jumpCounter >= jumpCount + 1f)
                     {
                         int projID = ModContent.ProjectileType<FetidBaghnakhs>();
-                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        foreach (Projectile p in Main.ActiveProjectiles)
                         {
-                            if (Main.projectile[i].type != projID || !Main.projectile[i].active || Main.projectile[i].ai[1] != npc.whoAmI)
+                            if (p.type != projID || p.ai[1] != npc.whoAmI)
                                 continue;
 
-                            Main.projectile[i].damage = 0;
-                            Main.projectile[i].timeLeft = 30;
-                            Main.projectile[i].netUpdate = true;
+                            p.damage = 0;
+                            p.timeLeft = 30;
+                            p.netUpdate = true;
                         }
                         SelectNextAttack(npc);
                     }

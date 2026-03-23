@@ -60,12 +60,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (npc.justHit && npc.Infernum().ExtraAI[5] != 1f)
             {
                 SoundEngine.PlaySound(Eidolist.DeathSound with { Volume = 3f }, npc.Center);
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == npc.type)
+                    if (n.type == npc.type)
                     {
-                        Main.npc[i].Infernum().ExtraAI[5] = 1f;
-                        Main.npc[i].netUpdate = true;
+                        n.Infernum().ExtraAI[5] = 1f;
+                        n.netUpdate = true;
                     }
                 }
 
@@ -260,7 +260,19 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public static void DoBehavior_LightningOrbs(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
             int initalFadeOutTime = 30;
-            List<NPC> eidolists = [.. Main.npc.Take(Main.maxNPCs).Where(n => n.type == npc.type && n.active).OrderBy(n => n.Infernum().ExtraAI[5])];
+            List<NPC> eidolists = [];
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type == npc.type)
+                {
+                    eidolists.Add(n);
+                }
+            }
+            if (eidolists.Count > 1)
+            {
+                eidolists.OrderBy(n => n.Infernum().ExtraAI[5]);
+            }
+
             ref float teleportCounter = ref npc.Infernum().ExtraAI[0];
 
             // Do a teleport fadeout.
@@ -543,12 +555,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public static void AffectAllEidolists(Action<NPC, int> action)
         {
             int eidolistID = ModContent.NPCType<Eidolist>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == eidolistID)
+                if (n.type == eidolistID)
                 {
-                    action(Main.npc[i], (int)Main.npc[i].ai[2]);
-                    Main.npc[i].netUpdate = true;
+                    action(n, (int)n.ai[2]);
+                    n.netUpdate = true;
                 }
             }
         }
@@ -562,8 +574,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.frame.Y = (int)(npc.frameCounter + npc.ai[2]) % Main.npcFrameCount[npc.type] * frameHeight;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             bool teleporting = npc.localAI[0] is > 0f and < 1f;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             if (teleporting)

@@ -59,25 +59,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Create a burst of icicles if the dark form collides with another split AEW.
             if (DarkForm && !HasCreatedIcicleBurstSpread)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile projectile in Main.ActiveProjectiles)
                 {
-                    if (Main.projectile[i].type != Projectile.type)
+                    if (projectile.type != Projectile.type)
                         continue;
 
-                    if (!Main.projectile[i].active)
+                    if (!projectile.Hitbox.Intersects(Projectile.Hitbox))
                         continue;
 
-                    if (!Main.projectile[i].Hitbox.Intersects(Projectile.Hitbox))
-                        continue;
-
-                    if (i == Projectile.whoAmI)
+                    if (projectile.whoAmI == Projectile.whoAmI)
                         continue;
 
                     HasCreatedIcicleBurstSpread = true;
                     Projectile.netUpdate = true;
 
-                    Main.projectile[i].ModProjectile<AEWSplitForm>().HasCreatedIcicleBurstSpread = true;
-                    Main.projectile[i].netUpdate = true;
+                    projectile.ModProjectile<AEWSplitForm>().HasCreatedIcicleBurstSpread = true;
+                    projectile.netUpdate = true;
                 }
 
                 if (HasCreatedIcicleBurstSpread)

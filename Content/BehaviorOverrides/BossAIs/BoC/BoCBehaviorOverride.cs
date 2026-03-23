@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -489,13 +491,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;
                 if (enraged)
                     npc.velocity *= 1.425f;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != ModContent.NPCType<BrainIllusion2>())
+                    if (n.type != ModContent.NPCType<BrainIllusion2>())
                         continue;
 
-                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * npc.velocity.Length();
-                    Main.npc[i].netUpdate = true;
+                    n.velocity = n.SafeDirectionTo(target.Center) * npc.velocity.Length();
+                    n.netUpdate = true;
                 }
 
                 SoundEngine.PlaySound(SoundID.ForceRoarPitched, target.Center);
@@ -581,13 +583,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     npc.Center = teleportDestination;
 
                     // And bring creepers along with because their re-adjustment motion in the base game is unpredictable and unpleasant.
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].type != NPCID.Creeper || !Main.npc[i].active)
+                        if (n.type != NPCID.Creeper)
                             continue;
 
-                        Main.npc[i].Center = npc.Center + Main.rand.NextVector2CircularEdge(3f, 3f);
-                        Main.npc[i].netUpdate = true;
+                        n.Center = npc.Center + Main.rand.NextVector2CircularEdge(3f, 3f);
+                        n.netUpdate = true;
                     }
                     npc.netUpdate = true;
                 }
@@ -604,10 +606,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         #endregion AI
 
+        #region Death Effects
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BrainOfCthulhuRelic>());
+        }
+
+        #endregion Death Effects
+
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             frame.Y += texture.Height / Main.npcFrameCount[npc.type] * 4;
@@ -635,6 +647,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             return false;
         }
 
+        public override void CalGlobalNPCPostdraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter) => RunCalAfter = false;
+
         #endregion Drawing
 
         #region Tips
@@ -653,5 +667,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             };
         }
         #endregion Tips
+
     }
 }

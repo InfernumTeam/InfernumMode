@@ -98,10 +98,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.scale = BigSlimeBaseScale;
 
                 int splitSlimeID = ModContent.NPCType<SplitBigSlime>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == splitSlimeID)
-                        Main.npc[i].active = false;
+                    if (n.type == splitSlimeID)
+                        n.active = false;
                 }
 
                 needsToPickNewAttack = true;

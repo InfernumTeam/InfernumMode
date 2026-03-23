@@ -78,10 +78,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         #region Loading
         public override void Load()
         {
-            GlobalNPCOverrides.OnKillEvent += GenerateColosseumEntranceIfNecessary;
+
         }
 
-        private void GenerateColosseumEntranceIfNecessary(NPC npc)
+        // GenerateColosseumEntranceIfNecessary
+        public override void OnKill(NPC npc)
         {
             // Create a lost colosseum entrance after the cultist is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance && !WeakReferenceSupport.InAnySubworld())
@@ -286,18 +287,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 NPCID.AncientCultistSquidhead,
             ];
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (projectilesToClearAway.Contains(Main.projectile[i].type) && Main.projectile[i].active)
-                    Main.projectile[i].Kill();
+                if (projectilesToClearAway.Contains(p.type))
+                    p.Kill();
             }
 
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC npc in Main.ActiveNPCs)
             {
-                if (npcsToClearAway.Contains(Main.npc[i].type) && Main.npc[i].active)
+                if (npcsToClearAway.Contains(npc.type))
                 {
-                    Main.npc[i].active = false;
-                    Main.npc[i].netUpdate = true;
+                    npc.active = false;
+                    npc.netUpdate = true;
                 }
             }
         }
@@ -996,10 +997,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (cultists is null)
                 {
                     cultists = [];
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if ((Main.npc[i].type == NPCID.CultistBoss || Main.npc[i].type == NPCID.CultistBossClone) && Main.npc[i].active)
-                            cultists.Add(i);
+                        if (n.type == NPCID.CultistBoss || n.type == NPCID.CultistBossClone)
+                            cultists.Add(n.whoAmI);
                     }
                 }
 
@@ -1473,8 +1474,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;

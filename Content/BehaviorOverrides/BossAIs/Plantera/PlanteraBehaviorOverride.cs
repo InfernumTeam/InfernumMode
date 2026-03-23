@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -210,12 +211,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 List<Vector2> flowerSpawnPositions = [];
 
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].type != NPCID.PlanterasHook || !Main.npc[i].active)
+                    if (n.type != NPCID.PlanterasHook)
                         continue;
 
-                    flowerSpawnPositions.Add(Main.npc[i].Center);
+                    flowerSpawnPositions.Add(n.Center);
                 }
 
                 for (int tries = 0; tries < 10000; tries++)
@@ -746,18 +747,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 ModContent.ProjectileType<BouncingPetal>(),
             ];
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!projectilesToDelete.Contains(Main.projectile[i].type) || !Main.projectile[i].active)
+                if (!projectilesToDelete.Contains(p.type))
                     continue;
 
-                Main.projectile[i].active = false;
-                Main.projectile[i].netUpdate = true;
+                p.active = false;
+                p.netUpdate = true;
             }
         }
         #endregion AI Utility Methods
 
         #endregion AI
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PlanteraRelic>());
+        }
+
+        #endregion Death Effects
 
         #region Drawing
         public override void BossHeadSlot(NPC npc, ref int index)

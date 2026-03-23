@@ -5,6 +5,7 @@ using CalamityMod.Events;
 using CalamityMod.Particles;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
@@ -930,13 +931,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public static void OnHitIceParticles(NPC npc, Projectile projectile, bool wasACrit)
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            OnHitIceParticles(npc, item, hit.Crit);
+        }
+
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            OnHitIceParticles(npc, projectile, hit.Crit);
+        }
+
+        // Make Cryogen release ice particles when hit.
+        public static void OnHitIceParticles(NPC npc, Entity entity, bool wasACrit)
         {
             if (npc.Infernum().ExtraAI[6] > 0f)
                 return;
 
             int particleCount = wasACrit ? 30 : 20;
-            Vector2 direction = projectile.oldVelocity.SafeNormalize(Main.rand.NextVector2Unit());
+            Vector2 direction = entity.oldVelocity.SafeNormalize(Main.rand.NextVector2Unit());
 
             for (int i = 0; i < particleCount; i++)
             {
@@ -944,7 +956,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
                 // Add a bit of randomness, but weight towards going in a cone from the hit zone.
                 Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
-                Particle iceParticle = new SnowyIceParticle(projectile.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
+                Particle iceParticle = new SnowyIceParticle(entity.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
                 GeneralParticleHandler.SpawnParticle(iceParticle);
             }
 
@@ -952,10 +964,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         }
         #endregion AI
 
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CryogenRelic>());
+        }
+
+        #endregion Death Effects
+
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Main.projFrames[npc.type] = 12;
 
             Texture2D subphase1Texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/Cryogen1").Value;

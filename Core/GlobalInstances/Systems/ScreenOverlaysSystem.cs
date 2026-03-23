@@ -133,9 +133,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IScreenCullDrawer drawer)
+                if (p.ModProjectile is not IScreenCullDrawer drawer)
                     continue;
 
                 drawer.CullDraw(Main.spriteBatch);
@@ -167,9 +167,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IAboveWaterProjectileDrawer drawer)
+                if (p.ModProjectile is not IAboveWaterProjectileDrawer drawer)
                     continue;
 
                 drawer.DrawAboveWater(Main.spriteBatch);

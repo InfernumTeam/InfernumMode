@@ -71,12 +71,9 @@ namespace InfernumMode.Common.Graphics.Metaballs
         public override void ExtraDrawing()
         {
             // Draw perditus' whip line as a metaball.
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active)
-                    continue;
-
-                if (Main.projectile[i].ModProjectile is PerditusProjectile perditus)
+                if (projectile.ModProjectile is PerditusProjectile perditus)
                 {
                     List<Vector2> points = [];
                     Projectile.FillWhipControlPoints(perditus.Projectile, points);

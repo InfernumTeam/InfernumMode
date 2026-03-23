@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -632,6 +633,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         #endregion AI Utility Methods
 
         #endregion AI
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<QueenBeeRelic>());
+        }
+
+        #endregion Death Effects
 
         #region Drawing and Frames
 

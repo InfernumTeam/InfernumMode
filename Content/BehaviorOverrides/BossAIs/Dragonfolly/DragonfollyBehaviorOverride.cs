@@ -173,16 +173,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // Piss off any remaining swarmers.
                 int swarmerType = ModContent.NPCType<DraconicSwarmer>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != swarmerType)
+                    if (n.type != swarmerType)
                         continue;
 
-                    Main.npc[i].ai[0] = 3f;
-                    Main.npc[i].ai[1] = 0f;
-                    Main.npc[i].ai[2] = 0f;
-                    Main.npc[i].ai[3] = 0f;
-                    Main.npc[i].netUpdate = true;
+                    n.ai[0] = 3f;
+                    n.ai[1] = 0f;
+                    n.ai[2] = 0f;
+                    n.ai[3] = 0f;
+                    n.netUpdate = true;
                 }
 
                 npc.netUpdate = true;
@@ -196,16 +196,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // Piss off any remaining swarmers.
                 int swarmerType = ModContent.NPCType<DraconicSwarmer>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != swarmerType)
+                    if (n.type != swarmerType)
                         continue;
 
-                    Main.npc[i].ai[0] = 3f;
-                    Main.npc[i].ai[1] = 0f;
-                    Main.npc[i].ai[2] = 0f;
-                    Main.npc[i].ai[3] = 2f;
-                    Main.npc[i].netUpdate = true;
+                    n.ai[0] = 3f;
+                    n.ai[1] = 0f;
+                    n.ai[2] = 0f;
+                    n.ai[3] = 2f;
+                    n.netUpdate = true;
                 }
 
                 npc.netUpdate = true;
@@ -408,15 +408,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             if (chargeType == DragonfollyAttackType.ThunderCharge)
             {
                 int plasmaOrbType = ModContent.NPCType<RedPlasmaEnergy>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].type != plasmaOrbType || !Main.npc[i].active)
+                    if (n.type != plasmaOrbType)
                         continue;
 
-                    Main.npc[i].life = 0;
-                    Main.npc[i].active = false;
-                    Main.npc[i].HitEffect();
-                    Main.npc[i].netUpdate = true;
+                    n.life = 0;
+                    n.active = false;
+                    n.HitEffect();
+                    n.netUpdate = true;
                 }
             }
 
@@ -1224,8 +1224,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float fadeToRed = npc.localAI[2];
             float phaseTransitionCountdown = npc.Infernum().ExtraAI[6];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

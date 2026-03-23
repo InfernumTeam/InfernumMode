@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
@@ -69,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         #region Loading
         public override void Load()
         {
-            GlobalNPCOverrides.StrikeNPCEvent += AddDamageMultiplier;
+            //GlobalNPCOverrides.StrikeNPCEvent += AddDamageMultiplier;
         }
 
         private bool AddDamageMultiplier(NPC npc, ref NPC.HitModifiers modifiers)
@@ -434,13 +437,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 for (int j = 0; j < explosionColorPalette.Length; j++)
                     explosionColorPalette[j] = Color.Lerp(explosionColorPalette[j], Color.Red, 0.3f);
 
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active)
-                        continue;
-
-                    if (Main.npc[i].type == thanatosBodyID && i % 3 == 0 || Main.npc[i].type == thanatosHeadID)
-                        GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(Main.npc[i].Center, Vector2.Zero, explosionColorPalette, 2.1f, 90, 0.4f));
+                    if (n.type == thanatosBodyID && n.whoAmI % 3 == 0 || n.type == thanatosHeadID)
+                        GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(n.Center, Vector2.Zero, explosionColorPalette, 2.1f, 90, 0.4f));
                 }
             }
 
@@ -701,10 +701,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (attackTimer % rotorReleaseRate == rotorReleaseRate - 1f)
                 {
                     // Randomly pick a segment that's decently far away from the target but not too far away to release a rotor from.
-                    var segments = (from n in Main.npc.Take(Main.maxNPCs)
-                                    where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f) && n.WithinRange(target.Center, 1200f)
-                                    orderby n.Distance(target.Center)
-                                    select n).ToList();
+                    List<NPC> segments = [];
+                    foreach (NPC n in Main.ActiveNPCs)
+                    {
+                        if (n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f) && n.WithinRange(target.Center, 1200f))
+                        {
+                            segments.Add(n);
+                        }
+                    }
+                    segments.OrderBy(n => n.Distance(target.Center));
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && segments.Count > 1)
                     {
@@ -1155,8 +1160,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
@@ -1176,6 +1183,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override bool PreKill(NPC npc)
+        {
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type != apolloID && n.type != thanatosID && n.type != aresID)
+                    continue;
+
+                totalExoMechs++;
+            }
+
+            if (totalExoMechs >= 2)
+                return false;
+
+            return true;
+        }
         public override bool CheckDead(NPC npc) => ExoMechManagement.HandleDeathEffects(npc);
         #endregion Death Effects
     }

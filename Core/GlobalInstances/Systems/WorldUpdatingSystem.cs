@@ -89,11 +89,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             {
                 bool gateExists = false;
                 int wayfinderGateID = ModContent.ProjectileType<WayfinderGate>();
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile projectile in Main.ActiveProjectiles)
                 {
-                    Projectile projectile = Main.projectile[i];
-
-                    if (projectile.type == wayfinderGateID && projectile.active)
+                    if (projectile.type == wayfinderGateID)
                     {
                         gateExists = true;
                         break;

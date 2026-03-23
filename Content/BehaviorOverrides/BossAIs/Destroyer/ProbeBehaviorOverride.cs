@@ -107,16 +107,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public static void KillAllProbes()
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC npc = Main.npc[i];
-                if (npc.active && npc.type == NPCID.Probe)
-                    BlowUpEffects(npc);
+                if (n.type == NPCID.Probe)
+                    BlowUpEffects(n);
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Allow afterimages.
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 6;

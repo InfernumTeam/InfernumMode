@@ -5,12 +5,14 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -138,38 +140,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             attackTimer++;
 
             return false;
-        }
-
-        public static bool PerformDeathEffect(NPC npc)
-        {
-            if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
-            {
-                Main.npc[npc.realLife].NPCLoot();
-                Main.npc[npc.realLife].Infernum().ExtraAI[9] = 1f;
-                return false;
-            }
-
-            bool splitting = false;
-            if (npc.ai[2] >= 2f)
-            {
-                npc.boss = true;
-
-                if (npc.Infernum().ExtraAI[10] == 0f)
-                {
-                    npc.Infernum().ExtraAI[10] = 1f;
-                    /*if (!BossRushEvent.BossRushActive)
-                        npc.NPCLoot();*/
-                }
-            }
-
-            else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
-            {
-                npc.Infernum().ExtraAI[10] = 1f;
-                HandleSplit(npc, ref npc.ai[2]);
-                splitting = true;
-            }
-
-            return npc.ai[2] >= 2f && !splitting;
         }
 
         #region Attacks
@@ -435,11 +405,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
             // Avoid other worm heads.
             Vector2 pushAway = Vector2.Zero;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
                 bool isEoW = n.type is NPCID.EaterofWorldsHead or NPCID.EaterofWorldsHead;
-                if (isEoW && i != npc.whoAmI)
+                if (isEoW && n.whoAmI != npc.whoAmI)
                     pushAway += npc.SafeDirectionTo(n.Center, Vector2.UnitY) * Utils.GetLerpValue(190f, 90f, npc.Distance(n.Center), true) * -4f;
             }
             idealVelocity += pushAway;
@@ -467,11 +436,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             int heads = NPC.CountNPCS(NPCID.EaterofWorldsHead);
             if ((splitCounter >= 2f && heads < 4) || (splitCounter < 2f && splitCounter >= 1f && heads < 2))
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].realLife == npc.whoAmI || i == npc.whoAmI)
+                    if (n.realLife == npc.whoAmI || n.whoAmI == npc.whoAmI)
                     {
-                        Main.npc[i].active = false;
+                        n.active = false;
                     }
                 }
                 return;
@@ -503,13 +472,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         public static void HandleSplit(NPC npc, ref float splitCounter)
         {
             // Delete all segments and create two new worms.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].realLife == npc.whoAmI || i == npc.whoAmI)
+                if (n.realLife == npc.whoAmI || n.whoAmI == npc.whoAmI)
                 {
-                    Main.npc[i].life = 0;
-                    Main.npc[i].checkDead();
-                    Main.npc[i].active = false;
+                    n.life = 0;
+                    n.checkDead();
+                    n.active = false;
                 }
             }
 
@@ -571,6 +540,46 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         }
 
         #endregion AI Utility Methods
+
+        #region Death Effects
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf((info) => info.npc.boss, ModContent.ItemType<EaterOfWorldsRelic>());
+        }
+        // PerformDeathEffect
+        public override bool PreKill(NPC npc)
+        {
+            if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
+            {
+                Main.npc[npc.realLife].NPCLoot();
+                Main.npc[npc.realLife].Infernum().ExtraAI[9] = 1f;
+                return false;
+            }
+
+            bool splitting = false;
+            if (npc.ai[2] >= 2f)
+            {
+                npc.boss = true;
+
+                if (npc.Infernum().ExtraAI[10] == 0f)
+                {
+                    npc.Infernum().ExtraAI[10] = 1f;
+                    /*if (!BossRushEvent.BossRushActive)
+                        npc.NPCLoot();*/
+                }
+            }
+
+            else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
+            {
+                npc.Infernum().ExtraAI[10] = 1f;
+                HandleSplit(npc, ref npc.ai[2]);
+                splitting = true;
+            }
+
+            return npc.ai[2] >= 2f && !splitting;
+        }
+
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

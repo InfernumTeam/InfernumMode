@@ -299,8 +299,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.frame.Y = (int)npc.frameCounter * frameHeight;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/SleepingColossalSquid").Value;
             Rectangle frame = texture.Frame();
             if (npc.Infernum().ExtraAI[5] == 1f)

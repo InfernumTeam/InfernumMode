@@ -57,10 +57,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 {
                     int signusID = ModContent.NPCType<Signus>();
                     int ceaselessVoidID = ModContent.NPCType<CeaselessVoid>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-                        if (n.active && (n.type == signusID || n.type == ceaselessVoidID))
+                        if (n.type == signusID || n.type == ceaselessVoidID)
                             n.active = false;
                     }
 

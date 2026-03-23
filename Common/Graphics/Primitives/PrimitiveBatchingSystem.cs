@@ -41,10 +41,9 @@ namespace InfernumMode.Common.Graphics.Primitives
 
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                Projectile p = Main.projectile[i];
-                if (p.active && p.type > ProjectileID.None && p.ModProjectile != null)
+                if (p.type > ProjectileID.None && p.ModProjectile != null)
                     Draw(p.ModProjectile.GetType());
             }
 

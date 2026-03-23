@@ -1,4 +1,4 @@
-﻿using InfernumMode.Content.Dusts;
+﻿/*using InfernumMode.Content.Dusts;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -63,4 +63,4 @@ namespace InfernumMode.Content.Buffs
 
         public override void Update(Player player, ref int buffIndex) => player.Infernum().SetValue<bool>("DarkFlames", true);
     }
-}
+}*/

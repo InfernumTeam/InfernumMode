@@ -1078,8 +1078,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         public static float WidthFunction(float completionRatio) => SmoothStep(50f, 35f, completionRatio);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             NPCID.Sets.TrailCacheLength[npc.type] = 22;
             ref float afterimageCount = ref npc.Infernum().ExtraAI[13];
 

@@ -38,7 +38,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             npc.frame.Y = (int)currentFrame * npc.frame.Height;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => CataclysmBehaviorOverride.DrawBrother(npc, spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
+            return CataclysmBehaviorOverride.DrawBrother(npc, spriteBatch, lightColor);
+        }
         #endregion Frames and Drawcode
     }
 }

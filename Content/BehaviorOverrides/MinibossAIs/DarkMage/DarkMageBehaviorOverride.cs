@@ -1,6 +1,7 @@
 ﻿using System;
 using CalamityMod;
 using InfernumMode.Common.UtilityMethods;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -23,6 +24,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
         }
 
         public override int NPCOverrideType => NPCID.DD2DarkMageT1;
+
+        #region AI
 
         public override bool PreAI(NPC npc) => DoAI(npc);
 
@@ -349,6 +352,17 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 npc.netUpdate = true;
             }
         }
+
+        #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DarkMageRelic>());
+        }
+
+        #endregion Death Effects
 
         public override void FindFrame(NPC npc, int frameHeight)
         {

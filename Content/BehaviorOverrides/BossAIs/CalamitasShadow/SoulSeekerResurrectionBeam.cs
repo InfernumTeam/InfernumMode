@@ -94,11 +94,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, seeker);
 
                     int seekerIndex = 0;
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-
-                        if (n.active && n.type == seekerID)
+                        if (n.type == seekerID)
                         {
                             n.ai[0] = TwoPi * seekerIndex / totalSeekers;
                             n.ai[1] = 0f;

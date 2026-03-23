@@ -14,6 +14,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Dusts;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.TrackedMusic;
@@ -652,10 +653,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     attackState++;
                     attackTimer = 0f;
 
-                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    foreach (Projectile p in Main.ActiveProjectiles)
                     {
-                        if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<BrimstoneDeathray>())
-                            Main.projectile[i].active = false;
+                        if (p.type == ModContent.ProjectileType<BrimstoneDeathray>())
+                            p.active = false;
                     }
 
                     Vector2 teleportDestination = target.Center - Main.rand.NextVector2CircularEdge(300f, 300f);
@@ -995,8 +996,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             BrimmyAttackType attackState = (BrimmyAttackType)(int)npc.ai[0];
             UnifiedRandom roseRNG = new(npc.whoAmI + 466920161);
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
@@ -1075,6 +1078,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         #endregion
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BrimstoneElementalRelic>());
+        }
+
         public override bool CheckDead(NPC npc)
         {
             // Just die as usual if the Brimstone Elemental is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill her quickly.
@@ -1093,10 +1102,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             npc.ai[0] = (int)BrimmyAttackType.DeathAnimation;
             npc.life = npc.lifeMax;
+            npc.dontTakeDamage = true;
             npc.active = true;
             npc.netUpdate = true;
             return false;
         }
+
         #endregion Death Effects
     }
 }

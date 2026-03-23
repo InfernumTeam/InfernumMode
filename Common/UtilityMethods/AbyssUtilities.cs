@@ -10,19 +10,19 @@ namespace InfernumMode
         {
             NPC closestPredator = null;
             distanceToClosestPredator = 9999999f;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!Main.npc[i].active || !Main.npc[i].Infernum().IsAbyssPredator)
+                if (!n.Infernum().IsAbyssPredator)
                     continue;
 
-                float extraDistance = (Main.npc[i].width / 2) + (Main.npc[i].height / 2);
+                float extraDistance = (n.width / 2) + (n.height / 2);
                 extraDistance *= extraDistance;
 
-                bool canHit = Collision.CanHit(npc.Center, 1, 1, Main.npc[i].Center, 1, 1);
-                if (Vector2.DistanceSquared(npc.Center, Main.npc[i].Center) < (distanceToClosestPredator + extraDistance) && canHit)
+                bool canHit = Collision.CanHit(npc.Center, 1, 1, n.Center, 1, 1);
+                if (Vector2.DistanceSquared(npc.Center, n.Center) < (distanceToClosestPredator + extraDistance) && canHit)
                 {
-                    distanceToClosestPredator = Vector2.DistanceSquared(npc.Center, Main.npc[i].Center);
-                    closestPredator = Main.npc[i];
+                    distanceToClosestPredator = Vector2.DistanceSquared(npc.Center, n.Center);
+                    closestPredator = n;
                 }
             }
 

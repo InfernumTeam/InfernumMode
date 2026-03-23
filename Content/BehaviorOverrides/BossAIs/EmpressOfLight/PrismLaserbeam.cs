@@ -21,12 +21,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             get
             {
                 int prismID = ModContent.ProjectileType<EmpressPrism>();
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (Main.projectile[i].identity != Projectile.ai[0] || !Main.projectile[i].active || Main.projectile[i].type != prismID)
+                    if (p.identity != Projectile.ai[0] || p.type != prismID)
                         continue;
 
-                    return Main.projectile[i];
+                    return p;
                 }
                 return null;
             }

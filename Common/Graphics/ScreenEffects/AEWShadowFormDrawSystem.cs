@@ -105,9 +105,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void DrawShadowProjectiles()
         {
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].ModProjectile is not IAEWShadowProjectileDrawer drawer)
+                if (projectile.ModProjectile is not IAEWShadowProjectileDrawer drawer)
                     continue;
 
                 drawer.DrawShadow(Main.spriteBatch);

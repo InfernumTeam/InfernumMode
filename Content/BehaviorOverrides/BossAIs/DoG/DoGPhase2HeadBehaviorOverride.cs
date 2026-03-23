@@ -365,10 +365,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             ProjectileID.CultistBossLightningOrbArc,
                             ModContent.ProjectileType<AcceleratingDoGBurst>()
                         ];
-                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        foreach (Projectile p in Main.ActiveProjectiles)
                         {
-                            if (projectilesToDelete.Contains(Main.projectile[i].type) && Main.projectile[i].active)
-                                Main.projectile[i].active = false;
+                            if (projectilesToDelete.Contains(p.type))
+                                p.active = false;
                         }
                         return false;
                     }
@@ -480,13 +480,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             int headID = ModContent.NPCType<DevourerofGodsHead>();
             int bodyID = ModContent.NPCType<DevourerofGodsBody>();
             int tailID = ModContent.NPCType<DevourerofGodsTail>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type != headID && Main.npc[i].type != bodyID && Main.npc[i].type != tailID)
+                if (n.type != headID && n.type != bodyID && n.type != tailID)
                     break;
 
-                Main.npc[i].active = false;
-                Main.npc[i].netUpdate = true;
+                n.active = false;
+                n.netUpdate = true;
             }
             npc.active = false;
             npc.netUpdate = true;
@@ -550,23 +550,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                 // Start at some number, n, at 0. This number is used as a counter for the nth segment to destroy, from the tail to the head.
                 // This works by looping through all NPCs and identifying if it's a DoG segment with that segment ID
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (segments.Contains(Main.npc[i].type) && Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[SegmentNumberIndex] == index)
+                    if (segments.Contains(n.type) && n.Infernum().ExtraAI[SegmentNumberIndex] == index)
                     {
                         // Create some dust at the segment's position to indicate a small cosmic explosion puff.
                         for (int j = 0; j < 20; j++)
                         {
-                            Dust cosmicBurst = Dust.NewDustPerfect(Main.npc[i].Center + Main.rand.NextVector2Circular(25f, 25f), DustID.BoneTorch);
+                            Dust cosmicBurst = Dust.NewDustPerfect(n.Center + Main.rand.NextVector2Circular(25f, 25f), DustID.BoneTorch);
                             cosmicBurst.scale = 1.7f;
                             cosmicBurst.velocity = Main.rand.NextVector2Circular(9f, 9f);
                             cosmicBurst.noGravity = true;
                         }
 
-                        Main.npc[i].life = 0;
-                        Main.npc[i].HitEffect();
-                        Main.npc[i].active = false;
-                        Main.npc[i].netUpdate = true;
+                        n.life = 0;
+                        n.HitEffect();
+                        n.active = false;
+                        n.netUpdate = true;
                         destroyedSegments++;
                         break;
                     }
@@ -979,13 +979,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 npc.Center = Vector2.One * -10000f;
 
                 // Bring segments along with.
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                    if (n.type == ModContent.NPCType<DevourerofGodsBody>() || n.type == ModContent.NPCType<DevourerofGodsTail>())
                     {
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].Opacity = 0f;
-                        Main.npc[i].netUpdate = true;
+                        n.Center = npc.Center;
+                        n.Opacity = 0f;
+                        n.netUpdate = true;
                     }
                 }
                 npc.active = false;
@@ -1026,13 +1026,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.Center = Main.projectile[ChargePortalIndex].Center;
 
                     int segmentCount = 0;
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                        if (n.type == ModContent.NPCType<DevourerofGodsBody>() || n.type == ModContent.NPCType<DevourerofGodsTail>())
                         {
-                            Main.npc[i].Center = npc.Center;
-                            Main.npc[i].Opacity = Utils.GetLerpValue(15f, 0f, segmentCount, true);
-                            Main.npc[i].netUpdate = true;
+                            n.Center = npc.Center;
+                            n.Opacity = Utils.GetLerpValue(15f, 0f, segmentCount, true);
+                            n.netUpdate = true;
                             segmentCount++;
                         }
                     }
@@ -1208,12 +1208,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         }
 
                         // Bring all segments along with.
-                        for (int i = 0; i < Main.maxNPCs; i++)
+                        foreach (NPC n in Main.ActiveNPCs)
                         {
-                            if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                            if (n.type == ModContent.NPCType<DevourerofGodsBody>() || n.type == ModContent.NPCType<DevourerofGodsTail>())
                             {
-                                Main.npc[i].Center = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY) * i * 2f;
-                                Main.npc[i].netUpdate = true;
+                                n.Center = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY) * n.whoAmI * 2f;
+                                n.netUpdate = true;
                             }
                         }
 
@@ -1292,12 +1292,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                         npc.Center = Main.projectile[GeneralPortalIndex].Center;
                         npc.velocity = npc.SafeDirectionTo(Main.projectile[GeneralPortalIndex].ModProjectile<DoGChargeGate>().Destination) * 45f;
-                        for (int i = 0; i < Main.maxNPCs; i++)
+                        foreach (NPC n in Main.ActiveNPCs)
                         {
-                            if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                            if (n.type == ModContent.NPCType<DevourerofGodsBody>() || n.type == ModContent.NPCType<DevourerofGodsTail>())
                             {
-                                Main.npc[i].Center = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY) * i * 0.5f;
-                                Main.npc[i].netUpdate = true;
+                                n.Center = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY) * n.whoAmI * 0.5f;
+                                n.netUpdate = true;
                             }
                         }
                         Main.projectile[GeneralPortalIndex].Kill();

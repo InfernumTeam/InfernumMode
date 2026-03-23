@@ -343,13 +343,13 @@ namespace InfernumMode.Content.Projectiles.Melee
                 return;
 
             // Attempt to get the currently held spear.
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].type != ModContent.ProjectileType<PunctusProjectile>() || Main.projectile[i].owner != Owner.whoAmI)
+                if (p.type != ModContent.ProjectileType<PunctusProjectile>() || p.owner != Owner.whoAmI)
                     continue;
 
                 // Get the spear, and if it is performing a rock throw and aiming, begin aiming ourselves.
-                PunctusProjectile profanus = Main.projectile[i].ModProjectile as PunctusProjectile;
+                PunctusProjectile profanus = p.ModProjectile as PunctusProjectile;
                 if (profanus.CurrentMode is PunctusProjectile.UseMode.RockThrow && profanus.CurrentState is PunctusProjectile.UseState.Aiming)
                 {
 
@@ -473,9 +473,9 @@ namespace InfernumMode.Content.Projectiles.Melee
         public static int ActiveRocks(Player owner)
         {
             int total = 0;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].owner != owner.whoAmI || Main.projectile[i].type != ModContent.ProjectileType<PunctusRock>() || Main.projectile[i].ModProjectile is not PunctusRock rock)
+                if (p.owner != owner.whoAmI || p.type != ModContent.ProjectileType<PunctusRock>() || p.ModProjectile is not PunctusRock rock)
                     continue;
 
                 // Theres a bit of leeway with rocks that have just fired, as they can fire slightly ahead of the spear.
@@ -493,9 +493,9 @@ namespace InfernumMode.Content.Projectiles.Melee
         public static int PassiveRocks(Player owner)
         {
             int total = 0;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].owner != owner.whoAmI || Main.projectile[i].type != ModContent.ProjectileType<PunctusRock>() || Main.projectile[i].ModProjectile is not PunctusRock rock)
+                if (p.owner != owner.whoAmI || p.type != ModContent.ProjectileType<PunctusRock>() || p.ModProjectile is not PunctusRock rock)
                     continue;
 
                 if (rock.CurrentState is State.Circling or State.Aiming)

@@ -81,18 +81,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             {
                 int otherPillar = -1;
                 bool collidingWithOtherPillar = false;
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (!Main.projectile[i].active || Main.projectile[i].type != Projectile.type || i == Projectile.whoAmI)
+                    if (p.type != Projectile.type || p.whoAmI == Projectile.whoAmI)
                         continue;
 
-                    bool colliding = Main.projectile[i].Colliding(Main.projectile[i].Hitbox, Projectile.Hitbox) ||
-                        Projectile.Colliding(Projectile.Hitbox, Main.projectile[i].Hitbox);
-                    if (!colliding || Main.projectile[i].ai[0] < 60f)
+                    bool colliding = p.Colliding(p.Hitbox, Projectile.Hitbox) ||
+                        Projectile.Colliding(Projectile.Hitbox, p.Hitbox);
+                    if (!colliding || p.ai[0] < 60f)
                         continue;
 
                     collidingWithOtherPillar = true;
-                    otherPillar = i;
+                    otherPillar = p.whoAmI;
                     break;
                 }
 

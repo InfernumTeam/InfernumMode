@@ -16,6 +16,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Common.VerletIntergration;
 using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances;
@@ -56,7 +57,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override void Load()
         {
             GlobalNPCOverrides.HitEffectsEvent += UpdateAcidHissSound;
-            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalASDeath;
         }
 
         private void UpdateAcidHissSound(NPC npc, ref NPC.HitInfo hit)
@@ -72,7 +72,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        private bool DisableNaturalASDeath(NPC npc, ref NPC.HitModifiers modifiers)
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            DisableNaturalASDeath(npc);
+        }
+
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            DisableNaturalASDeath(npc);
+        }
+
+        public static bool DisableNaturalASDeath(NPC npc)
         {
             bool isAquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
             if (isAquaticScourge)
@@ -80,12 +90,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
 
                 // Disable damage and start the death animation if the hit would kill the scourge.
-                if (head.life - modifiers.FinalDamage.Base <= 1)
+                if (head.life <= 1)
                 {
                     head.life = 0;
                     head.checkDead();
-                    modifiers.FinalDamage.Base *= 0;
-                    npc.dontTakeDamage = true;
                     return false;
                 }
             }
@@ -512,10 +520,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.velocity = Vector2.UnitY * -3f;
 
                 int bodyID = ModContent.NPCType<AquaticScourgeBody>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (!n.active || n.realLife != npc.whoAmI || n.type != bodyID)
+                    if (n.realLife != npc.whoAmI || n.type != bodyID)
                         continue;
 
                     n.Center = npc.Center;
@@ -981,10 +988,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (shootCounter >= shootCount - 1f)
                 {
                     int bodyID = ModContent.NPCType<AquaticScourgeBody>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-                        if (!n.active || n.type != bodyID || n.realLife != npc.whoAmI)
+                        if (n.type != bodyID || n.realLife != npc.whoAmI)
                             continue;
 
                         n.Infernum().ExtraAI[0] = 0f;
@@ -1452,9 +1458,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.netUpdate = true;
 
                 // Shove back the first few segments as well as the head, to reduce weird slithering artifacts from the segmenting code.
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
                     if (n.realLife == npc.whoAmI && n.ai[3] <= 3f)
                     {
                         n.position -= recoilOffset;
@@ -1515,10 +1520,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (hasCreatedSplashSound == 0f)
                 {
                     int totalMovingSegmentsInWater = 0;
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-                        if (n.active && n.realLife == npc.whoAmI && n.Infernum().ExtraAI[4] >= 1f)
+                        if (n.realLife == npc.whoAmI && n.Infernum().ExtraAI[4] >= 1f)
                             totalMovingSegmentsInWater++;
                     }
 
@@ -1652,10 +1656,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public static void ReleaseSpikesFromSegments(NPC npc, int segmentInterval, int segmentIndex)
         {
             int bodyID = ModContent.NPCType<AquaticScourgeBody>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (!n.active || n.type != bodyID || n.realLife != npc.whoAmI || n.ai[3] % segmentInterval != segmentIndex)
+                if (n.type != bodyID || n.realLife != npc.whoAmI || n.ai[3] % segmentInterval != segmentIndex)
                     continue;
 
                 foreach (Vector2 spikePosition in AquaticScourgeBodyBehaviorOverride.GetSpikePositions(n))
@@ -1725,16 +1728,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 ModContent.ProjectileType<WaterClearingBubble>()
             ];
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                Projectile p = Main.projectile[i];
-                if (!p.active || !bubbles.Contains(p.type))
+                if (!bubbles.Contains(p.type))
                     continue;
 
                 for (int j = 0; j < 45; j++)
                 {
                     Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), DustID.ToxicBubble);
-                    bubble.velocity = (TwoPi * i / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
+                    bubble.velocity = (TwoPi * p.whoAmI / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
                     bubble.scale = Main.rand.NextFloat(1f, 1.5f);
                     bubble.noGravity = true;
                 }
@@ -1775,30 +1777,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         #endregion AI Utility Methods
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<AquaticScourgeRelic>());
+        }
         public override bool CheckDead(NPC npc)
         {
-            PopAllBubbles();
-            SelectNextAttack(npc);
-
-            // Delete all stray entities.
-            for (int i = 0; i < 3; i++)
+            if (npc.ai[2] != (int)AquaticScourgeAttackType.DeathAnimation)
             {
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AcceleratingArcingAcid>(), ModContent.ProjectileType<AcidBubble>(), ModContent.ProjectileType<AquaticScourgeBodySpike>(),
-                    ModContent.ProjectileType<FallingAcid>(), ModContent.ProjectileType<RadiationPulse>(), ModContent.ProjectileType<SulphuricGas>(), ModContent.ProjectileType<SulphuricGasDebuff>(),
-                    ModContent.ProjectileType<SulphuricTornado>(), ModContent.ProjectileType<SulphurousRockRubble>());
-            }
+                PopAllBubbles();
+                SelectNextAttack(npc);
 
-            npc.ai[2] = (int)AquaticScourgeAttackType.DeathAnimation;
-            npc.life = 1;
-            npc.active = true;
-            npc.netUpdate = true;
-            return false;
+                // Delete all stray entities.
+                for (int i = 0; i < 3; i++)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AcceleratingArcingAcid>(), ModContent.ProjectileType<AcidBubble>(), ModContent.ProjectileType<AquaticScourgeBodySpike>(),
+                        ModContent.ProjectileType<FallingAcid>(), ModContent.ProjectileType<RadiationPulse>(), ModContent.ProjectileType<SulphuricGas>(), ModContent.ProjectileType<SulphuricGasDebuff>(),
+                        ModContent.ProjectileType<SulphuricTornado>(), ModContent.ProjectileType<SulphurousRockRubble>());
+                }
+
+                npc.ai[2] = (int)AquaticScourgeAttackType.DeathAnimation;
+                npc.life = npc.lifeMax;
+                npc.dontTakeDamage = true;
+                npc.active = true;
+                npc.netUpdate = true;
+                return false;
+            }
+            return true;
         }
         #endregion Death Effects
 
         #region Drawcode
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float skeletonInterpolant = npc.localAI[1];
             float jawRotation = npc.localAI[2];
             float jawRotationSine = Sin(jawRotation);

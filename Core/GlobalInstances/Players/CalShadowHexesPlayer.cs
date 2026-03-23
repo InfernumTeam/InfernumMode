@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CalamityMod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.Buffs;
 using Microsoft.Xna.Framework;
@@ -54,7 +55,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public void ActivateHex(string key)
         {
             if (HexStatuses.TryGetValue(key, out HexStatus status))
+            {
                 status.IsActive = true;
+                Player.AddCooldown(key + "Hex", 2);
+            }
         }
 
         #region Reset Effects
@@ -64,6 +68,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 status.Intensity = Clamp(status.Intensity - 0.02f, 0f, 1f);
                 status.IsActive = false;
+                string key = HexStatuses.First(key => key.Value == status).Key + "Hex";
+                ref var cd = ref Player.Calamity().cooldowns;
+                if (cd.TryGetValue(key, out var value))
+                {
+                    cd.Remove(key);
+                }
             }
         }
         #endregion Reset Effects
@@ -71,10 +81,14 @@ namespace InfernumMode.Core.GlobalInstances.Players
         #region Life Regen
         public override void UpdateBadLifeRegen()
         {
-            if (HexIsActive("Catharsis") && Player.lifeRegen >= 1)
+
+        }
+
+        public override void NaturalLifeRegen(ref float regen)
+        {
+            if (HexIsActive("Catharsis"))
             {
-                Player.lifeRegen = 0;
-                Player.lifeRegenTime = 0;
+                regen = 0f;
             }
         }
         #endregion Life Regen

@@ -84,60 +84,60 @@ namespace InfernumMode.Core.GlobalInstances
         #region Manual Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+            if (!Utilities.CanOverride(npc, out object container))
+            {
+                return base.PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
+            }
+            if (!npc.IsABestiaryIconDummy)
             {
                 bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
                 if (isDoG && npc.alpha >= 252)
                     return false;
 
-                var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-                if (container is not null)
+                if (Main.LocalPlayer.Calamity().trippy)
                 {
-                    if (Main.LocalPlayer.Calamity().trippy)
+                    SpriteEffects direction = SpriteEffects.None;
+                    if (npc.spriteDirection == 1)
+                        direction = SpriteEffects.FlipHorizontally;
+
+                    Vector2 origin = npc.frame.Size() * 0.5f;
+                    Color shroomColor = npc.GetAlpha(new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0));
+                    float colorFadeFactor = 0.99f;
+                    shroomColor.R = (byte)(shroomColor.R * colorFadeFactor);
+                    shroomColor.G = (byte)(shroomColor.G * colorFadeFactor);
+                    shroomColor.B = (byte)(shroomColor.B * colorFadeFactor);
+                    shroomColor.A = (byte)(shroomColor.A * colorFadeFactor);
+                    for (int i = 0; i < 4; i++)
                     {
-                        SpriteEffects direction = SpriteEffects.None;
-                        if (npc.spriteDirection == 1)
-                            direction = SpriteEffects.FlipHorizontally;
+                        Vector2 drawPosition = npc.Center;
+                        float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
+                        float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
 
-                        Vector2 origin = npc.frame.Size() * 0.5f;
-                        Color shroomColor = npc.GetAlpha(new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0));
-                        float colorFadeFactor = 0.99f;
-                        shroomColor.R = (byte)(shroomColor.R * colorFadeFactor);
-                        shroomColor.G = (byte)(shroomColor.G * colorFadeFactor);
-                        shroomColor.B = (byte)(shroomColor.B * colorFadeFactor);
-                        shroomColor.A = (byte)(shroomColor.A * colorFadeFactor);
-                        for (int i = 0; i < 4; i++)
-                        {
-                            Vector2 drawPosition = npc.Center;
-                            float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
-                            float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
+                        if (i is 0 or 2)
+                            drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
+                        else
+                            drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
 
-                            if (i is 0 or 2)
-                                drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
-                            else
-                                drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
+                        if (i is 0 or 1)
+                            drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
+                        else
+                            drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
+                        drawPosition.Y += npc.gfxOffY;
+                        drawPosition -= Main.screenPosition;
 
-                            if (i is 0 or 1)
-                                drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
-                            else
-                                drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
-                            drawPosition.Y += npc.gfxOffY;
-                            drawPosition -= Main.screenPosition;
-
-                            Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
-                        }
+                        Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                     }
-                    return container.BehaviorOverride.PreDraw(npc, Main.spriteBatch, drawColor);
                 }
+                return container.NPCOverride().PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
             }
-            return base.PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
+            return container.NPCOverride().PreDraw(npc, spriteBatch, screenPos, drawColor);
         }
         #endregion
 
         #region Healthbar Manipulation
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
-            if (!InfernumMode.CanUseCustomAIs)
+            if (!Utilities.CanOverride(npc, out object container))
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
             if (npc.type is NPCID.CultistBoss or NPCID.CultistBossClone)
@@ -154,7 +154,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == NPCID.EaterofWorldsBody)
                 return false;
 
-            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+            return container.NPCOverride().DrawHealthBar(npc, hbPosition, ref scale, ref position);
         }
 
         #endregion
@@ -163,6 +163,9 @@ namespace InfernumMode.Core.GlobalInstances
         public override void DrawBehind(NPC npc, int index)
         {
             if (!InfernumMode.CanUseCustomAIs)
+                return;
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (container is null)
                 return;
 
             bool isAres = npc.whoAmI == CalamityGlobalNPC.draedonExoMechPrime || npc.realLife == CalamityGlobalNPC.draedonExoMechPrime;
@@ -187,6 +190,9 @@ namespace InfernumMode.Core.GlobalInstances
         public override void ModifyTypeName(NPC npc, ref string typeName)
         {
             if (!InfernumMode.CanUseCustomAIs)
+                return;
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (container is null)
                 return;
 
             if (npc.type == ModContent.NPCType<CalamitasClone>())

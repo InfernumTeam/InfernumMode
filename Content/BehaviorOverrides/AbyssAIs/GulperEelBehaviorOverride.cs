@@ -254,8 +254,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             return [.. positions];
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Why is this drawing the body with additive blending?
             Main.spriteBatch.ResetBlendState();
 

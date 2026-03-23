@@ -8,6 +8,7 @@ using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -796,7 +797,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // To make the attack better than a simple DPS check the hands will target nearby players if close to deerclops.
             int handID = ModContent.NPCType<LightSnuffingHand>();
             float inverseCoveredDistance = 0f;
-            NPC[] nearbyHands = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == handID && Vector2.Distance(GetEyePosition(npc), n.Center) < 240f).ToArray();
+            NPC[] nearbyHands = [];
+            int index = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type == handID && Vector2.Distance(GetEyePosition(npc), n.Center) < 240f)
+                {
+                    nearbyHands[index++] = n;
+                }
+            }
             inverseCoveredDistance = nearbyHands.Sum(n => 240f - Vector2.Distance(GetEyePosition(npc), n.Center));
             smoothDistance = Lerp(smoothDistance, inverseCoveredDistance, 0.08f);
 
@@ -1143,8 +1152,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             npc.frameCounter++;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Draw the portal that Deerclops is dragged into once ready.
             float dragPortalCenterY = npc.Infernum().ExtraAI[DragPortalCenterYIndex];
             float dragPortalAppearInterpolant = npc.Infernum().ExtraAI[DragPortalAppearInterpolantIndex];
@@ -1276,6 +1287,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DeerclopsRelic>());
+        }
+
         public override bool CheckDead(NPC npc)
         {
             // Just die as usual if the Deerclops is killed during the death animation. This is done so that Cheat Sheet and other butcher effects can kill him quickly.
@@ -1292,6 +1309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             npc.netUpdate = true;
             return false;
         }
+
         #endregion Death Effects
 
         #region Tips

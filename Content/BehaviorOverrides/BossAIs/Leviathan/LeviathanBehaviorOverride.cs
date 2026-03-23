@@ -3,6 +3,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
@@ -43,6 +45,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             npc.defense = 40;
             npc.DR_NERD(0.35f);
         }
+
+        #region AI
 
         public override bool PreAI(NPC npc)
         {
@@ -372,6 +376,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 npc.Infernum().ExtraAI[i] = 0f;
         }
 
+        #endregion AI
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            LeadingConditionRule lastFishStanding = new(DropHelper.If(_ => NPC.CountNPCS(ModContent.NPCType<Anahita>()) + NPC.CountNPCS(ModContent.NPCType<LeviathanNPC>()) <= 1 && InfernumMode.CanUseCustomAIs));
+            lastFishStanding.Add(ModContent.ItemType<LeviathanRelic>());
+            npcLoot.Add(lastFishStanding);
+        }
+
+        #endregion Death Effects
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             int timeBetweenFrames = 6;
@@ -386,8 +403,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             npc.frame.Y = frame % 3 * npc.frame.Height;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float horizontalAfterimageInterpolant = npc.localAI[1];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             switch ((int)npc.localAI[0])

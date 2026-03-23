@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -10,6 +11,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -787,9 +789,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Reset local variables for hands.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
                 if (n.ai[1] != npc.whoAmI)
                     continue;
 
@@ -940,9 +941,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         #endregion AI
 
-        #region Frames and Drawcode
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SkeletronPrimeRelic>());
+        }
+
+        #endregion Death Effects
+
+        #region Frames and Drawcode
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             ref float shudderAmount = ref npc.Infernum().ExtraAI[ShudderAmountIndex];
 
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;

@@ -8,6 +8,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -974,11 +975,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             // Clear a bunch of stray projectiles.
             int sharkronID = ModContent.NPCType<SulphurousSharkron>();
             int toothBallID = ModContent.NPCType<OldDukeToothBall>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                bool npcTypeThatShouldDisappear = Main.npc[i].type == sharkronID || Main.npc[i].type == toothBallID;
-                if (Main.npc[i].active && npcTypeThatShouldDisappear)
-                    Main.npc[i].active = false;
+                bool npcTypeThatShouldDisappear = n.type == sharkronID || n.type == toothBallID;
+                if (npcTypeThatShouldDisappear)
+                    n.active = false;
             }
             Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HomingAcid>(), ModContent.ProjectileType<SandPoisonCloudOldDuke>(), ModContent.ProjectileType<SulphuricBlob>(), ModContent.ProjectileType<SharkSummonVortex>(),
                 ModContent.ProjectileType<OldDukeGore>());
@@ -987,6 +988,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         #endregion Utilities
 
         #endregion AI
+
+        #region Death Effects
+
+        public override bool PreKill(NPC npc)
+        {
+            CalamityWorld.StopRain();
+            return base.PreKill(npc);
+        }
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());
+        }
+
+        #endregion Death Effects
 
         #region Frames and Drawcode
 
@@ -1015,8 +1031,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             ref float attackTimer = ref npc.ai[1];
             ref float phaseTransitionState = ref npc.Infernum().ExtraAI[6];
             ref float phaseTransitionTimer = ref npc.Infernum().ExtraAI[7];

@@ -145,10 +145,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     [
                         ModContent.ProjectileType<SmallPlasmaSpark>(),
                     ];
-                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    foreach (Projectile p in Main.ActiveProjectiles)
                     {
-                        if (projectilesToDelete.Contains(Main.projectile[i].type))
-                            Main.projectile[i].active = false;
+                        if (projectilesToDelete.Contains(p.type))
+                            p.active = false;
                     }
                 }
 

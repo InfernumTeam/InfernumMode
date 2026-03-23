@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Loop to find all previous segments in the worm linked list until the tail is reached.
             int segmentIndex = (int)npc.ai[0];
-            while (segmentIndex >= 0 && segmentIndex < Main.maxNPCs && Main.npc[segmentIndex].active && (Main.npc[segmentIndex].type == ModContent.NPCType<OarfishBody>()))
+            while (segmentIndex >= 0 && segmentIndex < Main.maxNPCs && Main.npc[segmentIndex].active && Main.npc[segmentIndex].type == ModContent.NPCType<OarfishBody>())
             {
                 segments.Add(Main.npc[segmentIndex]);
                 segmentIndex = (int)Main.npc[segmentIndex].ai[0];

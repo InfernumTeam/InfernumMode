@@ -16,11 +16,11 @@ namespace InfernumMode.Content.Skies
             if (FairyIndex >= 0 && Main.npc[FairyIndex].active && Main.npc[FairyIndex].type == type)
                 return;
             FairyIndex = -1;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == type)
+                if (n.type == type)
                 {
-                    FairyIndex = i;
+                    FairyIndex = n.whoAmI;
                     break;
                 }
             }

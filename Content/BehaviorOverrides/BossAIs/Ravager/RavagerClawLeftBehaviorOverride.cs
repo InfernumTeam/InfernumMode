@@ -41,7 +41,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreAI(NPC npc) => DoClawAI(npc, true);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawClaw(npc, Main.spriteBatch, lightColor, true);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
+            return DrawClaw(npc, Main.spriteBatch, lightColor, true);
+        }
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {

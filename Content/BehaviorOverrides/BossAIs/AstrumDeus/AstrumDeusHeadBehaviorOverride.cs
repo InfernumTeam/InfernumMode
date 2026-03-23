@@ -165,10 +165,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     ModContent.ProjectileType<AstralCrystal>(),
                     ModContent.ProjectileType<AstralVortex>(),
                     ModContent.ProjectileType<MassiveInfectedStar>());
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == deusSpawnID)
-                        Main.npc[i].active = false;
+                    if (n.type == deusSpawnID)
+                        n.active = false;
                 }
 
                 attackTimer = 0f;
@@ -769,10 +769,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (attackTimer < shootTime)
             {
                 int bodyID = ModContent.NPCType<AstrumDeusBody>();
-                List<NPC> crystalShootCandidates = Main.npc.Take(Main.maxNPCs).Where(n =>
+                List<NPC> crystalShootCandidates = [];
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    return n.active && n.type == bodyID && !n.WithinRange(target.Center, 375f) && n.WithinRange(target.Center, 960f);
-                }).ToList();
+                    if (n.type == bodyID && !n.WithinRange(target.Center, 375f) && n.WithinRange(target.Center, 960f))
+                    {
+                        crystalShootCandidates.Add(n);
+                    }
+                }
                 if (attackTimer % crystalShootRate == crystalShootRate - 1f && crystalShootCandidates.Count >= 1)
                 {
                     NPC bodyToShootFrom = Main.rand.Next(crystalShootCandidates);
@@ -878,14 +882,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Make all deus spawns fly towards the target after a sufficient quantity of time has passed.
             if (attackTimer == flyTime + 1f)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != deusSpawnID)
+                    if (n.type != deusSpawnID)
                         continue;
 
-                    Main.npc[i].ai[3] = 1f;
-                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * spawnFlySpeed;
-                    Main.npc[i].netUpdate = true;
+                    n.ai[3] = 1f;
+                    n.velocity = n.SafeDirectionTo(target.Center) * spawnFlySpeed;
+                    n.netUpdate = true;
                 }
             }
 
@@ -967,10 +971,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Send energy bolts towards the star.
             int bodyID = ModContent.NPCType<AstrumDeusBody>();
-            List<NPC> bodySegments = Main.npc.Take(Main.maxNPCs).Where(n =>
+            List<NPC> bodySegments = [];
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                return n.active && n.type == bodyID;
-            }).ToList();
+                if (n.type == bodyID)
+                {
+                    bodySegments.Add(n);
+                }
+            }
             if (attackTimer > repositionTimeBuffer && attackTimer < repositionTimeBuffer + starGrowTime && attackTimer % 7f == 6f)
             {
                 Vector2 startCenter = new(starSpawnCenterX, starSpawnCenterY);
@@ -1287,12 +1295,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int segmentCount = 0;
             int bodyType = ModContent.NPCType<AstrumDeusBody>();
             int tailType = ModContent.NPCType<AstrumDeusTail>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && (Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
+                if (n.type == bodyType || n.type == tailType)
                 {
-                    Main.npc[i].Center = npc.Center - (npc.rotation - PiOver2).ToRotationVector2() * segmentCount;
-                    Main.npc[i].netUpdate = true;
+                    n.Center = npc.Center - (npc.rotation - PiOver2).ToRotationVector2() * segmentCount;
+                    n.netUpdate = true;
                     segmentCount++;
                 }
             }
@@ -1303,8 +1311,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         #endregion AI
 
         #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumDeus/AstrumDeusHead").Value;
             if (npc.Infernum().ExtraAI[7] == 1f)
             {

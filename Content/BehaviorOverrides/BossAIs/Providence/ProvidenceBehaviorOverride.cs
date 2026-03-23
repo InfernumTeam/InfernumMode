@@ -139,8 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #region Loading
         public override void Load()
         {
-            GlobalNPCOverrides.OnKillEvent += DetermineNightDefeatStatus;
-            GlobalNPCOverrides.StrikeNPCEvent += PerformDamageRestrictions;
+            //GlobalNPCOverrides.StrikeNPCEvent += PerformDamageRestrictions;
             //TrackedMusicManager.PauseInUIConditionEvent += AddMusicPauseCondition;
         }
 
@@ -151,7 +150,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return true;
         }
 
-        private void DetermineNightDefeatStatus(NPC npc)
+        // DetermineNightDefeatStatus
+        public override void OnKill(NPC npc)
         {
             // Determine whether Providence was defeated at night first. Her infernal relic will give a baffled comment if this happens.
             if (npc.type == ModContent.NPCType<ProvidenceBoss>())
@@ -1224,10 +1224,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ProfanedSpearInfernum>());
 
                 int guardianID = ModContent.NPCType<ProvSpawnOffense>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.active && n.type == guardianID)
+                    if (n.type == guardianID)
                         n.active = false;
                 }
             }
@@ -1261,10 +1260,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         }, target.Center);
 
                         int guardianID = ModContent.NPCType<ProvSpawnOffense>();
-                        for (int i = 0; i < Main.maxNPCs; i++)
+                        foreach (NPC n in Main.ActiveNPCs)
                         {
-                            NPC n = Main.npc[i];
-                            if (n.active && n.type == guardianID)
+                            if (n.type == guardianID)
                             {
                                 for (int j = 0; j < 4; j++)
                                 {
@@ -1443,10 +1441,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int guardianID = ModContent.NPCType<ProvSpawnHealer>();
-                        for (int i = 0; i < Main.maxNPCs; i++)
+                        foreach (NPC n in Main.ActiveNPCs)
                         {
-                            NPC n = Main.npc[i];
-                            if (n.type != guardianID || !n.active)
+                            if (n.type != guardianID)
                                 continue;
 
                             Vector2 spikeSpawnPosition = ProvidenceHealerGuardianBehaviorOverride.GetCrystalPosition(n);
@@ -1474,10 +1471,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (Main.netMode != NetmodeID.MultiplayerClient && spinRadiusOffset >= 1400f)
                 {
                     int guardianID = ModContent.NPCType<ProvSpawnHealer>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-                        if (n.type != guardianID || !n.active)
+                        if (n.type != guardianID)
                             continue;
 
                         for (int j = 0; j < 20; j++)
@@ -2065,10 +2061,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 int rockID = ModContent.NPCType<ProfanedRocks>();
                 bool rockWasChanged = false;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.active && n.type == rockID && n.Infernum().ExtraAI[0] == 0f)
+                    if (n.type == rockID && n.Infernum().ExtraAI[0] == 0f)
                     {
                         n.Infernum().ExtraAI[0] = 1f;
                         n.netUpdate = true;
@@ -2558,10 +2553,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 ModContent.NPCType<ProvSpawnOffense>(),
                 ModContent.NPCType<ProfanedRocks>(),
             ];
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (n.active && guardianIDs.Contains(n.type))
+                if (guardianIDs.Contains(n.type))
                     n.active = false;
             }
 
@@ -2672,7 +2666,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static Color RuneColorFunction(NPC n, float _) => Color.Lerp(Color.Yellow, Color.Wheat, 0.8f) * (1f - n.Opacity) * n.Infernum().ExtraAI[1];
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => false;
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
+            return false;
+        }
         #endregion
 
         #region Tips

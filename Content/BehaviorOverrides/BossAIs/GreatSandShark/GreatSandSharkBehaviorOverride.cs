@@ -88,13 +88,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
+
+        #region Death Effects
+
+        // Ensure that the great sand shark drops its items on top of the player. The reason for this is because if it releases items inside of blocks they will
+        // be completely unobtainable, due to the Colosseum subworld not being mineable.
+        public override bool PreKill(NPC npc)
+        {
+            if (npc.HasPlayerTarget)
+            {
+                npc.damage = 0;
+                npc.Center = Main.player[npc.target].Center;
+            }
+            return true;
+        }
+
+        #endregion Death Effects
     }
 }

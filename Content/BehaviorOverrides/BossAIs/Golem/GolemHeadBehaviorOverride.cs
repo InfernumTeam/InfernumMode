@@ -61,8 +61,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             npc.dontTakeDamage = reader.ReadBoolean();
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Only draw eyes on summon animation
             if (Main.npc[(int)npc.ai[0]].ai[0] < 182f)
             {

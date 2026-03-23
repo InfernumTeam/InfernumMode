@@ -498,8 +498,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         #endregion AI and Behaviors
 
         #region Frames and Drawcode
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/ReaperSharkEyes").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;

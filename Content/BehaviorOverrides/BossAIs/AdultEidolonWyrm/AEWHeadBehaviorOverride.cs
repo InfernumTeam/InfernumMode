@@ -846,10 +846,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.velocity = npc.SafeDirectionTo(target.Center) * mainWyrmUpwardChargeSpeed;
 
                 // Bring the segments to the teleport position.
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (!n.active || (n.type != ModContent.NPCType<PrimordialWyrmBody>() && n.type != ModContent.NPCType<PrimordialWyrmBodyAlt>() && n.type != ModContent.NPCType<PrimordialWyrmTail>()))
+                    if (n.type != ModContent.NPCType<PrimordialWyrmBody>() && n.type != ModContent.NPCType<PrimordialWyrmBodyAlt>() && n.type != ModContent.NPCType<PrimordialWyrmTail>())
                         continue;
 
                     n.Center = npc.Center;
@@ -1579,8 +1578,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         #endregion AI Utility Methods
 
         #region Draw Effects
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.frame = new(0, 0, 254, 138);
 
             DrawSegment(npc, lightColor);

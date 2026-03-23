@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Twins.TwinsAttackSynchronizer;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
@@ -76,10 +80,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public static void DrawChainsBetweenTwins(NPC npc)
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (!n.active || npc.whoAmI == i || n.type != NPCID.Retinazer || n.type != NPCID.Spazmatism)
+                if (npc.whoAmI == n.whoAmI || (n.type != NPCID.Retinazer && n.type != NPCID.Spazmatism))
                     continue;
 
                 bool chainIsTooLong = !npc.WithinRange(n.Center, 2000f);
@@ -101,8 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Reset afterimage lengths.
             NPCID.Sets.TrailingMode[npc.type] = 3;
             NPCID.Sets.TrailCacheLength[npc.type] = 5;
@@ -213,7 +218,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion Tips
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            LeadingConditionRule lastTwinStanding = new(DropHelper.If(_ => NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 && InfernumMode.CanUseCustomAIs));
+            lastTwinStanding.Add(ModContent.ItemType<TwinsRelic>());
+            npcLoot.Add(lastTwinStanding);
+        }
+
         public override bool CheckDead(NPC npc) => HandleDeathEffects(npc);
+
         #endregion Death Effects
     }
 }

@@ -6,6 +6,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.UI;
 using InfernumMode.Assets.BossTextures;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -40,23 +41,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         #region Loading
         public override void Load()
         {
-            GlobalNPCOverrides.OnKillEvent += MakeSplitSlimesCreateDeathStuff;
+
         }
 
-        private void MakeSplitSlimesCreateDeathStuff(NPC npc)
-        {
-            bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<CrimulanSGBig>();
-            if (bigSlimeGod && Registered(npc.type))
-            {
-                for (int i = 0; i < 12; i++)
-                {
-                    int slime = NPC.NewNPC(npc.GetSource_Death(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, ModContent.NPCType<SplitBigSlimeAnimation>());
-                    Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
-                }
-
-                SelectNextAttackSpecific(LeaderOfFight);
-            }
-        }
         #endregion Loading
 
         #region AI
@@ -499,10 +486,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         }
         #endregion AI
 
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SlimeGodRelic>());
+        }
+
+        #endregion Death Effects
+
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
 
             ref float afterimageCount = ref npc.Infernum().ExtraAI[6];

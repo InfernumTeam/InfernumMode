@@ -5,6 +5,7 @@ using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -51,23 +52,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         ];
 
         #region Loading
+
         public override void Load()
         {
-            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalSkeletronDeath;
+
         }
 
-        private bool DisableNaturalSkeletronDeath(NPC npc, ref NPC.HitModifiers modifiers)
-        {
-            if (npc.type == NPCID.SkeletronHead && npc.life - modifiers.FinalDamage.Base <= 1)
-            {
-                npc.life = 0;
-                npc.checkDead();
-                modifiers.FinalDamage *= 0;
-                npc.dontTakeDamage = true;
-                return false;
-            }
-            return true;
-        }
         #endregion Loading
 
         #region AI
@@ -108,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 return false;
             }
 
-            if (Main.dayTime)
+            if (Main.dayTime && attackState != (int)SkeletronAttackType.DeathAnimation)
             {
                 npc.velocity = (npc.velocity * 14f + npc.SafeDirectionTo(target.Center) * 25f) / 15f;
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.3f;
@@ -797,8 +787,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         #region Drawing and Frames
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float phaseChangeTimer = 90f - npc.Infernum().ExtraAI[0];
             bool canDrawBehindGlow = npc.Infernum().ExtraAI[1] >= 2f;
             float backGlowFade = 0f;
@@ -824,10 +816,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         #endregion
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<SkeletronRelic>());
+        }
+
         public override bool CheckDead(NPC npc)
         {
             if (npc.ai[0] != (int)SkeletronAttackType.DeathAnimation)
             {
+                npc.dontTakeDamage = true;
+                npc.defense = 9999;
+                npc.Calamity().unbreakableDR = true;
                 npc.ai[0] = (int)SkeletronAttackType.DeathAnimation;
                 npc.ai[1] = 0f;
             }
@@ -836,12 +837,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Get rid of the silly hands.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type == NPCID.SkeletronHand && Main.npc[i].active)
+                if (n.type == NPCID.SkeletronHand)
                 {
-                    Main.npc[i].active = false;
-                    Main.npc[i].netUpdate = true;
+                    n.active = false;
+                    n.netUpdate = true;
                 }
             }
 

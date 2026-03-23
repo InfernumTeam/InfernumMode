@@ -7,6 +7,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -734,6 +735,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             GeneralParticleHandler.SpawnParticle(sand);
         }
         #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DesertScourgeRelic>());
+        }
+
+        #endregion Death Effects
 
         #region Drawing
 

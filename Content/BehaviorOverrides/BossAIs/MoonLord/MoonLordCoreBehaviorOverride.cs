@@ -94,10 +94,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             get
             {
                 int activeArms = 0;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.type == NPCID.MoonLordHand && n.active && n.ai[0] != -2f)
+                    if (n.type == NPCID.MoonLordHand && n.ai[0] != -2f)
                         activeArms++;
                 }
                 return activeArms;
@@ -108,10 +107,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.type == NPCID.MoonLordHead && n.active && n.ai[0] != -2f)
+                    if (n.type == NPCID.MoonLordHead && n.ai[0] != -2f)
                         return true;
                 }
                 return false;
@@ -122,10 +120,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.type == NPCID.MoonLordCore && n.active && n.life < n.lifeMax * Phase3LifeRatio)
+                    if (n.type == NPCID.MoonLordCore && n.life < n.lifeMax * Phase3LifeRatio)
                         return true;
                 }
                 return false;
@@ -144,11 +141,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override void Load()
         {
-            GlobalNPCOverrides.OnKillEvent += GenerateProfanedTempleIfNecessary;
-            GlobalNPCOverrides.StrikeNPCEvent += HandleMLBodyPhaseTriggers;
+            //GlobalNPCOverrides.StrikeNPCEvent += HandleMLBodyPhaseTriggers;
         }
 
-        private void GenerateProfanedTempleIfNecessary(NPC npc)
+        // GenerateProfanedTempleIfNecessary
+        public override void OnKill(NPC npc)
         {
             // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine && !WeakReferenceSupport.InAnySubworld())
@@ -238,12 +235,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         npc.localAI[i] = bodyPartIndices[i];
 
                     // Reset hand AIs.
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].active)
+                        if (n.type == NPCID.MoonLordHand)
                         {
-                            Main.npc[i].ai[0] = 0f;
-                            Main.npc[i].netUpdate = true;
+                            n.ai[0] = 0f;
+                            n.netUpdate = true;
                         }
                     }
                 }
@@ -338,11 +335,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Update other limbs if the core is supposed to sync.
             if (npc.netUpdate)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
                     bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
-                    if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
+                    if (n.ai[3] == npc.whoAmI && isBodyPart)
                     {
                         n.netSpam = npc.netSpam;
                         n.netUpdate = true;
@@ -530,14 +526,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             npc.Infernum().ExtraAI[7]++;
 
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
                 bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
-                if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
+                if (n.ai[3] == npc.whoAmI && isBodyPart)
                 {
                     for (int j = 0; j < 5; j++)
-                        n.Infernum().ExtraAI[i] = 0f;
+                        n.Infernum().ExtraAI[j] = 0f;
                 }
             }
 
@@ -560,10 +555,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 ModContent.ProjectileType<StardustConstellation>(),
                 ModContent.ProjectileType<VoidBlackHole>(),
             ];
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (projectilesToDelete.Contains(Main.projectile[i].type))
-                    Main.projectile[i].active = false;
+                if (projectilesToDelete.Contains(p.type))
+                    p.active = false;
             }
         }
 
@@ -587,8 +582,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Hideous code from vanilla. Don't mind it too much.
             Texture2D coreTexture = TextureAssets.Npc[npc.type].Value;
             Texture2D coreOutlineTexture = TextureAssets.Extra[ExtrasID.MoonLordCoreMoss].Value;
@@ -604,11 +601,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 int armIndex = -1;
                 bool leftArm = a == 0;
                 Vector2 directionThing = new((!leftArm).ToDirectionInt(), 1f);
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].ai[2] == a && Main.npc[i].ai[3] == npc.whoAmI)
+                    if (n.type == NPCID.MoonLordHand && n.ai[2] == a && n.ai[3] == npc.whoAmI)
                     {
-                        armIndex = i;
+                        armIndex = n.whoAmI;
                         break;
                     }
                 }

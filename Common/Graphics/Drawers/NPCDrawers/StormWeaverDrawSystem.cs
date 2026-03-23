@@ -22,12 +22,8 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
             // Draw all weaver segments.
             int weaverBodyID = ModContent.NPCType<StormWeaverBody>();
             int weaverTailID = ModContent.NPCType<StormWeaverTail>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (!n.active)
-                    continue;
-
                 if (n.type != weaverHeadID && n.type != weaverBodyID && n.type != weaverTailID)
                     continue;
 

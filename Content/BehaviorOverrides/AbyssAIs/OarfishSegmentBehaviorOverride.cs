@@ -61,8 +61,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         }
 
         public override bool PreAI(NPC npc) => DoSegmentingAI(npc);
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
     }
 
     public class OarfishTailBehaviorOverride : NPCBehaviorOverride
@@ -70,7 +68,5 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override int NPCOverrideType => ModContent.NPCType<OarfishTail>();
 
         public override bool PreAI(NPC npc) => OarfishBodyBehaviorOverride.DoSegmentingAI(npc);
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
     }
 }

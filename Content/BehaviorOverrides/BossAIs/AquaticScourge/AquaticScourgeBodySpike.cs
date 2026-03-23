@@ -70,12 +70,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Prevent spike clumping behavior.
             float pushForce = 0.85f;
-            for (int k = 0; k < Main.maxProjectiles; k++)
+            foreach (Projectile otherProj in Main.ActiveProjectiles)
             {
-                Projectile otherProj = Main.projectile[k];
-
                 // Short circuits to make the loop as fast as possible
-                if (!otherProj.active || otherProj.type != Projectile.type || k == Projectile.whoAmI)
+                if (otherProj.type != Projectile.type || otherProj.whoAmI == Projectile.whoAmI)
                     continue;
 
                 // If the other projectile is indeed the same owned by the same player and they're too close, nudge them away.

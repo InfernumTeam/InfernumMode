@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
@@ -7,6 +8,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Worldgen;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -74,9 +76,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
-            npc.damage = npc.defDamage - 15;
+            npc.damage = (int)Math.Round(npc.defDamage * 0.921875);
             npc.dontTakeDamage = false;
             npc.noTileCollide = false;
+            Main.NewText(npc.lifeMax);
 
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
@@ -580,9 +583,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public static void DespawnAllSlimeEnemies()
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC npc in Main.ActiveNPCs)
             {
-                NPC npc = Main.npc[i];
                 if (npc.type is NPCID.BlueSlime or NPCID.SlimeSpiked)
                 {
                     npc.active = false;
@@ -600,8 +602,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         #region Draw Code
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D kingSlimeTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
@@ -659,6 +663,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         #endregion Drawcode
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<KingSlimeRelic>());
+        }
 
         public override bool CheckDead(NPC npc)
         {

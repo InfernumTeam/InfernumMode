@@ -117,18 +117,18 @@ namespace InfernumMode.Content.BossBars
 
         public override void Update(IBigProgressBar currentBar, ref BigProgressBarInfo info)
         {
-            for (int j = 0; j < Main.maxNPCs; j++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[j].active && !BossHealthBarManager.BossExclusionList.Contains(Main.npc[j].type))
+                if (!BossHealthBarManager.BossExclusionList.Contains(n.type))
                 {
-                    bool isEoWSegment = Main.npc[j].type is NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail;
+                    bool isEoWSegment = n.type is NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail;
 
                     bool canHaveHpBar = false;
-                    if (Main.npc[j].TryGetGlobalNPC<CalamityGlobalNPC>(out var result))
+                    if (n.TryGetGlobalNPC<CalamityGlobalNPC>(out var result))
                         canHaveHpBar = result.CanHaveBossHealthBar;
 
-                    if ((Main.npc[j].IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(Main.npc[j].type) || canHaveHpBar || ModCallNPCsThatCanHaveAHPBar.Contains(Main.npc[j].type))
-                        AddBar(j);
+                    if ((n.IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(n.type) || canHaveHpBar || ModCallNPCsThatCanHaveAHPBar.Contains(n.type))
+                        AddBar(n.whoAmI);
                 }
             }
             for (int i = 0; i < ActiveBossBars.Count; i++)

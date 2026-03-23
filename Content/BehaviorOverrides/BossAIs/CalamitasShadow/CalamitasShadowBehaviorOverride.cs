@@ -18,6 +18,7 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Buffs;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -737,11 +738,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
 
                     int seekerID = ModContent.NPCType<SoulSeeker>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        NPC n = Main.npc[i];
-
-                        if (n.active && n.type == seekerID)
+                        if (n.type == seekerID)
                         {
                             n.Infernum().ExtraAI[0] = 1f;
                             n.netUpdate = true;
@@ -1917,8 +1916,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             npc.frame.Y = npc.frame.Height * ((int)npc.frameCounter % 6);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             SpriteEffects direction = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 direction = SpriteEffects.FlipHorizontally;
@@ -2179,6 +2180,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ForgottenShadowOfCalamitasRelic>());
+        }
 
         public override bool CheckDead(NPC npc)
         {

@@ -304,16 +304,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             bool alone = !NPC.AnyNPCs(NPCID.Spazmatism) && isRetinazer || !NPC.AnyNPCs(NPCID.Retinazer) && isSpazmatism;
             bool otherTwinHasCreatedShield = false;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!Main.npc[i].active)
+                if (n.type is not NPCID.Retinazer and not NPCID.Spazmatism)
                     continue;
-                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
-                    continue;
-                if (Main.npc[i].type == npc.type)
+                if (n.type == npc.type)
                     continue;
 
-                if (Main.npc[i].Infernum().ExtraAI[3] == 1f)
+                if (n.Infernum().ExtraAI[3] == 1f)
                 {
                     otherTwinHasCreatedShield = true;
                     break;
@@ -1848,16 +1846,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 SilenceSpazmatismFlameSounds(npc);
 
             bool otherTwinHasCreatedShield = false;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!Main.npc[i].active)
+                if (n.type is not NPCID.Retinazer and not NPCID.Spazmatism)
                     continue;
-                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
-                    continue;
-                if (Main.npc[i].type == npc.type)
+                if (n.type == npc.type)
                     continue;
 
-                if (Main.npc[i].Infernum().ExtraAI[3] == 1f)
+                if (n.Infernum().ExtraAI[3] == 1f)
                 {
                     otherTwinHasCreatedShield = true;
                     break;

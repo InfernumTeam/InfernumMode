@@ -177,8 +177,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             yield return npc.Center + Vector2.UnitY * npc.gfxOffY + new Vector2(-18f, -10f).RotatedBy(npc.rotation) * npc.scale;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float skeletonInterpolant = npc.localAI[1];
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
             Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBody").Value;

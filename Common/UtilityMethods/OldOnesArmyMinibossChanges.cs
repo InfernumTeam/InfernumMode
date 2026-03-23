@@ -74,22 +74,22 @@ namespace InfernumMode.Common.UtilityMethods
                 NPCID.DD2DrakinT2,
                 NPCID.DD2DrakinT3,
             ];
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && pickOffNPCs.Contains(Main.npc[i].type))
+                if (pickOffNPCs.Contains(n.type))
                 {
-                    if (Main.npc[i].Opacity > 0.8f)
+                    if (n.Opacity > 0.8f)
                     {
                         for (int j = 0; j < 10; j++)
                         {
-                            Dust magic = Dust.NewDustDirect(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, DustID.Shadowflame);
+                            Dust magic = Dust.NewDustDirect(n.position, n.width, n.height, DustID.Shadowflame);
                             magic.velocity.Y -= 3f;
                             magic.velocity *= Main.rand.NextFloat(1f, 1.25f);
                             magic.alpha = 128;
                             magic.noGravity = true;
                         }
                     }
-                    Main.npc[i].active = false;
+                    n.active = false;
                 }
             }
         }

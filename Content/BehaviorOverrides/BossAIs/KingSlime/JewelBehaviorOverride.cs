@@ -19,6 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         {
             ref float attackTimer = ref npc.ai[0];
             ref float backglowInterpolant = ref npc.ai[1];
+            Main.NewText(npc.lifeMax);
 
             // Disappear if the main boss is not present.
             if (!NPC.AnyNPCs(NPCID.KingSlime))
@@ -101,8 +102,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 Main.projectile[beam].tileCollide = canReachTarget;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float backglowInterpolant = npc.ai[1];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;

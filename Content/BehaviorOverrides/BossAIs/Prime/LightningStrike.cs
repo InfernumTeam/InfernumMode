@@ -12,12 +12,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override void PostAI()
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type == NPCID.SkeletronPrime && Main.npc[i].active && Projectile.Hitbox.Intersects(Main.npc[i].Hitbox))
+                if (n.type == NPCID.SkeletronPrime && Projectile.Hitbox.Intersects(n.Hitbox))
                 {
-                    Main.npc[i].Infernum().ExtraAI[0] = 1f;
-                    Main.npc[i].netUpdate = true;
+                    n.Infernum().ExtraAI[0] = 1f;
+                    n.netUpdate = true;
                 }
             }
         }

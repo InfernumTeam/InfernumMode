@@ -1,5 +1,6 @@
 ﻿using System;
 using CalamityMod.Events;
+using CalamityMod.NPCs;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -120,8 +121,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             float cyanAuraStrength = MathF.Max(Main.npc[NPC.crimsonBoss].localAI[1], npc.ai[2]);
 
@@ -144,5 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
             return true;
         }
+
+        public override void CalGlobalNPCPostdraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter) => RunCalAfter = false;
     }
 }

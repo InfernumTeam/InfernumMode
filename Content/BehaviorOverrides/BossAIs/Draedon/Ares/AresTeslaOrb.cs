@@ -77,15 +77,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return null;
 
             float detachDistance = DetatchmentDistance;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].type != Projectile.type || Main.projectile[i].ai[0] != Identity + 1f || !Main.projectile[i].active)
+                if (p.type != Projectile.type || p.ai[0] != Identity + 1f)
                     continue;
 
-                if (Vector2.Distance(Projectile.Center, Main.projectile[i].Center) > detachDistance)
+                if (Vector2.Distance(Projectile.Center, p.Center) > detachDistance)
                     continue;
 
-                return Main.projectile[i];
+                return p;
             }
 
             return null;

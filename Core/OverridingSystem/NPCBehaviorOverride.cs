@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CalamityMod.NPCs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -61,7 +63,7 @@ namespace InfernumMode.Core.OverridingSystem
             }
         }
 
-        public static bool Registered(int npcID) => BehaviorOverrideSet[npcID] != null;
+        public static bool Registered(int npcID) => BehaviorOverrideSet != null && BehaviorOverrideSet[npcID] != null;
 
         public static bool Registered<T>() where T : ModNPC => Registered(ModContent.NPCType<T>());
         #endregion
@@ -92,11 +94,15 @@ namespace InfernumMode.Core.OverridingSystem
         /// </summary>
         public virtual void Load() { }
 
+        public virtual void SetStaticDefaults() { }
+
         /// <summary>
         /// Use this to set custom defaults for the npc. This runs after every other mod's.
         /// </summary>
         /// <param name="npc">The NPC</param>
         public virtual void SetDefaults(NPC npc) { }
+
+        public virtual void OnSpawn(NPC npc, IEntitySource source) { }
 
         /// <summary>
         /// Use this to perform custom behavior for the NPC. Return false to stop <see cref="NPC.AI"/> from running. Returns true by default.
@@ -133,7 +139,13 @@ namespace InfernumMode.Core.OverridingSystem
         /// <param name="spriteBatch">The spritebatch to draw with.</param>
         /// <param name="lightColor">The light color at the NPC's center</param>
         /// <returns></returns>
-        public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
+        public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) => true;
+
+        public virtual bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position) => null;
+
+        public virtual bool CalGlobalNPCPreDraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter) => RunCalAfter = true;
+
+        public virtual void CalGlobalNPCPostdraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter) => RunCalAfter = true;
 
         /// <summary>
         /// Whether or not to run the code for checking whether an NPC will remain active. Return false to stop the NPC from being despawned
@@ -141,9 +153,29 @@ namespace InfernumMode.Core.OverridingSystem
         /// </summary>
         /// <param name="npc">The NPC.</param>
         /// <returns></returns>
+        public virtual bool CheckActive(NPC npc) => true;
+
         public virtual bool CheckDead(NPC npc) => true;
 
+        public virtual bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot) => true;
+
         public virtual void BossHeadSlot(NPC npc, ref int index) { }
+
+        public virtual void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment) { }
+
+        public virtual void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers) { }
+
+        public virtual void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone) { }
+
+        public virtual void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone) { }
+
+        public virtual bool PreKill(NPC npc) => true;
+
+        public virtual void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) { }
+
+        public virtual void OnKill(NPC npc) { }
+
+        public virtual void ResetEffects(NPC npc) { }
 
         /// <summary>
         /// Use this to provide a list of tips to display on player death with the blasted tophat.

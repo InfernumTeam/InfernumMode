@@ -84,10 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 aew.velocity = aew.SafeDirectionTo(target.Center) * 120f;
                 aew.Infernum().ExtraAI[2] = 1f;
 
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    NPC n = Main.npc[i];
-                    if (n.active && (n.type == aewBodyID || n.type == aewBody2ID || n.type == aewTailID))
+                    if (n.type == aewBodyID || n.type == aewBody2ID || n.type == aewTailID)
                     {
                         n.Center = aew.Center;
                         n.netUpdate = true;

@@ -109,26 +109,26 @@ namespace InfernumMode.Core.ILEditingStuff
 
         internal static bool CalGlobalNPCPredrawDetourMethod(Orig_CalGlobalNPCPredrawMethod orig, CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (InfernumMode.CanUseCustomAIs)
-            {
-                if (npc.type == NPCID.GolemHeadFree)
-                    return false;
-            }
+            if (!Utilities.CanOverride(npc, out object container))
+                return orig(self, npc, spriteBatch, screenPos, drawColor);
 
-            return orig(self, npc, spriteBatch, screenPos, drawColor);
+            bool val = container.NPCOverride().CalGlobalNPCPreDraw(self, npc, spriteBatch, screenPos, drawColor, out bool RunCalAfter);
+            if (RunCalAfter)
+                val = orig(self, npc, spriteBatch, screenPos, drawColor);
+            return val;
         }
 
         internal static void CalGlobalNPCPostdrawDetourMethod(Orig_CalGlobalNPCPostdrawMethod orig, CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (InfernumMode.CanUseCustomAIs)
+            if (!Utilities.CanOverride(npc, out object container))
             {
-                if (npc.type == NPCID.BrainofCthulhu)
-                    return;
-                if (npc.type == NPCID.Creeper)
-                    return;
+                orig(self, npc, spriteBatch, screenPos, drawColor);
+                return;
             }
+            container.NPCOverride().CalGlobalNPCPostdraw(self, npc, spriteBatch, screenPos, drawColor, out bool RunCalAfter);
+            if (RunCalAfter)
+                orig(self, npc, spriteBatch, screenPos, drawColor);
 
-            orig(self, npc, spriteBatch, screenPos, drawColor);
         }
     }
 }

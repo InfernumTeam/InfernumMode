@@ -70,13 +70,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             int empressIndex = NPC.FindFirstNPC(NPCID.HallowBoss);
             NPC lacewing = null;
             float distanceToLacewing = float.MaxValue;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type != NPCID.EmpressButterfly || !Main.npc[i].active)
+                if (n.type != NPCID.EmpressButterfly)
                     continue;
 
-                distanceToLacewing = MathF.Min(distanceToLacewing, Projectile.Distance(Main.npc[i].Center));
-                lacewing = Main.npc[i];
+                distanceToLacewing = MathF.Min(distanceToLacewing, Projectile.Distance(n.Center));
+                lacewing = n;
             }
 
             // Move towards the empress if performing the lacewing animation or a charge-up for certain attacks.

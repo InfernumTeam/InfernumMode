@@ -43,17 +43,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         public override bool PreDraw(ref Color lightColor)
         {
             Projectile projectileToConnectTo = null;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile p in Main.ActiveProjectiles)
             {
                 // My facking eyes jesus.
-                if (Main.projectile[i].type != Projectile.type || !Main.projectile[i].active ||
-                    Main.projectile[i].timeLeft < 25f || Main.projectile[i].ai[0] != Index - 1f ||
-                    Main.projectile[i].ai[1] != Projectile.ai[1])
+                if (p.type != Projectile.type ||
+                    p.timeLeft < 25f || p.ai[0] != Index - 1f ||
+                    p.ai[1] != Projectile.ai[1])
                 {
                     continue;
                 }
 
-                projectileToConnectTo = Main.projectile[i];
+                projectileToConnectTo = p;
                 break;
             }
 

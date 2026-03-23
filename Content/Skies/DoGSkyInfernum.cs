@@ -103,11 +103,11 @@ namespace InfernumMode.Content.Skies
                 return true;
             }
             EdgyWormIndex = -1;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == ProvType)
+                if (n.type == ProvType)
                 {
-                    EdgyWormIndex = i;
+                    EdgyWormIndex = n.whoAmI;
                     break;
                 }
             }

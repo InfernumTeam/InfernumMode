@@ -69,8 +69,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         #region Drawcode
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             int npcType = (int)npc.ai[2];
             string rockVariantName = $"ProfanedRocks{npcType}";
             Texture2D texture = ModContent.Request<Texture2D>($"CalamityMod/NPCs/ProfanedGuardians/{rockVariantName}").Value;

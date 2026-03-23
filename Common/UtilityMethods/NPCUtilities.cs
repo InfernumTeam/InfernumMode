@@ -46,10 +46,10 @@ namespace InfernumMode
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].IsABoss())
-                        return Main.npc[i].realLife >= 0 ? Main.npc[Main.npc[i].realLife] : Main.npc[i];
+                    if (n.IsABoss())
+                        return n.realLife >= 0 ? Main.npc[n.realLife] : n;
                 }
                 return null;
             }

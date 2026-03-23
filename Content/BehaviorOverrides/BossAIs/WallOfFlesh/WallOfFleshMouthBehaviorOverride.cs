@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -34,9 +35,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public override bool PreAI(NPC npc)
         {
             int totalAttachedEyes = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!Main.npc[i].active || Main.npc[i].type != NPCID.WallofFleshEye || Main.npc[i].Infernum().ExtraAI[2] != 0f)
+                if (n.type != NPCID.WallofFleshEye || n.Infernum().ExtraAI[2] != 0f)
                     continue;
 
                 totalAttachedEyes++;
@@ -373,6 +374,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<WallOfFleshRelic>());
+        }
+
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()

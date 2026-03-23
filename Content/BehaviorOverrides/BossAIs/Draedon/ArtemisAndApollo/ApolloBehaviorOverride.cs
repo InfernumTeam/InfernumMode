@@ -9,6 +9,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
@@ -1988,8 +1989,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             return Color.Lerp(startingColor, endColor, Pow(completionRatio, 1.5f)) * npc.Opacity;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Prepare the flame trail shader with its map texture.
             Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.StreakFaded.Value;
             DrawExoTwin(npc, lightColor, npc.ModNPC<Apollo>().ChargeComboFlash, new PrimitiveSettings(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c), null),
@@ -2191,6 +2194,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override bool PreKill(NPC npc)
+        {
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type != apolloID && n.type != thanatosID && n.type != aresID)
+                    continue;
+
+                totalExoMechs++;
+            }
+
+            if (totalExoMechs >= 2)
+                return false;
+
+            return true;
+        }
         public override bool CheckDead(NPC npc)
         {
             if (npc.ai[0] == (int)TwinsAttackType.ThermonuclearBlitz && ExoMechManagement.TotalMechs <= 1)

@@ -154,14 +154,31 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         // This is largely based on the boids algorithm.
         public void DoSchoolingMovement()
         {
-            List<NPC> otherFish = Main.npc.Take(Main.maxNPCs).Where(n =>
+            List<NPC> otherFish = [];
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                bool nearbyAndInRange = n.WithinRange(NPC.Center, 1350f) && Collision.CanHitLine(NPC.Center, 1, 1, n.Center, 1, 1);
-                return n.type == NPC.type && n.whoAmI != NPC.whoAmI && nearbyAndInRange;
-            }).ToList();
+                if (n.type == NPC.type && n.whoAmI != NPC.whoAmI)
+                {
+                    bool nearbyAndInRage = n.WithinRange(NPC.Center, 1350f) && Collision.CanHitLine(NPC.Center, 1, 1, n.Center, 1, 1);
+                    if (nearbyAndInRage)
+                    {
+                        otherFish.Add(n);
+                    }
+                }
+            }
 
             // Get the center of the flock position and move towards it.
-            List<NPC> flockNeighbors = otherFish.Where(n => n.WithinRange(NPC.Center, 300f)).ToList();
+            List<NPC> flockNeighbors = [];
+            if (otherFish.Count > 0)
+            {
+                foreach (NPC n in otherFish)
+                {
+                    if (n.WithinRange(NPC.Center, 300f))
+                    {
+                        flockNeighbors.Add(n);
+                    }
+                }
+            }
             Vector2 centerOfFlock;
             if (flockNeighbors.Count > 0)
             {
@@ -177,7 +194,17 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.velocity += NPC.SafeDirectionTo(centerOfFlock, -Vector2.UnitY) * clockCenterMoveInterpolant * 0.1f;
 
             // Align with other fish.
-            List<NPC> alignmentNeighbors = otherFish.Where(n => n.WithinRange(NPC.Center, 300f)).ToList();
+            /*List<NPC> alignmentNeighbors = [];
+            if (otherFish.Count > 0)
+            {
+                foreach (NPC n in otherFish)
+                {
+                    if (n.WithinRange(NPC.Center, 300f))
+                    {
+                        alignmentNeighbors.Add(n);
+                    }
+                }
+            }*/
             Vector2 flockDirection;
             if (flockNeighbors.Count > 0)
             {
@@ -193,7 +220,17 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.velocity = NPC.velocity.ToRotation().AngleLerp(flockDirection.ToRotation(), 0.04f).ToRotationVector2() * NPC.velocity.Length();
 
             // Avoid close fish.
-            List<NPC> closeNeighbors = otherFish.Where(n => n.WithinRange(NPC.Center, 100f)).ToList();
+            /*List<NPC> closeNeighbors = [];
+            if (otherFish.Count > 0)
+            {
+                foreach (NPC n in otherFish)
+                {
+                    if (n.WithinRange(NPC.Center, 100f))
+                    {
+                        closeNeighbors.Add(n);
+                    }
+                }
+            }*/
             if (flockNeighbors.Count > 0)
             {
                 Vector2 avoidVelocity = Vector2.Zero;

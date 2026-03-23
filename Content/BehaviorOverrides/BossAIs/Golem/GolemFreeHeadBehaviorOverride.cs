@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using CalamityMod.NPCs;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,8 +41,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             npc.dontTakeDamage = reader.ReadBoolean();
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             if (npc.dontTakeDamage)
                 return false;
 
@@ -49,6 +52,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Rectangle rect = npc.frame;
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             GolemHeadBehaviorOverride.DoEyeDrawing(npc);
+            return false;
+        }
+
+        public override bool CalGlobalNPCPreDraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter)
+        {
+            RunCalAfter = false;
             return false;
         }
     }

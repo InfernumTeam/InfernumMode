@@ -200,9 +200,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         {
             get
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Utilities.IsExoMech(Main.npc[i]) && ExoMechAIUtilities.PerformingDeathAnimation(Main.npc[i]))
+                    if (Utilities.IsExoMech(n) && ExoMechAIUtilities.PerformingDeathAnimation(n))
                         return true;
                 }
                 return false;
@@ -255,17 +255,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             NPC initialMech = null;
 
             // Find the initial mech. If it cannot be found, return nothing.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!ExoMechIDs.Contains(Main.npc[i].type))
+                if (!ExoMechIDs.Contains(n.type))
                     continue;
 
-                if (!Main.npc[i].active)
-                    continue;
-
-                if (Main.npc[i].Infernum().ExtraAI[WasNotInitialSummonIndex] == 0f)
+                if (n.Infernum().ExtraAI[WasNotInitialSummonIndex] == 0f)
                 {
-                    initialMech = Main.npc[i];
+                    initialMech = n;
                     break;
                 }
             }
@@ -281,16 +278,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 return null;
 
             // Check to see if the initial mech believes that the final mech index is in use by a mech.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!ExoMechIDs.Contains(Main.npc[i].type))
+                if (!ExoMechIDs.Contains(n.type))
                     continue;
 
-                if (!Main.npc[i].active)
-                    continue;
-
-                if (initialMech.Infernum().ExtraAI[FinalMechIndexIndex] == i)
-                    return Main.npc[i];
+                if (initialMech.Infernum().ExtraAI[FinalMechIndexIndex] == n.whoAmI)
+                    return n;
             }
             return null;
         }
@@ -406,12 +400,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             get
             {
                 int count = 0;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!ExoMechIDs.Contains(Main.npc[i].type))
+                    if (!ExoMechIDs.Contains(n.type))
                         continue;
 
-                    if (!Main.npc[i].active || ExoMechAIUtilities.ShouldExoMechVanish(Main.npc[i]))
+                    if (ExoMechAIUtilities.ShouldExoMechVanish(n))
                         continue;
 
                     count++;
@@ -475,12 +469,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                     if (npc.type == ModContent.NPCType<Apollo>())
                     {
                         int artemisID = ModContent.NPCType<Artemis>();
-                        for (int i = 0; i < Main.maxNPCs; i++)
+                        foreach (NPC n in Main.ActiveNPCs)
                         {
-                            if (Main.npc[i].type == artemisID && Main.npc[i].realLife == npc.whoAmI)
+                            if (n.type == artemisID && n.realLife == npc.whoAmI)
                             {
-                                Main.npc[i].life = npc.life;
-                                Main.npc[i].active = true;
+                                n.life = npc.life;
+                                n.active = true;
                             }
                         }
                     }

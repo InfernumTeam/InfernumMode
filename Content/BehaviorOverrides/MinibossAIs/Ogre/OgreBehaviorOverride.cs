@@ -1,5 +1,7 @@
 ﻿using System;
+using CalamityMod;
 using InfernumMode.Common.UtilityMethods;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +27,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
         }
 
         public override int NPCOverrideType => NPCID.DD2OgreT2;
+
+        #region AI
 
         public override bool PreAI(NPC npc) => DoAI(npc);
 
@@ -634,6 +638,17 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             }
         }
 
+        #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OgreRelic>());
+        }
+
+        #endregion Death Effects
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frame.Width = 80;
@@ -697,6 +712,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DoDrawing(npc, Main.spriteBatch, lightColor);
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
+            return DoDrawing(npc, Main.spriteBatch, lightColor);
+        }
     }
 }

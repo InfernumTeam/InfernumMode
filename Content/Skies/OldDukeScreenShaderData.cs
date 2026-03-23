@@ -17,11 +17,11 @@ namespace InfernumMode.Content.Skies
                 return;
 
             OldDukeIndex = -1;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == oldDukeType && Main.npc[i].Infernum().ExtraAI[6] >= 2f)
+                if (n.type == oldDukeType && n.Infernum().ExtraAI[6] >= 2f)
                 {
-                    OldDukeIndex = i;
+                    OldDukeIndex = n.whoAmI;
                     break;
                 }
             }

@@ -36,11 +36,9 @@ namespace InfernumMode.Common.BaseEntities
         {
             List<BasePulseRingProjectile> rings = [];
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                Projectile projectile = Main.projectile[i];
-
-                if (projectile.active && projectile.ModProjectile is BasePulseRingProjectile pulseRing)
+                if (projectile.ModProjectile is BasePulseRingProjectile pulseRing)
                     rings.Add(pulseRing);
             }
 

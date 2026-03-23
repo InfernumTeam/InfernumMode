@@ -1,13 +1,17 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Twins.TwinsAttackSynchronizer;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
@@ -45,8 +49,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             return color;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Draw even if offscreen, to ensure that the telegraph is seen.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
@@ -170,7 +176,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            LeadingConditionRule lastTwinStanding = new(DropHelper.If(_ => NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 && InfernumMode.CanUseCustomAIs));
+            lastTwinStanding.Add(ModContent.ItemType<TwinsRelic>());
+            npcLoot.Add(lastTwinStanding);
+        }
+
         public override bool CheckDead(NPC npc) => HandleDeathEffects(npc);
+
         #endregion Death Effects
     }
 }

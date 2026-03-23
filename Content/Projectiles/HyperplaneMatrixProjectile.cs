@@ -497,10 +497,9 @@ namespace InfernumMode.Content.Projectiles
             ];
 
             int killedNPCs = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                NPC n = Main.npc[i];
-                if (!n.active || enemiesToNotAtomize.Contains(n.type))
+                if (enemiesToNotAtomize.Contains(n.type))
                     continue;
 
                 if (n.friendly || n.townNPC)

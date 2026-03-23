@@ -118,9 +118,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         }
         #endregion AI
 
-        #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #region Death Effects
+
+        // MakeSplitSlimesCreateDeathStuff
+        public override void OnKill(NPC npc)
         {
+            for (int i = 0; i < 12; i++)
+            {
+                int slime = NPC.NewNPC(npc.GetSource_Death(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, ModContent.NPCType<SplitBigSlimeAnimation>());
+                Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
+            }
+
+            SlimeGodComboAttackManager.SelectNextAttackSpecific(SlimeGodComboAttackManager.LeaderOfFight);
+        }
+
+        #endregion Death Effects
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             spriteBatch.Draw(BossTextureRegistry.CrimulanPaladin.Value, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }

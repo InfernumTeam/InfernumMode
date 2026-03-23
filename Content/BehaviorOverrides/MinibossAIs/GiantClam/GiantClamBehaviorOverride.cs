@@ -2,6 +2,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Projectiles.Enemy;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
         public const int HitsRequiredToAnger = 1;
 
         public override int NPCOverrideType => ModContent.NPCType<GiantClamNPC>();
+
+        #region AI
 
         public override bool PreAI(NPC npc)
         {
@@ -287,6 +290,17 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             npc.netUpdate = true;
         }
 
+        #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<GiantClamRelic>());
+        }
+
+        #endregion Death Effects
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             ref float hitCount = ref npc.ai[0];
@@ -322,8 +336,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;

@@ -8,6 +8,7 @@ using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -91,6 +92,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             npc.Opacity = 1f;
             npc.defense = 8;
         }
+
+        #region AI
 
         public override bool PreAI(NPC npc)
         {
@@ -930,8 +933,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             fire.noGravity = true;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #endregion
+
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<HiveMindRelic>());
+        }
+
+        #endregion Death Effects
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/HiveMind/HiveMindP2").Value;

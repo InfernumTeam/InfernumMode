@@ -3,16 +3,13 @@ using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
-using CalamityMod.NPCs.Yharon;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Items.SummonItems;
@@ -23,6 +20,7 @@ using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.Cutscenes;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
@@ -68,11 +66,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         internal static int Cryogen = -1;
 
-        internal static int AstrumAureus = -1;
-
         internal static int ProfanedCrystal = -1;
-
-        internal static int Yharon = -1;
         #endregion
 
         #region Reset Effects
@@ -80,35 +74,42 @@ namespace InfernumMode.Core.GlobalInstances
         {
             static void ResetSavedIndex(ref int index, int type, int type2 = -1)
             {
-                if (index >= 0)
+                if (index >= 0 && index < Main.maxNPCs)
                 {
+                    NPC npc = Main.npc[index];
                     // If the index npc is not active, reset the index.
-                    if (!Main.npc[index].active)
+                    if (!npc.active)
                         index = -1;
 
                     // Else, if this is -1,
                     else if (type2 == -1)
                     {
                         // If the index is not the correct type, reset the index.
-                        if (Main.npc[index].type != type)
+                        if (npc.type != type)
                             index = -1;
                     }
                     else
                     {
-                        if (Main.npc[type].type != type && Main.npc[index].type != type2)
+                        if (npc.type != type && npc.type != type2)
                             index = -1;
                     }
                 }
             }
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
-            ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
             ResetSavedIndex(ref ProfanedCrystal, ModContent.NPCType<HealerShieldCrystal>());
-            ResetSavedIndex(ref Yharon, ModContent.NPCType<Yharon>());
+
+            //if (Utilities.CanOverride(npc, out object container))
+            //    container.NPCOverride().BehaviorOverride.ResetEffects(npc);
         }
         #endregion Reset Effects
 
         #region Overrides
+
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
+        }
 
         public override void SetDefaults(NPC npc)
         {
@@ -126,16 +127,23 @@ namespace InfernumMode.Core.GlobalInstances
             infernum.OptionalPrimitiveDrawer = null;
             infernum.Optional3DStripDrawer = null;
 
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (InfernumMode.CanUseCustomAIs && container is not null)
-                container.BehaviorOverride.SetDefaults(npc);
+            if (Utilities.CanOverride(npc, out object container))
+                container.NPCOverride().SetDefaults(npc);
         }
 
-        public override void SetStaticDefaults()
+
+        public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)
         {
-            NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
+            if (!Utilities.CanOverride(npc, out object container))
+                return;
+            container.NPCOverride().ApplyDifficultyAndPlayerScaling(npc, numPlayers, balance, bossAdjustment);
         }
-
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            if (!Utilities.CanOverride(npc, out object container))
+                return;
+            container.NPCOverride().OnSpawn(npc, source);
+        }
         public override bool PreAI(NPC npc)
         {
             // Initialize the amount of players the NPC had when it spawned.
@@ -149,11 +157,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npc.netUpdate = true;
             }
 
-            if (!InfernumMode.CanUseCustomAIs)
-                return base.PreAI(npc);
-
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (container is null)
+            if (!Utilities.CanOverride(npc, out object container))
                 return base.PreAI(npc);
 
             // Disable the effects of timed DR.
@@ -177,7 +181,7 @@ namespace InfernumMode.Core.GlobalInstances
             // Disable netOffset effects.
             npc.netOffset = Vector2.Zero;
 
-            bool result = container.BehaviorOverride.PreAI(npc);
+            bool result = container.NPCOverride().PreAI(npc);
 
             // Disable the effects of certain unpredictable freeze debuffs.
             // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
@@ -196,14 +200,14 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void OnKill(NPC npc)
         {
-
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
             // no shark
             CalamityNaturalSpawnBossNPC.sharkKillCount = 0;
 
-            OnKillEvent?.Invoke(npc);
+            if (NPCBehaviorOverride.BehaviorOverrideSet[npc.type] is NPCBehaviorOverrideContainer container)
+                container.BehaviorOverride.OnKill(npc);
 
             // Trigger achievement checks.
             foreach (Player player in Main.ActivePlayers)
@@ -228,8 +232,10 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (!InfernumMode.CanUseCustomAIs)
+            if (!Utilities.CanOverride(npc, out object container))
                 return base.CanHitPlayer(npc, target, ref cooldownSlot);
+
+            container.NPCOverride().CanHitPlayer(npc, target, ref cooldownSlot);
 
             /*
             // Exceptions that do not have behavior overrides but exist in the fight still.
@@ -256,14 +262,24 @@ namespace InfernumMode.Core.GlobalInstances
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
         }
 
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (!InfernumMode.CanUseCustomAIs)
+            if (!Utilities.CanOverride(npc, out object container))
                 return;
 
             // Make Cryogen release ice particles when hit.
-            if (npc.type == ModContent.NPCType<CryogenNPC>() && NPCBehaviorOverride.Registered(npc.type))
-                CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, hit.Crit);
+            //if (npc.type == ModContent.NPCType<CryogenNPC>() && NPCBehaviorOverride.Registered(npc.type))
+            //    CryogenBehaviorOverride.OnHitIceParticles(npc, item, hit.Crit);
+
+            container.NPCOverride().OnHitByItem(npc, player, item, hit, damageDone);
+        }
+
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            if (!Utilities.CanOverride(npc, out object container))
+                return;
+
+            container.NPCOverride().OnHitByProjectile(npc, projectile, hit, damageDone);
         }
 
         public override void HitEffect(NPC npc, NPC.HitInfo hit)
@@ -276,16 +292,10 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
-            if (!InfernumMode.CanUseCustomAIs)
+            if (!Utilities.CanOverride(npc, out object container))
                 return;
 
-            // Loop through the StrikeNPC event subscribers and dynamically update the damage and such for every loop iteration.
-            // If any of the subscribers instruct this method to return false and disable damage, that applies universally.
-            // The reason the loop is necessary is because simply invoking the event and returning the result will only give back the result for the
-            // last subscriber called, effectively ignoring whatever all the other subscribers say should happen.
-            bool result = true;
-            foreach (StrikeNPCDelegate d in StrikeNPCEvent.GetInvocationList().Cast<StrikeNPCDelegate>())
-                result &= d.Invoke(npc, ref modifiers);
+            container.NPCOverride().ModifyIncomingHit(npc, ref modifiers);
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -300,11 +310,10 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool CheckDead(NPC npc)
         {
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (InfernumMode.CanUseCustomAIs && container is not null)
-                return container.BehaviorOverride.CheckDead(npc);
+            if (!Utilities.CanOverride(npc, out object container))
+                return base.CheckDead(npc);
 
-            return base.CheckDead(npc);
+            return container.NPCOverride().CheckDead(npc);
         }
 
         public override bool CheckActive(NPC npc)
@@ -327,6 +336,7 @@ namespace InfernumMode.Core.GlobalInstances
                 wasGivenDungeonsCurse.Value = true;
             }
         }
+
         #endregion
     }
 }

@@ -5,6 +5,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
@@ -136,7 +137,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = false;
             npc.noTileCollide = false;
 
-            GlobalNPCOverrides.AstrumAureus = npc.whoAmI;
+            CalamityGlobalNPC.astrumAureus = npc.whoAmI;
 
             bool enraged = enrageCountdown > 0f;
 
@@ -985,8 +986,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             return c * Utils.GetLerpValue(0.01f, 0.06f, completionRatio, true);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             npc.Infernum().OptionalPrimitiveDrawer ??= new(PrimitiveWidthFunction, c => PrimitiveTrailColor(npc, c), null, true, GameShaders.Misc["CalamityMod:SideStreakTrail"]);
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

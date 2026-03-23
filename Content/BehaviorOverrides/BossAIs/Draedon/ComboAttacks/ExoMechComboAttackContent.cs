@@ -37,18 +37,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int aresID = ModContent.NPCType<AresBody>();
 
             // Find the initial mech. If it cannot be found, return nothing.
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
-                    continue;
-                if (!Main.npc[i].active)
+                if (n.type != apolloID && n.type != thanatosID && n.type != aresID)
                     continue;
 
-                Main.npc[i].ai[0] = newAttack;
-                Main.npc[i].ai[1] = 0f;
+                n.ai[0] = newAttack;
+                n.ai[1] = 0f;
                 for (int j = 0; j < 5; j++)
-                    Main.npc[i].Infernum().ExtraAI[j] = 0f;
-                Main.npc[i].netUpdate = true;
+                    n.Infernum().ExtraAI[j] = 0f;
+                n.netUpdate = true;
             }
         }
 

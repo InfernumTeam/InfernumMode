@@ -222,8 +222,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             return npc.WithinRange(hidingSpot, 24f) || npc.velocity.Length() < 0.01f;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             if (InHidingSpot(npc))
                 return false;
 

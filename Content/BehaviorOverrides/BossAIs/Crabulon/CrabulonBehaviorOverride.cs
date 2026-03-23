@@ -7,6 +7,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Worldgen;
+using InfernumMode.Content.Items.Relics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -596,6 +597,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
         #endregion AI
 
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CrabulonRelic>());
+        }
+
+        #endregion Death Effects
+
         #region Frames and Drawcode
 
         public override void FindFrame(NPC npc, int frameHeight)
@@ -684,8 +694,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             return defaultArmOffset * new Vector2(-right.ToDirectionInt(), 1f) + frameBasedOffset;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/NPCs/Crabulon/CrabulonGlow").Value;
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Crabulon/CrabulonAlt").Value;
             Texture2D textureGlow = ModContent.Request<Texture2D>("CalamityMod/NPCs/Crabulon/CrabulonAltGlow").Value;

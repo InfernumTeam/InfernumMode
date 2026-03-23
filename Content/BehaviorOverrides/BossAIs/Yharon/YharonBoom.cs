@@ -77,12 +77,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             if (ShouldDeleteProjectiles)
             {
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (Main.projectile[i].active &&
-                        YharonProjectiles.ToList().Contains(Main.projectile[i].type))
+                    if (YharonProjectiles.ToList().Contains(p.type))
                     {
-                        Main.projectile[i].Kill();
+                        p.Kill();
                     }
                 }
             }

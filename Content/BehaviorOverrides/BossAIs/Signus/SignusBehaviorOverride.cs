@@ -6,12 +6,15 @@ using CalamityMod.NPCs;
 using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SubworldLibrary;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -821,9 +824,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         }
         #endregion AI
 
-        #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #region Death Effects
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
+            
+        }
+
+        public override bool PreKill(NPC npc)
+        {
+            if (npc.HasPlayerTarget && Main.player[npc.target].InModBiome(ModContent.GetInstance<ProfanedTempleBiome>()) && !SubworldSystem.IsActive<LostColosseum>())
+            {
+                npc.damage = 0;
+                npc.Center = Main.player[npc.target].Center;
+            }
+            return true;
+        }
+
+        #endregion Death Effects
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             void drawInstance(Vector2 baseDrawPosition, bool canDrawAfterimages, SpriteEffects direction)
             {
                 Texture2D NPCTexture;

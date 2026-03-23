@@ -83,36 +83,36 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
             // Draw regular projectiles.
             ShadowProjectilesExist = false;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].ModProjectile is null)
+                if (projectile.ModProjectile is null)
                     continue;
 
-                if (!Main.projectile[i].active || !hasInfernumGlobalProj(Main.projectile[i]))
+                if (!hasInfernumGlobalProj(projectile))
                     continue;
 
-                if (!Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is IAdditiveDrawer)
+                if (!projectile.Infernum().DrawAsShadow || projectile.ModProjectile is IAdditiveDrawer)
                     continue;
 
-                Main.instance.DrawProj(i);
+                Main.instance.DrawProj(projectile.whoAmI);
                 ShadowProjectilesExist = true;
             }
 
             // Draw additive effects.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (Main.projectile[i].ModProjectile is null)
+                if (projectile.ModProjectile is null)
                     continue;
 
-                if (!Main.projectile[i].active || !hasInfernumGlobalProj(Main.projectile[i]))
+                if (!hasInfernumGlobalProj(projectile))
                     continue;
 
-                if (!Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is not IAdditiveDrawer)
+                if (!projectile.Infernum().DrawAsShadow || projectile.ModProjectile is not IAdditiveDrawer)
                     continue;
 
-                Main.instance.DrawProj(i);
+                Main.instance.DrawProj(projectile.whoAmI);
                 ShadowProjectilesExist = true;
             }
         }

@@ -14,11 +14,11 @@ namespace InfernumMode.Content.Skies
             if (BirdbrainIndex >= 0 && Main.npc[BirdbrainIndex].active && Main.npc[BirdbrainIndex].type == type)
                 return;
             BirdbrainIndex = -1;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == type)
+                if (n.type == type)
                 {
-                    BirdbrainIndex = i;
+                    BirdbrainIndex = n.whoAmI;
                     break;
                 }
             }

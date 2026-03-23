@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -61,13 +62,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         }
         public override void AttachToSomething()
         {
-            if (!Main.npc.IndexInRange(GlobalNPCOverrides.AstrumAureus))
+            int index = CalamityGlobalNPC.astrumAureus;
+            if (!Main.npc.IndexInRange(index))
             {
                 Projectile.Kill();
                 return;
             }
 
-            Projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center - Vector2.UnitY * 12f;
+            Projectile.Center = Main.npc[index].Center - Vector2.UnitY * 12f;
             Projectile.Opacity = 1f;
             RotationalSpeed = Pi / Lifetime * FullCircleRotationFactor;
         }

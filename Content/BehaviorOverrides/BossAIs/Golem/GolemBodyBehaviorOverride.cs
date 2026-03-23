@@ -1531,25 +1531,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             SoundEngine.PlaySound(InfernumSoundRegistry.GolemGroundHitSound with { Pitch = -0.25f });
 
             int platformID = ModContent.NPCType<GolemArenaPlatform>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == platformID)
+                if (n.type == platformID)
                 {
                     for (int j = 0; j < 12; j++)
-                        Dust.NewDust(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, DustID.t_Lihzahrd);
+                        Dust.NewDust(n.position, n.width, n.height, DustID.t_Lihzahrd);
 
-                    StrongBloom fire = new(Main.npc[i].Center, Vector2.Zero, Color.Orange * 0.56f, 2f, 35);
+                    StrongBloom fire = new(n.Center, Vector2.Zero, Color.Orange * 0.56f, 2f, 35);
                     GeneralParticleHandler.SpawnParticle(fire);
 
                     for (int j = 0; j < 8; j++)
                     {
-                        Vector2 rockSpawnPosition = Main.npc[i].Center + Main.rand.NextVector2Circular(40f, 10f);
+                        Vector2 rockSpawnPosition = n.Center + Main.rand.NextVector2Circular(40f, 10f);
                         StoneDebrisParticle2 rock = new(rockSpawnPosition, -Vector2.UnitY.RotatedByRandom(0.8f) * Main.rand.NextFloat(3f, 13f), Color.Brown, Main.rand.NextFloat(1f, 1.4f), 90);
                         GeneralParticleHandler.SpawnParticle(rock);
                     }
 
-                    Main.npc[i].active = false;
-                    Main.npc[i].netUpdate = true;
+                    n.active = false;
+                    n.netUpdate = true;
                 }
             }
         }
@@ -1738,8 +1738,10 @@ LeaveLoop:
             return c * Utils.GetLerpValue(0.01f, 0.06f, completionRatio, true);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Prepare the telegraph primitive drawer.
             npc.Infernum().OptionalPrimitiveDrawer ??= new(PrimitiveWidthFunction, c => PrimitiveTrailColor(npc, c), null, true, GameShaders.Misc["CalamityMod:SideStreakTrail"]);
 

@@ -124,11 +124,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Projectile fireball = null;
 
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<HolyDogmaFireball>())
+                    if (p.type == ModContent.ProjectileType<HolyDogmaFireball>())
                     {
-                        fireball = Main.projectile[i];
+                        fireball = p;
                         break;
                     }
                 }

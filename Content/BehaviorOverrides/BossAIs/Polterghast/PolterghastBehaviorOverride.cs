@@ -337,13 +337,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int legType = ModContent.NPCType<PolterghastLeg>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if ((Main.npc[i].type == ModContent.NPCType<PolterPhantom>() || Main.npc[i].type == legType) && Main.npc[i].active)
+                    if (n.type == ModContent.NPCType<PolterPhantom>() || n.type == legType)
                     {
-                        Main.npc[i].life = 0;
-                        Main.npc[i].active = false;
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, i);
+                        n.life = 0;
+                        n.active = false;
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, n.whoAmI);
                     }
                 }
             }
@@ -507,12 +507,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             // Teleport the legs as well.
             int legID = ModContent.NPCType<PolterghastLeg>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type == legID && Main.npc[i].active)
+                if (n.type == legID)
                 {
-                    Main.npc[i].Center = polterghast.Center + Main.rand.NextVector2Circular(20f, 20f);
-                    Main.npc[i].netUpdate = true;
+                    n.Center = polterghast.Center + Main.rand.NextVector2Circular(20f, 20f);
+                    n.netUpdate = true;
                 }
             }
         }
@@ -561,7 +561,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Order legs based on their angular difference with Polterghast's direction to the target.
                 // Legs behind Polterghast have a large angular difference while ones in front have a smaller angular difference.
                 // This is ideal because you don't want Polterghast to try to somehow swipe at you with a leg that's on the opposite side.
-                List<NPC> legsOrderedByPlayerAngleOffset = [.. Main.npc.Take(Main.maxNPCs).Where(n => n.type == ModContent.NPCType<PolterghastLeg>() && n.active).OrderByDescending(l => npc.SafeDirectionTo(target.Center).AngleBetween(l.SafeDirectionTo(npc.Center)))];
+                List<NPC> legsOrderedByPlayerAngleOffset = [];
+                foreach (NPC n in Main.ActiveNPCs)
+                {
+                    if (n.type == ModContent.NPCType<PolterghastLeg>())
+                    {
+                        legsOrderedByPlayerAngleOffset.Add(n);
+                    }
+                }
+                legsOrderedByPlayerAngleOffset.OrderByDescending(l => npc.SafeDirectionTo(target.Center).AngleBetween(l.SafeDirectionTo(npc.Center)));
 
                 legToManuallyControlIndex = legsOrderedByPlayerAngleOffset[Main.rand.Next(2)].whoAmI;
                 return;
@@ -1175,9 +1183,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             npc.Infernum().ExtraAI[3] = (adjustedTimer >= splitDelay + hoverTime).ToInt();
 
             int cloneID = ModContent.NPCType<PolterPhantom>();
-            IEnumerable<int> polterghasts = Main.npc.Take(Main.maxNPCs).
-                Where(n => (n.type == npc.type || n.type == cloneID) && n.active).
-                Select(n => n.whoAmI);
+            List<int> polterghasts = [];
+
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type == npc.type || n.type == cloneID)
+                {
+                    polterghasts.Add(n.whoAmI);
+                }
+            }
 
             if (adjustedTimer < splitDelay + hoverTime && !npc.WithinRange(target.Center, 300f))
             {
@@ -1199,26 +1213,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         // An NPC must update once for it to recieve a whoAmI variable.
                         // Without this, the below IEnumerable collection would not incorporate this NPC.
                         // Yes, this is dumb.
-                        Main.npc[clone].UpdateNPC(clone);
+                        //Main.npc[clone].UpdateNPC(clone); // NewNPC already sets whoAmI
                     }
                 }
 
-                polterghasts = Main.npc.Take(Main.maxNPCs).
-                    Where(n => n.type == cloneID && n.active).
-                    Select(n => n.whoAmI);
+                polterghasts = [];
+                foreach (NPC n in Main.ActiveNPCs)
+                {
+                    if (n.type == cloneID)
+                    {
+                        polterghasts.Add(n.whoAmI);
+                    }
+                }
 
                 // Teleport around the player.
                 Vector2 originalPosition = npc.Center;
-                for (int i = 0; i < polterghasts.Count(); i++)
+                for (int i = 0; i < polterghasts.Count; i++)
                 {
-                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(TwoPi * i / polterghasts.Count()) * 540f;
+                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(TwoPi * i / polterghasts.Count) * 540f;
                     while (target.WithinRange(newPosition, 380f))
                         newPosition.Y += 10f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Main.npc[polterghasts.ElementAt(i)].Center = newPosition;
-                        Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
+                        Main.npc[polterghasts[i]].Center = newPosition;
+                        Main.npc[polterghasts[i]].netUpdate = true;
                     }
                 }
                 SoundEngine.PlaySound(PolterghastBoss.PhantomSound with { Volume = 2f }, target.Center);
@@ -1244,35 +1263,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     Vector2 soulVelocity = (TwoPi * i / 19f).ToRotationVector2() * 12.5f;
                     Utilities.NewProjectileBetter(npc.Center + soulVelocity * 2f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), SoulDamage, 0f);
                 }
-                for (int i = 0; i < polterghasts.Count(); i++)
+                for (int i = 0; i < polterghasts.Count; i++)
                 {
-                    Main.npc[polterghasts.ElementAt(i)].velocity = Main.npc[polterghasts.ElementAt(i)].SafeDirectionTo(target.Center) * chargeSpeed;
-                    Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
+                    Main.npc[polterghasts[i]].velocity = Main.npc[polterghasts[i]].SafeDirectionTo(target.Center) * chargeSpeed;
+                    Main.npc[polterghasts[i]].netUpdate = true;
                 }
             }
 
             if (attackTimer >= totalCharges * attackCycleLength)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == cloneID)
+                    if (n.type == cloneID)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int j = 0; j < 18; j++)
                             {
-                                Vector2 shootVelocity = Main.npc[i].SafeDirectionTo(npc.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
+                                Vector2 shootVelocity = n.SafeDirectionTo(npc.Center).RotatedByRandom(0.4f) * Main.rand.NextFloat(15f, 20f);
 
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(soul => soul.timeLeft = 20);
-                                Utilities.NewProjectileBetter(Main.npc[i].Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
+                                Utilities.NewProjectileBetter(n.Center, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 0, 0f);
                             }
 
-                            Main.npc[i].life = 0;
-                            Main.npc[i].HitEffect(0, 10.0);
-                            Main.npc[i].checkDead();
-                            Main.npc[i].active = false;
+                            n.life = 0;
+                            n.HitEffect(0, 10.0);
+                            n.checkDead();
+                            n.active = false;
                         }
-                        SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, Main.npc[i].Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, n.Center);
                     }
                 }
                 SelectNextAttack(npc);
@@ -1464,8 +1483,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             return Color.LightCyan * endFadeOpacity * npc.localAI[1] * 0.4f;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Initialize the telegraph primitive drawer.
             npc.Infernum().OptionalPrimitiveDrawer ??= new(c => TelegraphWidthFunction(npc, c), c => TelegraphColorFunction(npc, c), null, false, InfernumEffectsRegistry.SideStreakVertexShader);
 

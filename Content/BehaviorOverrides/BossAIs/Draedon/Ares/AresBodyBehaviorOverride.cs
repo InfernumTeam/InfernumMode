@@ -241,10 +241,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (attackType != (int)AresBodyAttackType.IdleHover)
                 {
                     // Destroy all lasers and telegraphs.
-                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    foreach (Projectile p in Main.ActiveProjectiles)
                     {
-                        if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
-                            Main.projectile[i].Kill();
+                        if ((p.type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || p.type == ModContent.ProjectileType<AresSpinningDeathBeam>()))
+                            p.Kill();
                     }
                 }
 
@@ -612,10 +612,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 DoLaughEffect(npc);
 
                 // Destroy all lasers and telegraphs.
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile p in Main.ActiveProjectiles)
                 {
-                    if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
-                        Main.projectile[i].Kill();
+                    if ((p.type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || p.type == ModContent.ProjectileType<AresSpinningDeathBeam>()))
+                        p.Kill();
                 }
             }
         }
@@ -936,12 +936,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
 
                 npc.Center = target.Center - Vector2.UnitY * 1500f;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && Main.npc[i].realLife == npc.whoAmI)
+                    if (n.realLife == npc.whoAmI)
                     {
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].netUpdate = true;
+                        n.Center = npc.Center;
+                        n.netUpdate = true;
                     }
                 }
 
@@ -1680,16 +1680,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Draw arms.
             int photonRipperID = ModContent.NPCType<AresEnergyKatana>();
             int laserArm = NPC.FindFirstNPC(ModContent.NPCType<AresLaserCannon>());
             int pulseArm = NPC.FindFirstNPC(ModContent.NPCType<AresPulseCannon>());
             int teslaArm = NPC.FindFirstNPC(ModContent.NPCType<AresTeslaCannon>());
             int plasmaArm = NPC.FindFirstNPC(ModContent.NPCType<AresPlasmaFlamethrower>());
-            List<NPC> katanas = Main.npc.Take(Main.maxNPCs).
-                Where(n => n.active && n.type == photonRipperID).ToList();
+            List<NPC> katanas = [];
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type == photonRipperID)
+                {
+                    katanas.Add(n);
+                }
+            }
             Color afterimageBaseColor = Color.White;
             float scale = npc.scale;
 
@@ -1808,6 +1816,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         #endregion Frames and Drawcode
 
         #region Death Effects
+
+        public override bool PreKill(NPC npc)
+        {
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type != apolloID && n.type != thanatosID && n.type != aresID)
+                    continue;
+
+                totalExoMechs++;
+            }
+
+            if (totalExoMechs >= 2)
+                return false;
+
+            return true;
+        }
         public override bool CheckDead(NPC npc)
         {
             if (npc.ai[0] == (int)AresBodyAttackType.PrecisionBlasts && ExoMechManagement.TotalMechs <= 1)

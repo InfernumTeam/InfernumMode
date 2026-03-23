@@ -291,8 +291,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 headOrigin = new(191f, 130f);
             Texture2D eyeScleraTexture = TextureAssets.Extra[ExtrasID.MoonLordEyeWhiteHead].Value;

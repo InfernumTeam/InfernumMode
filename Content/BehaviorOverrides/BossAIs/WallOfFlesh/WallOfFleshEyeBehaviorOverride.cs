@@ -35,9 +35,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             Player target = Main.player[Main.npc[Main.wofNPCIndex].target];
 
             int circleHoverCount = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
+                if (n.type != npc.type || n.Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
                     continue;
 
                 circleHoverCount++;
@@ -70,12 +70,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 npc.dontTakeDamage = true;
 
                 int circleHoverOffsetIndex = 0;
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
+                    if (n.type != npc.type || n.Infernum().ExtraAI[IsDetachedFlagIndex] == 0f)
                         continue;
 
-                    Main.npc[i].Infernum().ExtraAI[1] = circleHoverOffsetIndex;
+                    n.Infernum().ExtraAI[1] = circleHoverOffsetIndex;
                     circleHoverOffsetIndex++;
                 }
 
@@ -164,8 +164,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             ref float verticalOffsetFactor = ref npc.ai[0];
 
             // Don't draw any chains once free.
@@ -202,15 +204,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             drawChainFrom(start);
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type != NPCID.WallofFleshEye || !Main.npc[i].active || Main.npc[i].whoAmI == npc.whoAmI)
+                if (n.type != NPCID.WallofFleshEye || n.whoAmI == npc.whoAmI)
                     continue;
 
                 // Draw order depends on index. Therefore, if the other index is greater than this one, that means it will draw
                 // a chain of its own. This is done to prevent duplicates.
-                if (Main.npc[i].whoAmI < npc.whoAmI)
-                    drawChainFrom(Main.npc[i].Center);
+                if (n.whoAmI < npc.whoAmI)
+                    drawChainFrom(n.Center);
             }
             return true;
         }

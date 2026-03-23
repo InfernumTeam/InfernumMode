@@ -992,8 +992,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             bool charging = npc.localAI[0] == (int)PBGFrameType.Charge;
             ref float previousFrameType = ref npc.localAI[1];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;

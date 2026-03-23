@@ -276,8 +276,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion AI and Behaviors
 
         #region Draw Effects
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             int afterimageCount = 7;
             float brightnessWidthFactor = npc.Infernum().ExtraAI[CommanderBrightnessWidthFactorIndex];
             float fadeToBlack = Utils.GetLerpValue(1.84f, 2.66f, brightnessWidthFactor, true);
@@ -570,12 +572,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Get rid of the silly hands.
             int handID = ModContent.NPCType<EtherealHand>();
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].type == handID && Main.npc[i].active)
+                if (n.type == handID)
                 {
-                    Main.npc[i].active = false;
-                    Main.npc[i].netUpdate = true;
+                    n.active = false;
+                    n.netUpdate = true;
                 }
             }
 

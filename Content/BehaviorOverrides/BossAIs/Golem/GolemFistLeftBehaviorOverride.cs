@@ -10,8 +10,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc) => DoFistAI(npc, true);
 
-        // public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawFist(npc, Main.spriteBatch, lightColor, true);
-
         public static bool DoFistAI(NPC npc, bool leftFist)
         {
             npc.dontTakeDamage = true;

@@ -163,17 +163,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             bool leftClawActive = false;
             bool rightClawActive = false;
             bool headActive = false;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            foreach (NPC n in Main.ActiveNPCs)
             {
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerHead>())
+                if (n.type == ModContent.NPCType<RavagerHead>())
                     headActive = true;
-                if (Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[0] == 0f && Main.npc[i].type == ModContent.NPCType<RavagerClawRight>())
+                if (n.Infernum().ExtraAI[0] == 0f && n.type == ModContent.NPCType<RavagerClawRight>())
                     rightClawActive = true;
-                if (Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[0] == 0f && Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>())
+                if (n.Infernum().ExtraAI[0] == 0f && n.type == ModContent.NPCType<RavagerClawLeft>())
                     leftClawActive = true;
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerLegRight>())
+                if (n.type == ModContent.NPCType<RavagerLegRight>())
                     rightLegActive = true;
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerLegLeft>())
+                if (n.type == ModContent.NPCType<RavagerLegLeft>())
                     leftLegActive = true;
             }
 
@@ -891,8 +891,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         #region Drawing
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             float widthFunction(float completionRatio) => SmoothStep(160f, 10f, completionRatio);
             Color colorFunction(float completionRatio)
             {

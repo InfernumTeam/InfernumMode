@@ -159,7 +159,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         public override void Load()
         {
             GlobalNPCOverrides.BossHeadSlotEvent += RedefineMapSlotConditions;
-            GlobalNPCOverrides.StrikeNPCEvent += UpdateLifeTriggers;
         }
 
         private void RedefineMapSlotConditions(NPC npc, ref int index)
@@ -189,28 +188,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        private bool UpdateLifeTriggers(NPC npc, ref NPC.HitModifiers modifiers)
+        public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.FinalDamage *= 2f;
+        }
+        // UpdateLifeTriggers
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             // Make DoG enter the second phase once ready.
             bool isDoG = npc.type == ModContent.NPCType<DoGHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
-            return !isDoG || HandleDoGLifeBasedHitTriggers(npc, modifiers.FinalDamage.Base, ref modifiers);
+            if (!isDoG)
+                return;
+            HandleDoGLifeBasedHitTriggers(npc);
         }
 
         // HandleDoGLifeBasedHitTriggers will never be run serverside, thus ensuring DoG will never properly change phase. This sends a packet to the server to run the intended health phase change calculations.
-        public static void UpdateDoGPhaseServer(int npcIndex, double damage)
+        public static void UpdateDoGPhaseServer(int npcIndex)
         {
             NPC npc = Main.npc[npcIndex];
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
-            if (life - damage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
+            if (life <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
             {
                 npc.dontTakeDamage = true;
+                npc.life = (int)Math.Round(npc.lifeMax * Phase2LifeRatio);
                 CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
                 npc.netUpdate = true;
                 return;
             }
 
             // Disable damage and start the death animation if the hit would kill DoG.
-            if (life - damage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
+            if (life <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
@@ -223,29 +230,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static bool HandleDoGLifeBasedHitTriggers(NPC npc, double realDamage, ref NPC.HitModifiers modifiers)
+        public static bool HandleDoGLifeBasedHitTriggers(NPC npc)
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
 
             // Disable damage and enter phase 2 if the hit would bring DoG down to a sufficiently low quantity of HP.
-            if (life - realDamage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
+            if (life <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
             {
-                modifiers.FinalDamage.Base *= 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.dontTakeDamage = true;
+                    npc.life = (int)Math.Round(npc.lifeMax * Phase2LifeRatio);
                     CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
                 }
                 else
-                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI, realDamage);
+                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI);
                 return false;
             }
 
             // Disable damage and start the death animation if the hit would kill DoG.
-            if (life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
+            if (life <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
-                modifiers.FinalDamage.Base *= 0;
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.dontTakeDamage = true;
@@ -256,7 +261,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     }
                 }
                 else
-                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI, realDamage);
+                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI);
 
                 return false;
             }
@@ -274,7 +279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.Opacity = 0f;
             npc.defense = 0;
             npc.Calamity().DR = 0.3f;
-            npc.takenDamageMultiplier = 2f;
+            //npc.takenDamageMultiplier = 2f;
         }
 
         public override bool PreAI(NPC npc)
@@ -378,12 +383,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.Center = target.Center - Vector2.UnitX * target.direction * 3200f;
 
                     // Bring segments to the teleport position.
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                    foreach (NPC n in Main.ActiveNPCs)
                     {
-                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                        if (n.type == ModContent.NPCType<DevourerofGodsBody>() || n.type == ModContent.NPCType<DevourerofGodsTail>())
                         {
-                            Main.npc[i].Center = npc.Center;
-                            Main.npc[i].netUpdate = true;
+                            n.Center = npc.Center;
+                            n.netUpdate = true;
                         }
                     }
                 }
@@ -510,12 +515,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 int headType = ModContent.NPCType<DoGHead>();
                 int bodyType = ModContent.NPCType<DevourerofGodsBody>();
                 int tailType = ModContent.NPCType<DevourerofGodsTail>();
-                for (int i = 0; i < Main.maxNPCs; i++)
+                foreach (NPC n in Main.ActiveNPCs)
                 {
-                    if (Main.npc[i].active && (Main.npc[i].type == headType || Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
+                    if (n.type == headType || n.type == bodyType || n.type == tailType)
                     {
-                        Main.npc[i].Opacity = 1f;
-                        Main.npc[i].netUpdate = true;
+                        n.Opacity = 1f;
+                        n.netUpdate = true;
                     }
                 }
 
@@ -539,8 +544,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #endregion AI
 
         #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
                 return DoGPhase2HeadBehaviorOverride.PreDraw(npc, lightColor);
 
@@ -591,6 +598,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.active = true;
             npc.netUpdate = true;
             return false;
+        }
+        public override bool PreKill(NPC npc)
+        {
+            if (DoGPhase2HeadBehaviorOverride.InPhase2)
+            {
+                npc.dontTakeDamage = true;
+                if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
+                {
+                    SoundEngine.PlaySound(DoGHead.SpawnSound, npc.Center);
+                    npc.Infernum().ExtraAI[DeathAnimationTimerIndex] = 1f;
+                }
+                npc.netUpdate = true;
+                return false;
+            }
+            return true;
         }
         #endregion Death Effects
 

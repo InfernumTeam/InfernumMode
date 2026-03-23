@@ -221,7 +221,15 @@ namespace InfernumMode.Core.ILEditingStuff
         #region Utils
         public static NPC[] GetPlatforms(Projectile projectile)
         {
-            return [.. Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center))];
+            NPC[] nList = [];
+            int index = 0;
+            foreach (NPC n in Main.ActiveNPCs)
+            {
+                if (n.type == ModContent.NPCType<GolemArenaPlatform>())
+                    nList[index++] = n;
+            }
+            nList.OrderBy(n => projectile.Distance(n.Center));
+            return nList;
         }
 
         public static bool PlatformRequirement(Projectile projectile)

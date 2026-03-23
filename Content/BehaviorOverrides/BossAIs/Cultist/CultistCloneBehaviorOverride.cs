@@ -71,8 +71,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         #region Drawing and Frames
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             CultistBehaviorOverride.ExtraDrawcode(npc);
             CultistBehaviorOverride.DrawForcefield(npc.Center - Main.screenPosition, npc.Opacity * 0.55f, Color.DeepSkyBlue, InfernumTextureRegistry.WavyNoise.Value);
             return true;

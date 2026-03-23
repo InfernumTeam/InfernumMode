@@ -98,8 +98,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         #region Draw Effects
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
+            if (npc.IsABestiaryIconDummy)
+                return base.PreDraw(npc, spriteBatch, screenPos, lightColor);
             // Don't do anything if Providence is not present, to prevent index errors.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss))
                 return false;

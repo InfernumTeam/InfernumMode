@@ -24,6 +24,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public delegate void ModifyHitNPCWithProjDelegate(InfernumPlayer player, Projectile proj, NPC target, ref NPC.HitModifiers modifiers);
 
+        public delegate void ModifyHitNPCDelegate(InfernumPlayer player, NPC target, ref NPC.HitModifiers modifiers);
+
         public delegate bool FreeDodgeDelegate(InfernumPlayer player, Player.HurtInfo info);
 
         public delegate bool PreKillDelegate(InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource);
@@ -59,6 +61,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public static event ModifyHitNPCWithItemDelegate ModifyHitNPCWithItemEvent;
 
         public static event ModifyHitNPCWithProjDelegate ModifyHitNPCWithProjEvent;
+        public static event ModifyHitNPCDelegate ModifyHitNPCEvent;
 
         public static event FreeDodgeDelegate FreeDodgeEvent;
 
@@ -217,6 +220,11 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
         {
             ModifyHitNPCWithProjEvent?.Invoke(this, proj, target, ref modifiers);
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            ModifyHitNPCEvent?.Invoke(this, target, ref modifiers);
         }
 
         public override bool FreeDodge(Player.HurtInfo info)

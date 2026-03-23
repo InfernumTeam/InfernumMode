@@ -33,26 +33,26 @@ namespace InfernumMode.Content.Items.Accessories
                     Player p = player.Player;
                     float bonus = 1.4f;
                     // Everything but summoner.
-                    p.GetDamage<MeleeDamageClass>() *= bonus;
-                    p.GetDamage<MeleeNoSpeedDamageClass>() *= bonus;
-                    p.GetDamage<RangedDamageClass>() *= bonus;
-                    p.GetDamage<MagicDamageClass>() *= bonus;
-                    p.GetDamage<MagicSummonHybridDamageClass>() *= bonus;
+                    p.GetDamage<GenericDamageClass>() *= bonus;
+                    p.GetDamage<SummonDamageClass>() /= bonus;
                     p.GetDamage<SummonMeleeSpeedDamageClass>() *= bonus;
-                    p.GetDamage<RogueDamageClass>() *= bonus;
 
                     float currentStealth = InfernumMode.CalamityMod?.Call("GetCurrentStealth", p) is float f ? f : 1f;
                     bool stealthStrike = currentStealth > 0f && p.HeldItem.CountsAsClass<RogueDamageClass>();
 
                     if (!stealthStrike)
+                    {
                         p.GetAttackSpeed<GenericDamageClass>() += bonus - 1f;
+                        //p.GetAttackSpeed<SummonDamageClass>() -= bonus - 1f;
+                        //p.GetAttackSpeed<SummonMeleeSpeedDamageClass>() += bonus - 1f;
+                    }
 
                     p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
                     p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
                 }
             };
 
-            InfernumPlayer.ModifyHitNPCWithItemEvent += (InfernumPlayer player, Item item, NPC target, ref NPC.HitModifiers modifiers) =>
+            /*InfernumPlayer.ModifyHitNPCWithItemEvent += (InfernumPlayer player, Item item, NPC target, ref NPC.HitModifiers modifiers) =>
             {
                 if (player.GetValue<bool>(FieldName))
                 {
@@ -76,18 +76,34 @@ namespace InfernumMode.Content.Items.Accessories
 
                     modifiers.DisableCrit();
                 }
-            };
-        }
+            };*/
 
-        private static void OnHitParticles(NPC npc)
-        {
-            for (int i = 0; i < 3; i++)
+            InfernumPlayer.ModifyHitNPCEvent += (InfernumPlayer player, NPC target, ref NPC.HitModifiers modifiers) =>
             {
-                Vector2 position = Main.rand.NextVector2FromRectangle(npc.Hitbox);
-                Vector2 velocity = npc.SafeDirectionTo(position) * Main.rand.NextFloat(1f, 3f);
-                GeneralParticleHandler.SpawnParticle(new GenericSparkle(position, velocity, Color.Lerp(Color.LightBlue, Color.LightCyan, Main.rand.NextFloat(1f)),
-                    Color.Lerp(Color.Cyan, Color.LightBlue, Main.rand.NextFloat()), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
-            }
+                if (modifiers.DamageType == DamageClass.Summon)
+                    return;
+                if (player.GetValue<bool>(FieldName))
+                {
+                    static void OnHitParticles(NPC npc)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Vector2 position = Main.rand.NextVector2FromRectangle(npc.Hitbox);
+                            Vector2 velocity = npc.SafeDirectionTo(position) * Main.rand.NextFloat(1f, 3f);
+                            GeneralParticleHandler.SpawnParticle(new GenericSparkle(position, velocity, Color.Lerp(Color.LightBlue, Color.LightCyan, Main.rand.NextFloat(1f)),
+                                Color.Lerp(Color.Cyan, Color.LightBlue, Main.rand.NextFloat()), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
+                        }
+                    }
+
+                    // Lie and check if it was a crit seperately because its not possible else.
+                    float crit = player.Player.GetTotalCritChance(modifiers.DamageType);
+
+                    if (Main.rand.Next(0, 101) < crit)
+                        OnHitParticles(target);
+
+                    modifiers.DisableCrit();
+                }
+            };
         }
 
         public override void SetDefaults()
@@ -100,7 +116,11 @@ namespace InfernumMode.Content.Items.Accessories
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) => player.Infernum().SetValue<bool>(FieldName, true);
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            player.Infernum().SetValue<bool>(FieldName, true);
+
+        }
 
         public override void AddRecipes()
         {

@@ -49,6 +49,9 @@ namespace InfernumMode.Content.Items
             // Make the sandstorm's core post-Cultist.
             AddRecipeIngredient(ModContent.ItemType<SandstormsCore>(), ItemID.FragmentSolar);
 
+            RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<AerialiteBar>());
+            RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<AerialiteBar>());
+
             // Create recipes for certain abyss items that are normally found in chests.
 
             // Anechoic Plating and the Depth Charm are interchangeable because they're both arbitrary metallic things and there's little reason to give a damn

@@ -5,8 +5,10 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Skies;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
@@ -16,6 +18,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead;
@@ -173,11 +176,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     return;
                 }
 
-                int p1HeadIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1HeadMapIcon");
-                int p1TailIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1TailMapIcon");
-                int p2HeadIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadMapIcon");
-                int p2BodyIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyMapIcon");
-                int p2TailIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailMapIcon");
+                string path = "InfernumMode/Content/BehaviorOverrides/BossAIs/DoG";
+                int p1HeadIcon = ModContent.GetModBossHeadSlot($"{path}/DoGP1HeadMapIcon");
+                int p1TailIcon = ModContent.GetModBossHeadSlot($"{path}/DoGP1TailMapIcon");
+                int p2HeadIcon = ModContent.GetModBossHeadSlot($"{path}/DoGP2HeadMapIcon");
+                int p2BodyIcon = ModContent.GetModBossHeadSlot($"{path}/DoGP2BodyMapIcon");
+                int p2TailIcon = ModContent.GetModBossHeadSlot($"{path}/DoGP2TailMapIcon");
                 bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
 
                 if (npc.type == ModContent.NPCType<DoGHead>())
@@ -308,6 +312,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Stop rain, because DoG doesn't like it when rain detracts from him trying to snap your head off.
             if (Main.raining)
                 Main.raining = false;
+
+            if (!InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                //Filters.Scene["CalamityMod:DevourerofGodsHead"].Deactivate();
+                //(SkyManager.Instance["CalamityMod:DevourerofGodsHead"] as DoGSky)?.Deactivate();
+                var filters = typeof(FilterManager).GetField("_activeFilters", Utilities.UniversalBindingFlags)?.GetValue(Filters.Scene) as LinkedList<Filter>;
+                if (filters?.Count > 0)
+                {
+                    foreach (Filter filter in filters)
+                    {
+                        filter.Deactivate();
+                    }
+                }
+                var skies = typeof(SkyManager).GetField("_activeSkies", Utilities.UniversalBindingFlags)?.GetValue(SkyManager.Instance) as LinkedList<CustomSky>;
+                if (skies?.Count > 0)
+                {
+                    foreach (CustomSky sky in skies)
+                    {
+                        sky.Deactivate();
+                    }
+                }
+            }
 
             // Prevent the Godslayer Inferno and Whispering Death debuff from being a problem by completely disabling both for the target.
             if (Main.player[npc.target].HasBuff(ModContent.BuffType<GodSlayerInferno>()))

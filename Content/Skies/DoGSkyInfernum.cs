@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.Skies;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
@@ -70,7 +69,6 @@ namespace InfernumMode.Content.Skies
 
         public override void Update(GameTime gameTime)
         {
-            (SkyManager.Instance["CalamityMod:DevourerofGodsHead"] as DoGSky)?.Deactivate();
             if (isActive && Intensity < 1f)
                 Intensity += 0.01f;
             else if (!isActive && Intensity > 0f)

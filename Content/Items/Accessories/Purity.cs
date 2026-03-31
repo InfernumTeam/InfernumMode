@@ -25,7 +25,11 @@ namespace InfernumMode.Content.Items.Accessories
         {
             Item.ResearchUnlockCount = 1;
 
-            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) => player.SetValue<bool>(FieldName, false);
+            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
+            {
+                player.SetValue<bool>(FieldName, false);
+                player.SetValue<bool>(FieldName + "hideVisual", false);
+            };
 
             InfernumPlayer.AccessoryUpdateEvent += (InfernumPlayer player) =>
             {
@@ -100,7 +104,7 @@ namespace InfernumMode.Content.Items.Accessories
                     // Lie and check if it was a crit seperately because its not possible else.
                     float crit = player.Player.GetTotalCritChance(modifiers.DamageType);
 
-                    if (Main.rand.Next(0, 101) < crit)
+                    if (!player.GetValue<bool>(FieldName + "hideVisual") && Main.rand.Next(0, 101) < crit)
                         OnHitParticles(target);
 
                     modifiers.DisableCrit();
@@ -121,7 +125,7 @@ namespace InfernumMode.Content.Items.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.Infernum().SetValue<bool>(FieldName, true);
-
+            player.Infernum().SetValue<bool>(FieldName + "hideVisual", hideVisual);
         }
 
         public override void AddRecipes()

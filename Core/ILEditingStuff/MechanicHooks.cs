@@ -10,6 +10,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.PrimordialWyrm;
@@ -23,6 +24,7 @@ using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
@@ -1031,6 +1033,33 @@ namespace InfernumMode.Core.ILEditingStuff
                 item.velocity = npc.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.74f) * Main.rand.NextFloat(9f, 25f);
 
                 NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex, 1f, 0f, 0f, 0, 0, 0);
+            }
+        }
+    }
+
+    internal sealed class ChangeDoGHoveringHeadIconHook : ModSystem
+    {
+        public static MethodInfo? DoGHeadBossHeadSlot = typeof(DevourerofGodsHead).GetMethod("BossHeadSlot", Utilities.UniversalBindingFlags);
+        public delegate void Orig_DoGHeadBossHeadSlot(DevourerofGodsHead self, ref int index);
+        public static Hook? ChangeDoGHoveringHeadIcon_Detour_Hook;
+        public override void OnModLoad()
+        {
+            if (DoGHeadBossHeadSlot != null)
+            {
+                ChangeDoGHoveringHeadIcon_Detour_Hook = new(DoGHeadBossHeadSlot, DoGHeadBossHeadSlot_Detour);
+                ChangeDoGHoveringHeadIcon_Detour_Hook?.Apply();
+            }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
+        }
+
+        public void DoGHeadBossHeadSlot_Detour(Orig_DoGHeadBossHeadSlot orig, DevourerofGodsHead self, ref int index)
+        {
+            orig(self, ref index);
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+                string key = inPhase2 ? "DoGP2HeadMapIcon" : "DoGP1HeadMapIcon";
+                index = ModContent.GetModBossHeadSlot($"InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/{key}");
             }
         }
     }

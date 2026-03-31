@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items;
 using CalamityMod.Items.Materials;
@@ -48,7 +49,8 @@ namespace InfernumMode.Content.Items.Accessories
                     }
 
                     p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
-                    p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
+                    if (InfernumMode.CalamityMod?.Version == Version.Parse("2.1.2"))
+                        p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible in this version.
                 }
             };
 

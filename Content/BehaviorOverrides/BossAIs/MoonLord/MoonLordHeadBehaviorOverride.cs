@@ -291,6 +291,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
+        // Give a dark tint to the moon lord.
+        public override Color? GetAlpha(NPC npc, Color drawColor) => Color.Lerp(drawColor, OverallTint with { A = 187 } * 1.35f, 0.75f) * npc.Opacity;
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             if (npc.IsABestiaryIconDummy)

@@ -26,22 +26,6 @@ namespace InfernumMode.Core.GlobalInstances
         {
             if (!Utilities.CanOverride(npc, out object container))
                 return base.GetAlpha(npc, drawColor);
-            // Give a dark tint to the moon lord.
-            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
-            {
-                if (InfernumMode.CanUseCustomAIs)
-                    return Color.Lerp(drawColor, MoonLordCoreBehaviorOverride.OverallTint with { A = 187 } * 1.35f, 0.75f) * npc.Opacity;
-            }
-
-            if (npc.type == ModContent.NPCType<ThanatosHead>() ||
-                npc.type == ModContent.NPCType<ThanatosBody1>() ||
-                npc.type == ModContent.NPCType<ThanatosBody2>() ||
-                npc.type == ModContent.NPCType<ThanatosTail>())
-            {
-                bool dealsNoContactDamage = npc.damage == 0;
-                npc.Infernum().ExtraAI[20] = Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
-                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
-            }
 
             return container.NPCOverride().GetAlpha(npc, drawColor);
         }

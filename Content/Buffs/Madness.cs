@@ -3,6 +3,7 @@ using InfernumMode.Common.DataStructures;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Buffs
@@ -28,7 +29,7 @@ namespace InfernumMode.Content.Buffs
             InfernumPlayer.PreKillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) =>
             {
                 if (player.GetValue<bool>("Madness"))
-                    damageSource = damageSource = PlayerDeathReason.ByCustomReason(Utilities.GetLocalization("Status.Death.Madness").Format(player.Player.name));
+                    damageSource = damageSource = PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.InfernumMode.Status.Death.Madness", player.Player.name));
 
                 return true;
             };

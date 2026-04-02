@@ -215,6 +215,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.takenDamageMultiplier *= 0.5f;
         }
 
+        public override Color? GetAlpha(NPC npc, Color drawColor)
+        {
+            bool dealsNoContactDamage = npc.damage == 0;
+            npc.Infernum().ExtraAI[20] = Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+            return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
+        }
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frame.Y = (int)npc.frameCounter * frameHeight;
@@ -263,6 +270,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             ThanatosBody1BehaviorOverride.DoSegmentAI(npc);
             return false;
+        }
+
+        public override Color? GetAlpha(NPC npc, Color drawColor)
+        {
+            bool dealsNoContactDamage = npc.damage == 0;
+            npc.Infernum().ExtraAI[20] = Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+            return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
         }
 
         public override void FindFrame(NPC npc, int frameHeight)
@@ -314,6 +328,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             ThanatosBody1BehaviorOverride.DoSegmentAI(npc);
             return false;
+        }
+
+        public override Color? GetAlpha(NPC npc, Color drawColor)
+        {
+            bool dealsNoContactDamage = npc.damage == 0;
+            npc.Infernum().ExtraAI[20] = Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+            return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

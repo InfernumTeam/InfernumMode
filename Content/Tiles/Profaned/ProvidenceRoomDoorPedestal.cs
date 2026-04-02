@@ -140,7 +140,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             Player lP = Main.LocalPlayer;
             if (!lP.dead && !lP.ghost && lP.Hitbox.Intersects(area))
             {
-                lP.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.InfernumMode.Biomes.ProfanedTempleBiome.DeathByThousandCrystals", Main.LocalPlayer.name)), 100, 0);
+                lP.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey("Mods.InfernumMode.Biomes.ProfanedTempleBiome.DeathByThousandCrystals", lP.name)), 100, 0);
                 lP.AddBuff(Main.dayTime ? ModContent.BuffType<HolyFlames>() : ModContent.BuffType<Nightwither>(), 180);
             }
             if (!SoundEngine.TryGetActiveSound(ShimmerID, out var _))

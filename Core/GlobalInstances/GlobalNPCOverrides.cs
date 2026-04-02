@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
@@ -10,7 +9,6 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Yharon;
-using CalamityMod.Systems.Collections;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;

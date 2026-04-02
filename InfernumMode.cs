@@ -2,7 +2,6 @@
 global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;

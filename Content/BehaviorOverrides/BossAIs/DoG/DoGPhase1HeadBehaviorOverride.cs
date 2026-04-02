@@ -5,7 +5,6 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.Skies;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core;

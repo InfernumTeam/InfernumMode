@@ -1118,7 +1118,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public static bool Cal_GlobalNPC_ShouldAffectNPC_Detour(Orig_Cal_GlobalNPC_ShouldAffectNPC orig, NPC npc)
         {
             bool val = orig(npc);
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null)
+            if ((InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null) || (npc.ModNPC != null && npc.ModNPC.Mod == InfernumMode.Instance))
             {
                 val = false;
             }

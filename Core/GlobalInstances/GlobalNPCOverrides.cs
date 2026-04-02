@@ -151,7 +151,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npc.netUpdate = true;
             }
 
-            if (npc.ModNPC != null && npc.ModNPC.Mod == Mod && InfernumMode.CalamityMod?.Version <= Version.Parse("2.1.2"))
+            if (npc.ModNPC != null && npc.ModNPC.Mod == Mod)
             {
                 var slowingStunTimerFieldInfo2 = typeof(CalamityGlobalNPC).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "debuffResistanceTimer");
                 if (slowingStunTimerFieldInfo2 != default)

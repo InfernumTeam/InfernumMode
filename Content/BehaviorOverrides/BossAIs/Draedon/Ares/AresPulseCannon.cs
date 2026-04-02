@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.canGhostHeal = false;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.HitSound = null;
+            NPC.HitSound = CommonCalamitySounds.ExoHitSound;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.netAlways = true;
             NPC.hide = true;
@@ -255,11 +255,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (NPC.soundDelay == 1)
+            /*if (NPC.soundDelay == 1)
             {
                 NPC.soundDelay = 3;
                 SoundEngine.PlaySound(CommonCalamitySounds.ExoHitSound, NPC.Center);
-            }
+            }*/
 
             for (int k = 0; k < 3; k++)
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TerraBlade, 0f, 0f, 100, new Color(0, 255, 255), 1f);
@@ -283,9 +283,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("AresPulseCannon1").Type, NPC.scale);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase1").Type, NPC.scale);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase2").Type, NPC.scale);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, InfernumMode.CalamityMod.Find<ModGore>("AresHandBase3").Type, NPC.scale);
+                    Mod cal = InfernumMode.CalamityMod;
+                    if (cal.TryFind("AresHandBase1", out ModGore handBase1))
+                        Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, handBase1.Type, NPC.scale);
+                    if (cal.TryFind("AresHandBase1", out ModGore handBase2))
+                        Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, handBase2.Type, NPC.scale);
+                    if (cal.TryFind("AresHandBase1", out ModGore handBase3))
+                        Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, handBase3.Type, NPC.scale);
                 }
             }
         }

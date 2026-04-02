@@ -34,7 +34,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static ILHook? DrawSelectionUI_IL_Hook;
 
-        public override void OnModUnload()
+        public override void OnModLoad()
         {
             if (ExoMechSelectionUIDraw != null)
             {

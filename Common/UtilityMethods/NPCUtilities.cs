@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -9,6 +10,7 @@ using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.SulphurousSea;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.Projectiles.Enemy;
+using CalamityMod.Systems.Collections;
 using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Core.OverridingSystem;
@@ -358,6 +360,30 @@ namespace InfernumMode
             npc.rotation = npc.velocity.Y * npc.direction * rotation;
             float rotationLimit = 2f * rotation;
             npc.rotation = MathHelper.Clamp(npc.rotation, -rotationLimit, rotationLimit);
+        }
+
+        public static void SafeSetStunImmunity(int type)
+        {
+            if (InfernumMode.CalamityMod?.Version > Version.Parse("2.1.2"))
+            {
+                var immunitySetFieldInfo = typeof(CalamityNPCSets).GetFields(UniversalBindingFlags).FirstOrDefault(f => f.Name == "ImmuneToSlowsAndOtherSpecialEffects");
+                if (immunitySetFieldInfo != default)
+                {
+                    bool[] immunitySet = (immunitySetFieldInfo.GetValue(null) as bool[])!;
+                    immunitySet[type] = true;
+                    immunitySetFieldInfo.SetValue(null, immunitySet);
+                }
+            }
+            else
+            {
+                var resistSetFieldInfo = typeof(CalamityNPCSets).GetFields(UniversalBindingFlags).FirstOrDefault(f => f.Name == "ResistSlowingDebuffsAndOtherSpecialEffects");
+                if (resistSetFieldInfo != default)
+                {
+                    bool[] resistSet = (resistSetFieldInfo.GetValue(null) as bool[])!;
+                    resistSet[type] = true;
+                    resistSetFieldInfo.SetValue(null, resistSet);
+                }
+            }
         }
     }
 }

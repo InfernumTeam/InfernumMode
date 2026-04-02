@@ -2,6 +2,8 @@
 global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using CalamityMod.ILEditing;
@@ -167,11 +169,18 @@ namespace InfernumMode
             BossBarManager.LoadPhaseInfo();
             NPCBehaviorOverride.LoadPhaseIndicators();
             Utilities.UpdateMapIconList();
+
             CalamityVanillaAIOverrideNPC.ModifyAIOverride += (context) =>
             {
                 if (CanUseCustomAIs && !DisableModifyAIOverride && context.OverrideToApply != null && NPCBehaviorOverride.BehaviorOverrideSet[context.NPCType] != null)
                     context.OverrideToApply = null;
             };
+
+            foreach (ModNPC npc in (typeof(NPCLoader).GetField("npcs", Utilities.UniversalBindingFlags)?.GetValue(null) as List<ModNPC>)!)
+            {
+                if (npc.Mod == this)
+                    Utilities.SafeSetStunImmunity(npc.Type);
+            }
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);

@@ -18,6 +18,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Schematics;
+using CalamityMod.Systems.Collections;
 using CalamityMod.World;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.DataStructures;
@@ -37,6 +38,7 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
+using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -1061,6 +1063,66 @@ namespace InfernumMode.Core.ILEditingStuff
                 string key = inPhase2 ? "DoGP2HeadMapIcon" : "DoGP1HeadMapIcon";
                 index = ModContent.GetModBossHeadSlot($"InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/{key}");
             }
+        }
+    }
+
+    internal sealed class SlowingStunImmunityHook : ModSystem
+    {
+        public override bool IsLoadingEnabled(Mod mod) => ModLoader.TryGetMod("CalamityMod", out Mod cal) && cal.Version > Version.Parse("2.1.2");
+
+        public static MethodInfo? Cal_GlobalNPC_PostAI = typeof(CalamityGlobalNPC).GetMethod("PostAI", Utilities.UniversalBindingFlags);
+        public delegate void Orig_Cal_GlobalNPC_PostAI(CalamityGlobalNPC self, NPC npc);
+        public static Hook? Cal_GlobalNPC_PostAI_Detour_Hook;
+
+        public static MethodInfo? Cal_GlobalNPC_ShouldAffectNPC = typeof(CalamityGlobalNPC).GetMethod("ShouldAffectNPC", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_Cal_GlobalNPC_ShouldAffectNPC(NPC npc);
+        public static Hook? Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook;
+
+        public override void OnModLoad()
+        {
+            if (Cal_GlobalNPC_PostAI != null)
+            {
+                Cal_GlobalNPC_PostAI_Detour_Hook = new(Cal_GlobalNPC_PostAI, Cal_GlobalNPC_PostAI_Detour);
+                Cal_GlobalNPC_PostAI_Detour_Hook?.Apply();
+            }
+
+            if (Cal_GlobalNPC_ShouldAffectNPC != null)
+            {
+                Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook = new(Cal_GlobalNPC_ShouldAffectNPC, Cal_GlobalNPC_ShouldAffectNPC_Detour);
+                Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook?.Apply();
+            }
+        }
+
+        public void Cal_GlobalNPC_PostAI_Detour(Orig_Cal_GlobalNPC_PostAI orig, CalamityGlobalNPC self, NPC npc)
+        {
+            var immunitySetFieldInfo = typeof(CalamityNPCSets).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "ImmuneToSlowsAndOtherSpecialEffects");
+            bool check = false;
+            bool previousImmunity = false;
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null && immunitySetFieldInfo != default)
+            {
+                bool[] immunitySet = (immunitySetFieldInfo.GetValue(null) as bool[])!;
+                previousImmunity = immunitySet[npc.type];
+                immunitySet[npc.type] = true;
+                immunitySetFieldInfo.SetValue(null, immunitySet);
+                check = true;
+            }
+            orig(self, npc);
+            if (check)
+            {
+                bool[] immunitySet = (immunitySetFieldInfo!.GetValue(null) as bool[])!;
+                immunitySet[npc.type] = previousImmunity;
+                immunitySetFieldInfo.SetValue(null, immunitySet);
+            }
+        }
+
+        public static bool Cal_GlobalNPC_ShouldAffectNPC_Detour(Orig_Cal_GlobalNPC_ShouldAffectNPC orig, NPC npc)
+        {
+            bool val = orig(npc);
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null)
+            {
+                val = false;
+            }
+            return val;
         }
     }
 }

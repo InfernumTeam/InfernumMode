@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
@@ -9,6 +10,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.Systems.Collections;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
@@ -147,6 +149,13 @@ namespace InfernumMode.Core.GlobalInstances
 
                 npc.Infernum().TotalPlayersAtStart = activePlayerCount;
                 npc.netUpdate = true;
+            }
+
+            if (npc.ModNPC != null && npc.ModNPC.Mod == Mod && InfernumMode.CalamityMod?.Version <= Version.Parse("2.1.2"))
+            {
+                var slowingStunTimerFieldInfo2 = typeof(CalamityGlobalNPC).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "debuffResistanceTimer");
+                if (slowingStunTimerFieldInfo2 != default)
+                    slowingStunTimerFieldInfo2.SetValue(npc.Calamity(), 2);
             }
 
             if (!InfernumMode.CanUseCustomAIs)

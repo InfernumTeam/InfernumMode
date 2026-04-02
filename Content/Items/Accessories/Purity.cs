@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items;
 using CalamityMod.Items.Materials;
@@ -24,7 +25,11 @@ namespace InfernumMode.Content.Items.Accessories
         {
             Item.ResearchUnlockCount = 1;
 
-            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) => player.SetValue<bool>(FieldName, false);
+            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
+            {
+                player.SetValue<bool>(FieldName, false);
+                player.SetValue<bool>(FieldName + "hideVisual", false);
+            };
 
             InfernumPlayer.AccessoryUpdateEvent += (InfernumPlayer player) =>
             {
@@ -48,7 +53,8 @@ namespace InfernumMode.Content.Items.Accessories
                     }
 
                     p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
-                    p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible.
+                    if (InfernumMode.CalamityMod?.Version == Version.Parse("2.1.2"))
+                        p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible in this version.
                 }
             };
 
@@ -98,7 +104,7 @@ namespace InfernumMode.Content.Items.Accessories
                     // Lie and check if it was a crit seperately because its not possible else.
                     float crit = player.Player.GetTotalCritChance(modifiers.DamageType);
 
-                    if (Main.rand.Next(0, 101) < crit)
+                    if (!player.GetValue<bool>(FieldName + "hideVisual") && Main.rand.Next(0, 101) < crit)
                         OnHitParticles(target);
 
                     modifiers.DisableCrit();
@@ -119,7 +125,7 @@ namespace InfernumMode.Content.Items.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.Infernum().SetValue<bool>(FieldName, true);
-
+            player.Infernum().SetValue<bool>(FieldName + "hideVisual", hideVisual);
         }
 
         public override void AddRecipes()

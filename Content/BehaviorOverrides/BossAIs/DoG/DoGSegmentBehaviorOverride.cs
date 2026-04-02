@@ -47,6 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.lifeMax = head.lifeMax;
             npc.defense = BodySegmentDefense;
             npc.Calamity().DR = BodySegmentDR;
+            npc.Calamity().canBreakPlayerDefense = true;
 
             if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {

@@ -43,7 +43,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
-using Terraria.GameContent.UI.States;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -719,7 +718,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void GetRidOfProvidenceLootBox_IL(ILContext context) => HookHelper.EarlyReturnEdit(context, edit);
     }*/
 
-    internal sealed class AddWarningAboutNonExpertOnWorldSelectionHook : ModSystem
+    /*internal sealed class AddWarningAboutNonExpertOnWorldSelectionHook : ModSystem
     {
         public override void Load() => IL_UIWorldCreation.AddWorldDifficultyOptions += AddWarningAboutNonExpertOnWorldSelection_IL;
 
@@ -741,7 +740,7 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Pop);
             c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
         }
-    }
+    }*/
 
     internal sealed class ReducePlayerDashDelay : ModSystem
     {

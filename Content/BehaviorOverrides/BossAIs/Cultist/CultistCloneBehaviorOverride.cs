@@ -71,6 +71,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         #region Drawing and Frames
 
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            scale = 1f;
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             if (npc.IsABestiaryIconDummy)

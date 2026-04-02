@@ -125,6 +125,8 @@ namespace InfernumMode.Core.OverridingSystem
         /// <param name="reader"></param>
         public virtual void ReceiveExtraData(NPC npc, BinaryReader reader) { }
 
+        public virtual void ModifyTypeName(NPC npc, ref string typeName) { }
+
         /// <summary>
         /// Use this to set the NPCs current frame.
         /// </summary>
@@ -141,6 +143,9 @@ namespace InfernumMode.Core.OverridingSystem
         /// <returns></returns>
         public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) => true;
 
+        public virtual Color? GetAlpha(NPC npc, Color drawColor) => drawColor;
+
+        public virtual void DrawBehind(NPC npc, int index) { }
         public virtual bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position) => null;
 
         public virtual bool CalGlobalNPCPreDraw(CalamityGlobalNPC cGnpc, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, out bool RunCalAfter) => RunCalAfter = true;

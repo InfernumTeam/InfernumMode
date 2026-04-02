@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CalamityMod;
 using CalamityMod.BiomeManagers;
 using CalamityMod.Items.Weapons.Summon;

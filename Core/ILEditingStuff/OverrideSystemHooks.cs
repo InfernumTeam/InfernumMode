@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.RuntimeDetour;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.ILEditingStuff

@@ -61,6 +61,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             SegmentAI(npc);
             return false;
         }
+
+        #region Draw
+
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
+
+        #endregion Draw
     }
     public class EoWTailBehaviorOverride : NPCBehaviorOverride
     {

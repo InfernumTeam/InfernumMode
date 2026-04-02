@@ -10,7 +10,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.WorldGeneration;
-using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Luminance.Common.Easings;
@@ -1384,6 +1383,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         #endregion AI
 
         #region Drawing and Frames
+
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            scale = 1f;
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
 
         public override void FindFrame(NPC npc, int frameHeight)
         {

@@ -5,7 +5,6 @@ using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Polterghast;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
@@ -25,6 +24,8 @@ namespace InfernumMode.Core.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
+            if (!Utilities.CanOverride(npc, out object container))
+                return base.GetAlpha(npc, drawColor);
             // Give a dark tint to the moon lord.
             if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
             {
@@ -42,7 +43,7 @@ namespace InfernumMode.Core.GlobalInstances
                 return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
             }
 
-            return base.GetAlpha(npc, drawColor);
+            return container.NPCOverride().GetAlpha(npc, drawColor);
         }
         #endregion
 
@@ -140,18 +141,8 @@ namespace InfernumMode.Core.GlobalInstances
             if (!Utilities.CanOverride(npc, out object container))
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
-            if (npc.type is NPCID.CultistBoss or NPCID.CultistBossClone)
-                scale = 1f;
-
-            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
-            if (isDoG && npc.alpha >= 252)
-                return false;
-
             // Don't draw HP bars if Ares is in the background.
             if (npc.realLife == CalamityGlobalNPC.draedonExoMechPrime && CalamityGlobalNPC.draedonExoMechPrime >= 0 && Math.Abs(Main.npc[CalamityGlobalNPC.draedonExoMechPrime].ai[2]) >= 0.25f)
-                return false;
-
-            if (npc.type == NPCID.EaterofWorldsBody)
                 return false;
 
             return container.NPCOverride().DrawHealthBar(npc, hbPosition, ref scale, ref position);
@@ -162,10 +153,7 @@ namespace InfernumMode.Core.GlobalInstances
         #region Layering Manipulation
         public override void DrawBehind(NPC npc, int index)
         {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (container is null)
+            if (!Utilities.CanOverride(npc, out object container))
                 return;
 
             bool isAres = npc.whoAmI == CalamityGlobalNPC.draedonExoMechPrime || npc.realLife == CalamityGlobalNPC.draedonExoMechPrime;
@@ -174,33 +162,28 @@ namespace InfernumMode.Core.GlobalInstances
                 Main.instance.DrawCacheNPCProjectiles.Remove(index);
                 ScreenOverlaysSystem.DrawCacheBeforeBlack.Add(index);
             }
+            container.NPCOverride().DrawBehind(npc, index);
         }
         #endregion Layering Manipulation
 
         #region Frame Manipulation
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (InfernumMode.CanUseCustomAIs && container is not null && !npc.IsABestiaryIconDummy)
-                container.BehaviorOverride.FindFrame(npc, frameHeight);
+            if (!Utilities.CanOverride(npc, out object container) || npc.IsABestiaryIconDummy)
+            {
+                return;
+            }
+            container.NPCOverride().FindFrame(npc, frameHeight);
         }
         #endregion
 
         #region Name Manipulation
         public override void ModifyTypeName(NPC npc, ref string typeName)
         {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (container is null)
+            if (!Utilities.CanOverride(npc, out object container))
                 return;
 
-            if (npc.type == ModContent.NPCType<CalamitasClone>())
-                typeName = Utilities.GetLocalization("NameOverrides.CalamitasShadowClone.EntryName").Format(CalamitasShadowBehaviorOverride.CustomName);
-            if (npc.type == ModContent.NPCType<Cataclysm>())
-                typeName = CalamitasShadowBehaviorOverride.CustomNameCataclysm.Value;
-            if (npc.type == ModContent.NPCType<Catastrophe>())
-                typeName = CalamitasShadowBehaviorOverride.CustomNameCatastrophe.Value;
+            container.NPCOverride().ModifyTypeName(npc, ref typeName);
         }
         #endregion Name Manipulation
     }

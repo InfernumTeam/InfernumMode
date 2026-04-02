@@ -7,7 +7,6 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.UI;
 using InfernumMode.Assets.BossTextures;
 using InfernumMode.Content.Items.Relics;
-using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

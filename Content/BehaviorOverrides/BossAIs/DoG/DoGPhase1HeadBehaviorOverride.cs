@@ -5,7 +5,6 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.Skies;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core;
@@ -570,6 +569,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #endregion AI
 
         #region Drawing
+
+        public override Color? GetAlpha(NPC npc, Color drawColor) => base.GetAlpha(npc, drawColor)/*Color.White*/;
+
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (npc.alpha >= 252)
+                return false;
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             if (npc.IsABestiaryIconDummy)

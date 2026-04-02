@@ -236,6 +236,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             return false;
         }
 
+        public override Color? GetAlpha(NPC npc, Color drawColor) => base.GetAlpha(npc, drawColor)/*Color.White*/;
+
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (npc.alpha >= 252)
+                return false;
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             if (npc.IsABestiaryIconDummy)
@@ -288,6 +297,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         {
             DoGPhase1BodyBehaviorOverride.DoGSegmentAI(npc);
             return false;
+        }
+
+        public override Color? GetAlpha(NPC npc, Color drawColor) => base.GetAlpha(npc, drawColor)/*Color.White*/;
+
+        public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (npc.alpha >= 252)
+                return false;
+            return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)

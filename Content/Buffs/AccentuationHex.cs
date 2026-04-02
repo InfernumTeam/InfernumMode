@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using CalamityMod;
-using CalamityMod.CalPlayer;
+﻿using CalamityMod;
 using CalamityMod.Cooldowns;
 using Terraria;
 using Terraria.Localization;

@@ -828,7 +828,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            
+
         }
 
         public override bool PreKill(NPC npc)

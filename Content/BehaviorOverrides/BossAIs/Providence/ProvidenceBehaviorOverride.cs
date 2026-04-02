@@ -20,7 +20,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

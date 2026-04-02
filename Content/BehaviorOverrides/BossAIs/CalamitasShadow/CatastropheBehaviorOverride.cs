@@ -45,5 +45,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return CataclysmBehaviorOverride.DrawBrother(npc, spriteBatch, lightColor);
         }
         #endregion Frames and Drawcode
+
+        public override void ModifyTypeName(NPC npc, ref string typeName)
+        {
+            typeName = CalamitasShadowBehaviorOverride.CustomNameCatastrophe.Value;
+        }
     }
 }

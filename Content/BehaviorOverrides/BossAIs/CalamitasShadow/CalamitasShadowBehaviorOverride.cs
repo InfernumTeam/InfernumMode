@@ -2179,6 +2179,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         }
         #endregion Frames and Drawcode
 
+        public override void ModifyTypeName(NPC npc, ref string typeName)
+        {
+            typeName = Utilities.GetLocalization("NameOverrides.CalamitasShadowClone.EntryName").Format(CustomName);
+        }
+
         #region Death Effects
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)

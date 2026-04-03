@@ -31,7 +31,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
-            AddMapEntry(new Color(178, 151, 163));
+            AddMapEntry(new Color(178, 151, 163), ModContent.GetInstance<Wayfinder>().DisplayName);
         }
 
         public override void NearbyEffects(int i, int j, bool closer)

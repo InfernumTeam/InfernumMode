@@ -117,7 +117,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             {
                 int itemID = ModContent.ItemType<WayfinderItem>();
                 int item = Item.NewItem(Projectile.GetSource_Loot(), Projectile.Center, itemID, 1, true, -1);
-                if (item < Main.maxItems && Main.netMode == NetmodeID.Server)
+                if (item <= Main.maxItems)
                 {
                     Main.timeItemSlotCannotBeReusedFor[item] = 18000;
                     NetMessage.SendData(MessageID.InstancedItem, player.whoAmI, -1, null, item);

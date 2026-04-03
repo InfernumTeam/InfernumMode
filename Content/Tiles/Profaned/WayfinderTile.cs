@@ -1,4 +1,5 @@
-﻿using InfernumMode.Content.Projectiles.Wayfinder;
+﻿using InfernumMode.Content.Items.Misc;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -35,24 +36,14 @@ namespace InfernumMode.Content.Tiles.Profaned
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
             Tile t = Framing.GetTileSafely(i, j);
-
             if (closer && t.TileFrameX == 18 && t.TileFrameY == 18)
             {
                 Vector2 spawnPosition = new Point(i, j).ToWorldCoordinates();
-
-                foreach (Player player in Main.ActivePlayers)
+                if (Main.LocalPlayer.WithinRange(spawnPosition, 100f))
                 {
-                    if (player.dead || player.ghost)
-                        continue;
-                    if (player.WithinRange(spawnPosition, 100f))
-                    {
-                        Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
-                        WorldGen.KillTile(i, j);
-                        break;
-                    }
+                    Projectile.NewProjectile(new EntitySource_TileBreak(i, j), spawnPosition, -Vector2.UnitY * 4f, ModContent.ProjectileType<WayfinderItemProjectile>(), 0, 0f, Main.myPlayer);
+                    WorldGen.KillTile(i, j);
                 }
             }
         }

@@ -1070,6 +1070,8 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         public override bool IsLoadingEnabled(Mod mod) => ModLoader.TryGetMod("CalamityMod", out Mod cal) && cal.Version > Version.Parse("2.1.2");
 
+        public static FieldInfo? immunitySetFieldInfo;
+
         public static MethodInfo? Cal_GlobalNPC_PostAI = typeof(CalamityGlobalNPC).GetMethod("PostAI", Utilities.UniversalBindingFlags);
         public delegate void Orig_Cal_GlobalNPC_PostAI(CalamityGlobalNPC self, NPC npc);
         public static Hook? Cal_GlobalNPC_PostAI_Detour_Hook;
@@ -1080,6 +1082,8 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public override void OnModLoad()
         {
+            immunitySetFieldInfo = typeof(CalamityNPCSets).GetField("ImmuneToSlowsAndOtherSpecialEffects", Utilities.UniversalBindingFlags);
+
             if (Cal_GlobalNPC_PostAI != null)
             {
                 Cal_GlobalNPC_PostAI_Detour_Hook = new(Cal_GlobalNPC_PostAI, Cal_GlobalNPC_PostAI_Detour);
@@ -1095,10 +1099,9 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Cal_GlobalNPC_PostAI_Detour(Orig_Cal_GlobalNPC_PostAI orig, CalamityGlobalNPC self, NPC npc)
         {
-            var immunitySetFieldInfo = typeof(CalamityNPCSets).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "ImmuneToSlowsAndOtherSpecialEffects");
             bool check = false;
             bool previousImmunity = false;
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null && immunitySetFieldInfo != default)
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null && immunitySetFieldInfo != null)
             {
                 bool[] immunitySet = (immunitySetFieldInfo.GetValue(null) as bool[])!;
                 previousImmunity = immunitySet[npc.type];

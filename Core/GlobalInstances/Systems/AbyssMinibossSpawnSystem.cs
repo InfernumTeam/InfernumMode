@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Reflection;
+using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Content.Projectiles.Generic;
@@ -29,6 +30,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public const int MinibossSpawnRate = 2400;
         private static bool CycleThroughMiniboss;
+        internal static FieldInfo? maxSpawns = typeof(NPC).GetField("maxSpawns", LumUtils.UniversalBindingFlags);
 
         public override void PreUpdateWorld()
         {
@@ -44,7 +46,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (!p.Calamity().ZoneAbyssLayer4 || p.Center.Y < CustomAbyss.Layer4Top * 16f + 1000f)
                     continue;
 
-                if (!Main.rand.NextBool(MinibossSpawnRate) || typeof(NPC).GetField("maxSpawns", LumUtils.UniversalBindingFlags)?.GetValue(null) as int? == 0)
+                if (!Main.rand.NextBool(MinibossSpawnRate) || (maxSpawns?.GetValue(null) is int i && i == 0))
                     continue;
 
                 AttemptToSpawnMiniboss(p);

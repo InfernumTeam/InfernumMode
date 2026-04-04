@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
@@ -73,6 +74,9 @@ namespace InfernumMode.Core.GlobalInstances
         internal static int ProfanedCrystal = -1;
 
         internal static int Yharon = -1;
+
+        internal static FieldInfo? slowingStunTimerFieldInfo;
+
         #endregion
 
         #region Reset Effects
@@ -134,6 +138,8 @@ namespace InfernumMode.Core.GlobalInstances
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
+
+            slowingStunTimerFieldInfo = typeof(CalamityGlobalNPC).GetField("debuffResistanceTimer", Utilities.UniversalBindingFlags);
         }
 
         public override bool PreAI(NPC npc)
@@ -151,9 +157,7 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.ModNPC != null && npc.ModNPC.Mod == Mod)
             {
-                var slowingStunTimerFieldInfo2 = typeof(CalamityGlobalNPC).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "debuffResistanceTimer");
-                if (slowingStunTimerFieldInfo2 != default)
-                    slowingStunTimerFieldInfo2.SetValue(npc.Calamity(), 2);
+                slowingStunTimerFieldInfo?.SetValue(npc.Calamity(), 2);
             }
 
             if (!InfernumMode.CanUseCustomAIs)
@@ -189,9 +193,7 @@ namespace InfernumMode.Core.GlobalInstances
             // Disable the effects of certain unpredictable freeze debuffs.
             // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
             // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
-            var slowingStunTimerFieldInfo = typeof(CalamityGlobalNPC).GetFields(Utilities.UniversalBindingFlags).FirstOrDefault(f => f.Name == "debuffResistanceTimer");
-            if (slowingStunTimerFieldInfo != default)
-                slowingStunTimerFieldInfo.SetValue(npc.Calamity(), 2);
+            slowingStunTimerFieldInfo?.SetValue(npc.Calamity(), 2);
             /*npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
             npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;

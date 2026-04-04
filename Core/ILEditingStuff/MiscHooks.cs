@@ -5,6 +5,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.PrimordialWyrm;
+using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;
@@ -348,6 +349,33 @@ namespace InfernumMode.Core.ILEditingStuff
             if (WorldSaveSystem.ProvidenceArena.Contains(placementPoint))
                 value = true;
             return value;
+        }
+    }
+    internal sealed class FixSCalSkyHook : ModSystem
+    {
+        public static MethodInfo? Cal_SCalSky_Update = typeof(SCalSky).GetMethod("Update", Utilities.UniversalBindingFlags);
+        public static ILHook? Cal_SCalSky_Update_IL_Hook;
+
+        public override void OnModLoad()
+        {
+            if (Cal_SCalSky_Update != null)
+            {
+                Cal_SCalSky_Update_IL_Hook = new(Cal_SCalSky_Update, Cal_SCalSky_Update_IL);
+                Cal_SCalSky_Update_IL_Hook?.Apply();
+            }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
+        }
+        public void Cal_SCalSky_Update_IL(ILContext context)
+        {
+            ILCursor cursor = new(context);
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchRet()))
+            {
+
+            }
+            cursor.Index += 3;
+            cursor.EmitDelegate(() => !InfernumMode.CanUseCustomAIs);
+            cursor.Emit(OpCodes.And);
+
         }
     }
     /*internal sealed class DisableGSSMessageHook : ModSystem

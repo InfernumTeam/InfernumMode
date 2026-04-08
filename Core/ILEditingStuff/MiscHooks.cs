@@ -378,20 +378,29 @@ namespace InfernumMode.Core.ILEditingStuff
 
         }
     }
-    /*internal sealed class DisableGSSMessageHook : ModSystem
+    internal sealed class DisableGSSMessageHook : ModSystem
     {
+        public static MethodInfo? CalDisplayLocalizedText = typeof(CalamityUtils).GetMethod("BroadcastLocalizedText", Utilities.UniversalBindingFlags);
+        public delegate void Orig_CalBroadcastLocalizedText(string key, Color? textColor = null);
         public static Hook? DisableGSSMessage_Detour_Hook;
+        public static bool SafetyLever = true;
+        // This detour isn't really ideal so I'm leaving this here for now until
+        // I decide to do anything about it so that in the case that it's trying to run for some reason,
+        // it can be externally toggled to not be prevented outside of Plantera death - Habble
 
         public override void OnModLoad()
         {
-            DisableGSSMessage_Detour_Hook = new(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
-            DisableGSSMessage_Detour_Hook?.Apply();
+            if (CalDisplayLocalizedText != null)
+            {
+                DisableGSSMessage_Detour_Hook = new(CalDisplayLocalizedText, CalBroadcastLocalizedText_Detour);
+                DisableGSSMessage_Detour_Hook?.Apply();
+            }
         }
-        public static void CalDisplayLocalizedText_Detour(Orig_CalDisplayLocalizedText orig, string key, Color? textColor = null)
+        public static void CalBroadcastLocalizedText_Detour(Orig_CalBroadcastLocalizedText orig, string key, Color? textColor = null)
         {
-            if (key == "Mods.CalamityMod.Status.Progression.SandSharkText3")
+            if (SafetyLever && InfernumMode.CanUseCustomAIs && key == "Mods.CalamityMod.Status.Progression.SandSharkText3")
                 return;
             orig(key, textColor);
         }
-    }*/
+    }
 }

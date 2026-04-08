@@ -96,9 +96,5 @@ namespace InfernumMode.Core.ILEditingStuff
         //public static MethodInfo CalDoGSkyUpdateDoGIndex => typeof(DoGSky).GetMethod("UpdateDoGIndex", Utilities.UniversalBindingFlags);
 
         //public delegate bool Orig_CalDoGSkyUpdateDoGIndex(DoGSky self);
-
-        //public static MethodInfo CalDisplayLocalizedText => typeof(CalamityUtils).GetMethod("DisplayLocalizedText", Utilities.UniversalBindingFlags);
-
-        //public delegate void Orig_CalDisplayLocalizedText(string key, Color? textColor = null);
     }
 }*/

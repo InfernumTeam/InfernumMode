@@ -20,6 +20,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
     {
         public override bool InstancePerEntity => true;
 
+        public bool InfernumItem;
+
         public bool DeveloperItem;
 
         public static Dictionary<int, LocalizedText> EnrageTooltipReplacements => new()
@@ -150,6 +152,15 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2f);
                 TooltipLine developerLine = new(Mod, "Developer", Utilities.GetLocalization("Items.DeveloperItem").Format(devColor.Hex3()));
                 tooltips.Add(developerLine);
+            }
+
+            if (InfernumItem)
+            {
+                // I wish it was simplier to paste colors but alas - Zav
+                float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
+                Color infColor = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+                TooltipLine infernumModeLine = new(Mod, "InfernumModeItem", Utilities.GetLocalization("Items.InfernumOnly").Format(infColor.Hex3()));
+                tooltips.Add(infernumModeLine);
             }
         }
 

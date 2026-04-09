@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -675,6 +675,7 @@ Mods: {
 			// Beware translators, this line must match the "enrage" word in the tooltip of your language
 			EnrageTooltip: enrage
 			DeveloperItem: "[c/{0}:~ Developer Item ~]"
+			InfernumOnly: "[c/{0}:Infernum]"
 			InfernalRelicText: Imbued with the infernal flames of a defeated foe
 
 			Lore: {
@@ -987,9 +988,9 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					Sometimes pure reaction skill is the most valuable thing to cultivate.
-					You are in the final stretch. Your determination has proven invaluable up to this point.
-					May it guide you through the last challenges.
+					Sometimes pure reaction skill is the most valuable thing to cultivate
+					You are in the final stretch. Your determination has proven invaluable up to this point
+					May it guide you through the last challenges
 					'''
 			}
 
@@ -1001,12 +1002,12 @@ Mods: {
 					DefaultMessage:
 						'''
 						You have done phenomenally. There is only one challenge left now-
-						Face the Witch.
+						Face the Witch
 						'''
 					DownedCalamitasMessage:
 						'''
-						Spectacular work. You have conquered all of the major obstacles.
-						Take pride in this accomplishment, for you are considerably stronger than you were when you began.
+						Spectacular work. You have conquered all of the major obstacles
+						Take pride in this accomplishment, for you are considerably stronger than you were when you began
 						'''
 				}
 			}
@@ -1034,7 +1035,7 @@ Mods: {
 			EmpressOfLightRelic: {
 				DisplayName: Infernal Empress of Light Relic
 				Tooltip: GetsChanged
-				PersonalMessage: The optional foes may at times be the most formidable. So too may they yield the greatest rewards.
+				PersonalMessage: The optional foes may at times be the most formidable. So too may they yield the greatest rewards
 			}
 
 			EyeOfCthulhuRelic: {
@@ -1042,8 +1043,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to.
-					The most important thing is fun.
+					Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to
+					The most important thing is fun
 					'''
 			}
 
@@ -1060,7 +1061,7 @@ Mods: {
 			GolemRelic: {
 				DisplayName: Infernal Golem Relic
 				Tooltip: GetsChanged
-				PersonalMessage: Simple methodical planning goes a long way. It will be invaluable against future obstacles.
+				PersonalMessage: Simple methodical planning goes a long way. It will be invaluable against future obstacles
 			}
 
 			HiveMindRelic: {
@@ -1071,7 +1072,7 @@ Mods: {
 			KingSlimeRelic: {
 				DisplayName: Infernal King Slime Relic
 				Tooltip: GetsChanged
-				PersonalMessage: Even seasoned players may struggle somewhat in the face of something new and unfamiliar. Adaptability is key.
+				PersonalMessage: Even seasoned players may struggle somewhat in the face of something new and unfamiliar. Adaptability is key
 			}
 
 			LeviathanRelic: {
@@ -1089,8 +1090,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					You have done very well thus far.
-					May your tenacity guide you through the remaining challenges.
+					You have done very well thus far
+					May your tenacity guide you through the remaining challenges
 					'''
 			}
 
@@ -1104,8 +1105,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					Difficult as the fight may be, you were wise to endure and overcome the challenge it brings.
-					You will find that the mechanics it tested will be relevant again soon.
+					Difficult as the fight may be, you were wise to endure and overcome the challenge it brings
+					You will find that the mechanics it tested will be relevant again soon
 					'''
 			}
 
@@ -1146,13 +1147,13 @@ Mods: {
 				PersonalMessage: {
 					DefaultMessage:
 						'''
-						The first major hurdle following the defeat of the Moon Lord. Your triumph over her was by no means a small feat.
+						The first major hurdle following the defeat of the Moon Lord. Your triumph over her was by no means a small feat
 						Perhaps consider fighting her again during the night for a special challenge?
 						'''
 					HasBeatenInfernumNightProvBeforeDayMessage:
 						'''
 						Bruh? What the heck? Are you OK?
-						            You were supposed to fight her at night AFTER beating her during the day first!
+						You were supposed to fight her at night AFTER beating her during the day first!
 						'''
 				}
 			}
@@ -1206,12 +1207,12 @@ Mods: {
 					DefaultMessage:
 						'''
 						You have done phenomenally. There is only one challenge left now-
-						Face the Cosmic Engineer.
+						Face the Cosmic Engineer
 						'''
 					DownedExoMechsMessage:
 						'''
-						Spectacular work. You have conquered all of the major obstacles.
-						Take pride in this accomplishment, for you are considerably stronger than you were when you began.
+						Spectacular work. You have conquered all of the major obstacles
+						Take pride in this accomplishment, for you are considerably stronger than you were when you began
 						'''
 				}
 			}
@@ -2546,6 +2547,7 @@ Mods: {
 
 		UI: {
 			MenuStyle: Infernum Style
+			InfernumDrop: This is an Infernum Mode drop rate
 			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
 			AchievementsHeader: Death Wishes
 			AchievementsLabelText: Next

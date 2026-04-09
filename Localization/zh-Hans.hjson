@@ -1,4 +1,4 @@
-Mods: {
+﻿Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -675,6 +675,7 @@ Mods: {
 			// Beware translators, this line must match the "enrage" word in the tooltip of your language
 			EnrageTooltip: 狂暴
 			DeveloperItem: "[c/{0}:~ 开发者物品 ~]"
+			// InfernumOnly: "[c/{0}:Infernum]"
 			InfernalRelicText: 以殁者之火铸其形，其焰猩赫
 
 			Lore: {
@@ -982,9 +983,9 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					有些时候，纯粹的反应能力是最值得去培养的。
-					你已经到了最终的阶段。目前为止，你已经证明了你那无价的决心。
-					愿它指引你完成最后的挑战。
+					有些时候，纯粹的反应能力是最值得去培养的
+					你已经到了最终的阶段。目前为止，你已经证明了你那无价的决心
+					愿它指引你完成最后的挑战
 					'''
 			}
 
@@ -996,12 +997,12 @@ Mods: {
 					DefaultMessage:
 						'''
 						你做的很好。现在，只剩下一个挑战了-
-						面对那位女巫。
+						面对那位女巫
 						'''
 					DownedCalamitasMessage:
 						'''
-						令人赞叹，你已经战胜了所有的困难。
-						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了。
+						令人赞叹，你已经战胜了所有的困难
+						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了
 						'''
 				}
 			}
@@ -1029,7 +1030,7 @@ Mods: {
 			EmpressOfLightRelic: {
 				DisplayName: 光之女皇炼狱圣物
 				Tooltip: GetsChanged
-				PersonalMessage: 那些可选性的敌人有时可能很难对付，击败他们也可能会拥有很高的收益。
+				PersonalMessage: 那些可选性的敌人有时可能很难对付，击败他们也可能会拥有很高的收益
 			}
 
 			EyeOfCthulhuRelic: {
@@ -1037,8 +1038,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					记住，你没有必要一直强迫自己取得胜利，有必要的话小憩一下也未尝不可。
-					最重要的是享受游戏的乐趣。
+					记住，你没有必要一直强迫自己取得胜利，有必要的话小憩一下也未尝不可
+					最重要的是享受游戏的乐趣
 					'''
 			}
 
@@ -1055,7 +1056,7 @@ Mods: {
 			GolemRelic: {
 				DisplayName: 石巨人炼狱圣物
 				Tooltip: GetsChanged
-				PersonalMessage: 还有很长的路要走，有条不紊的计划将有助于克服未来的障碍。
+				PersonalMessage: 还有很长的路要走，有条不紊的计划将有助于克服未来的障碍
 			}
 
 			HiveMindRelic: {
@@ -1066,7 +1067,7 @@ Mods: {
 			KingSlimeRelic: {
 				DisplayName: 史莱姆王炼狱圣物
 				Tooltip: GetsChanged
-				PersonalMessage: 即使是经验再丰富的玩家，面对陌生的挑战也会有些吃力。适应力是关键。
+				PersonalMessage: 即使是经验再丰富的玩家，面对陌生的挑战也会有些吃力。适应力是关键
 			}
 
 			LeviathanRelic: {
@@ -1084,8 +1085,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					到目前为止，你做得很好。
-					但愿你的坚韧不拔能指引你完成剩下的挑战。
+					到目前为止，你做得很好
+					但愿你的坚韧不拔能指引你完成剩下的挑战
 					'''
 			}
 
@@ -1099,8 +1100,8 @@ Mods: {
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					这也许是场困难的战斗，但你十分明智的忍受并克服了它所带来的挑战。
-					你会发现它所测试你的机制将很快就会再次出现。
+					这也许是场困难的战斗，但你十分明智的忍受并克服了它所带来的挑战
+					你会发现它所测试你的机制将很快就会再次出现
 					'''
 			}
 
@@ -1141,7 +1142,7 @@ Mods: {
 				PersonalMessage: {
 					DefaultMessage:
 						'''
-						这是在你击败月球领主后遇到的第一个阻碍，战胜她绝非易事。
+						这是在你击败月球领主后遇到的第一个阻碍，战胜她绝非易事
 						也许你可以试试在晚上与她来一场特别的战斗？
 						'''
 					HasBeatenInfernumNightProvBeforeDayMessage:
@@ -1201,12 +1202,12 @@ Mods: {
 					DefaultMessage:
 						'''
 						你做的很好。现在，只剩下一个挑战了-
-						面对那位神匠。
+						面对那位神匠
 						'''
 					DownedExoMechsMessage:
 						'''
-						令人赞叹，你已经战胜了所有的困难。
-						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了。
+						令人赞叹，你已经战胜了所有的困难
+						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了
 						'''
 				}
 			}
@@ -2541,6 +2542,7 @@ Mods: {
 
 		UI: {
 			// MenuStyle: Infernum Style
+			// InfernumDrop: In Infernum Mode
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个

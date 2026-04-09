@@ -39,6 +39,8 @@ namespace InfernumMode.Content.Items.Relics
             Item.maxStack = 999;
             Item.rare = ModContent.RarityType<InfernumRedRarity>();
             Item.value = Item.buyPrice(0, 5, 0, 0);
+
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
     }
 }

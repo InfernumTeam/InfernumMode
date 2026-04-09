@@ -61,7 +61,7 @@ namespace InfernumMode.Core.GlobalInstances
         {
             // Relic hell.
             if (npc.type == NPCID.KingSlime)
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<KingSlimeRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<KingSlimeRelic>(), desc: (string)Utilities.GetLocalization("UI.InfernumDrop"));
 
             if (npc.type == ModContent.NPCType<DesertScourgeHead>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DesertScourgeRelic>());

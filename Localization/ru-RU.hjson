@@ -911,82 +911,82 @@
 
 			AEWRelic: {
 				DisplayName: Инфернальная реликвия Первородного змея
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			AquaticScourgeRelic: {
 				DisplayName: Инфернальная реликвия Акватического бича
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			AstrumAureusRelic: {
 				DisplayName: Инфернальная реликвия Аструм Ауреуса
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			AstrumDeusRelic: {
 				DisplayName: Инфернальная реликвия Аструм Деуса
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			BereftVassalRelic: {
 				DisplayName: Инфернальная реликвия Обездоленного вассала
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			BetsyRelic: {
 				DisplayName: Инфернальная реликвия Бетси
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			BrainOfCthulhuRelic: {
 				DisplayName: Инфернальная реликвия Мозга Ктулху
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			BrimstoneElementalRelic: {
 				DisplayName: Инфернальная реликвия Серного элементаля
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			CeaselessVoidRelic: {
 				DisplayName: Инфернальная реликвия Неусмиримой пустоты
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			CrabulonRelic: {
 				DisplayName: Инфернальная реликвия Крабулона
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			CryogenRelic: {
 				DisplayName: Инфернальная реликвия Криогена
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DarkMageRelic: {
 				DisplayName: Инфернальная реликвия Тёмного мага
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DeerclopsRelic: {
 				DisplayName: Инфернальная реликвия Циклопа-оленя
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DesertScourgeRelic: {
 				DisplayName: Инфернальная реликвия Пустынного бича
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DestroyerRelic: {
 				DisplayName: Инфернальная реликвия Уничтожителя
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DevourerOfGodsRelic: {
 				DisplayName: Инфернальная реликвия Пожирателя Богов
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Иногда важнее всего просто работать над вашей реакцией
@@ -997,7 +997,7 @@
 
 			DraedonRelic: {
 				DisplayName: Инфернальная реликвия Дрэйдона
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1015,27 +1015,27 @@
 
 			DragonfollyRelic: {
 				DisplayName: Инфернальная реликвия Дуракона
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DreadnautilusRelic: {
 				DisplayName: Инфернальная реликвия Страшнаутилуса
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			DukeFishronRelic: {
 				DisplayName: Инфернальная реликвия Герцога Рыброна
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			EaterOfWorldsRelic: {
 				DisplayName: Инфернальная реликвия Пожирателя миров
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			EmpressOfLightRelic: {
 				DisplayName: Инфернальная реликвия Императрицы света
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Второстепенные враги иногда могут быть самыми грозными
@@ -1045,7 +1045,7 @@
 
 			EyeOfCthulhuRelic: {
 				DisplayName: Инфернальная реликвия Глаза Ктулху
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Помните, что не нужно силой заставлять себя идти к победе. Если нужно, лучше отдохните
@@ -1055,44 +1055,44 @@
 
 			ForgottenShadowOfCalamitasRelic: {
 				DisplayName: Инфернальная реликвия Забытой тени Каламитас
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			GiantClamRelic: {
 				DisplayName: Инфернальная реликвия Гигантского моллюска
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			GolemRelic: {
 				DisplayName: Инфернальная реликвия Голема
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage: Простое и методичное планирование проложит вам долгую дорогу. Оно будет неоценимо важным для будущих препятствий
 			}
 
 			HiveMindRelic: {
 				DisplayName: Инфернальная реликвия Разума порчи
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			KingSlimeRelic: {
 				DisplayName: Инфернальная реликвия Короля слизней
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage: Даже самым закалённым игрокам может быть сложно из-за чего-то нового и неизвестного. Адаптивность — вот ключ к победе
 			}
 
 			LeviathanRelic: {
 				DisplayName: Инфернальная реликвия Левиафан
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			LunaticCultistRelic: {
 				DisplayName: Инфернальная реликвия Культиста-лунатика
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			MoonLordRelic: {
 				DisplayName: Инфернальная реликвия Лунного лорда
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Пока что вы хорошо справляетесь
@@ -1102,12 +1102,12 @@
 
 			OgreRelic: {
 				DisplayName: Инфернальная реликвия Огра
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			OldDukeRelic: {
 				DisplayName: Инфернальная реликвия Старого герцога
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Насколько бы сложной не была битва, вы поступили мудро, терпя и преодолевая её вызовы
@@ -1117,17 +1117,17 @@
 
 			PerforatorsRelic: {
 				DisplayName: Инфернальная реликвия Улья перфораторов
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			PlaguebringerGoliathRelic: {
 				DisplayName: Инфернальная реликвия Разносчицы чумы Голиаф
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			PlanteraRelic: {
 				DisplayName: Инфернальная реликвия Плантеры
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Гордитесь своим количеством смертей!
@@ -1137,17 +1137,17 @@
 
 			PolterghastRelic: {
 				DisplayName: Инфернальная реликвия Полтергаста
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			ProfanedGuardiansRelic: {
 				DisplayName: Инфернальная реликвия Осквернённых стражей
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			ProvidenceRelic: {
 				DisplayName: Инфернальная реликвия Провиденс
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1165,48 +1165,48 @@
 
 			QueenBeeRelic: {
 				DisplayName: Инфернальная реликвия Королевы пчёл
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			QueenSlimeRelic: {
 				DisplayName: Инфернальная реликвия Королевы слизней
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			RavagerRelic: {
 				DisplayName: Инфернальная реликвия Разрушителя
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			SignusRelic: {
 				DisplayName: Инфернальная реликвия Сигнуса
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			SkeletronPrimeRelic: {
 				DisplayName: Инфернальная реликвия Скелетрона Прайма
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			SkeletronRelic: {
 				DisplayName: Инфернальная реликвия Скелетрона
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 				PersonalMessage: Первая значительная преграда. Вы стали лучше по сравнению с тем, что было до битвы с ним. Было ли весело изучать его поведение?
 			}
 
 			SlimeGodRelic: {
 				DisplayName: Инфернальная реликвия Бога слизней
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			StormWeaverRelic: {
 				DisplayName: Инфернальная реликвия Ткача бурь
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			SupremeCalamitasRelic: {
 				DisplayName: Инфернальная реликвия Каламитас, верховной ведьмы
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1224,17 +1224,17 @@
 
 			TwinsRelic: {
 				DisplayName: Инфернальная реликвия Близнецов
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			WallOfFleshRelic: {
 				DisplayName: Инфернальная реликвия Стены плоти
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			YharonRelic: {
 				DisplayName: Инфернальная реликвия Ярона
-				Tooltip: GetsChanged
+				// Tooltip: "{0}"
 			}
 
 			// Important: Don't translate this tooltip, currently is being used for the tooltip effect

@@ -24,6 +24,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Item.useTime = 45;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.consumable = false;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && player.Calamity().ZoneAbyssLayer4;

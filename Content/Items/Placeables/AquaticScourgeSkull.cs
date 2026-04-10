@@ -21,6 +21,7 @@ namespace InfernumMode.Content.Items.Placeables
             Item.value = Item.buyPrice(0, 20, 0, 0);
             Item.rare = ItemRarityID.LightPurple;
             Item.createTile = ModContent.TileType<AquaticScourgeSkullTile>();
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
     }
 }

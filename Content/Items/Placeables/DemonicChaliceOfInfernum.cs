@@ -22,6 +22,7 @@ namespace InfernumMode.Content.Items.Placeables
             Item.height = 96;
             Item.maxStack = 999;
             Item.DefaultToPlaceableTile(ModContent.TileType<InfernalChaliceTile>());
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
     }
 }

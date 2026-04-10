@@ -50,6 +50,8 @@ namespace InfernumMode.Content.Items.Dyes
         {
             Item.rare = ItemRarityID.Purple;
             Item.value = Item.sellPrice(0, 2, 50, 0);
+
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override void AddRecipes()

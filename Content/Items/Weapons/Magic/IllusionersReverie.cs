@@ -41,6 +41,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
             Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
             Item.rare = ModContent.RarityType<BurnishedAuric>();
+            Item.Infernum_Tooltips().InfernumItem = true;
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;

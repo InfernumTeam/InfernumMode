@@ -151,7 +151,15 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             {
                 Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2f);
                 TooltipLine developerLine = new(Mod, "Developer", Utilities.GetLocalization("Items.DeveloperItem").Format(devColor.Hex3()));
-                tooltips.Add(developerLine);
+                int index = tooltips.FindIndex((x) => x.Name == "BestiaryNotes" && x.Mod == "Terraria");
+                if (index == -1)
+                {
+                    tooltips.Add(developerLine);
+                }
+                else
+                {
+                    tooltips.Insert(index, developerLine);
+                }
             }
 
             if (InfernumItem)

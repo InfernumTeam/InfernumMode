@@ -160,7 +160,16 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
                 Color infColor = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
                 TooltipLine infernumModeLine = new(Mod, "InfernumModeItem", Utilities.GetLocalization("Items.InfernumOnly").Format(infColor.Hex3()));
-                tooltips.Add(infernumModeLine);
+                int index = tooltips.FindIndex((x) => x.Name == "BestiaryNotes" && x.Mod == "Terraria");
+                Main.NewText(index);
+                if (index == -1)
+                {
+                    tooltips.Add(infernumModeLine);
+                }
+                else
+                {
+                    tooltips.Insert(index, infernumModeLine);
+                }
             }
         }
 

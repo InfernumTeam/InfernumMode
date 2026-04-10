@@ -7,8 +7,6 @@ namespace InfernumMode.Content.Items.Relics
 {
     public class ProvidenceRelic : BaseRelicItem
     {
-        public override string DisplayNameToUse => "Infernal Providence Relic";
-
         public override string PersonalMessage
         {
             get
@@ -25,5 +23,7 @@ namespace InfernumMode.Content.Items.Relics
             Color.Lerp(Color.Orange, Color.Yellow, 0.35f);
 
         public override int TileID => ModContent.TileType<ProvidenceRelicTile>();
+
+        public override int MaxLines => 2;
     }
 }

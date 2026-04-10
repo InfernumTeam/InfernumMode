@@ -5,8 +5,6 @@ namespace InfernumMode.Content.Items.Relics
 {
     public class PolterghastRelic : BaseRelicItem
     {
-        public override string DisplayNameToUse => "Infernal Polterghast Relic";
-
         public override int TileID => ModContent.TileType<PolterghastRelicTile>();
     }
 }

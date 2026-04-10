@@ -3,32 +3,34 @@ using System.Linq;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Relics
 {
     public abstract class BaseRelicItem : ModItem
     {
-        public virtual string PersonalMessage => null;
+        public override LocalizedText Tooltip => Utilities.GetLocalization($"Items.{this.Name}.Tooltip").WithFormatArgs(PersonalMessage);
+        public virtual string PersonalMessage => Utilities.InfernalRelicText;
 
-        public virtual Color? PersonalMessageColor => null;
-
-        public abstract string DisplayNameToUse { get; }
+        public virtual Color? PersonalMessageColor => Color.DarkRed;
 
         public abstract int TileID { get; }
 
+        public virtual int MaxLines => 1;
+
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault(DisplayNameToUse);
-            // Tooltip.SetDefault("GetsChanged");
             Item.ResearchUnlockCount = 1;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            TooltipLine obj = tooltips.FirstOrDefault((x) => x.Name == "Tooltip0" && x.Mod == "Terraria");
-            obj.Text = PersonalMessage ?? Utilities.InfernalRelicText;
-            obj.OverrideColor = PersonalMessageColor ?? Color.DarkRed;
+            for (int i = 0; i < MaxLines; i++)
+            {
+                TooltipLine? obj = tooltips.FirstOrDefault((x) => x.Name == $"Tooltip{i}" && x.Mod == "Terraria");
+                obj?.OverrideColor = PersonalMessageColor;
+            }
         }
 
         public override void SetDefaults()

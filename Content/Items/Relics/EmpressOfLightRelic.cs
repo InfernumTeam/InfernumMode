@@ -6,8 +6,6 @@ namespace InfernumMode.Content.Items.Relics
 {
     public class EmpressOfLightRelic : BaseRelicItem
     {
-        public override string DisplayNameToUse => "Infernal Empress of Light Relic";
-
         public override string PersonalMessage => Utilities.GetLocalization("Items.EmpressOfLightRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.DeepPink;

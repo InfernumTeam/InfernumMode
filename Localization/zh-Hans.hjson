@@ -1,4 +1,4 @@
-﻿Mods: {
+Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
@@ -2542,7 +2542,7 @@
 
 		UI: {
 			// MenuStyle: Infernum Style
-			// InfernumDrop: In Infernum Mode
+			// InfernumDrop: This is an Infernum Mode drop rate
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个

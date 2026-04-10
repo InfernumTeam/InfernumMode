@@ -7,8 +7,6 @@ namespace InfernumMode.Content.Items.Relics
 {
     public class SupremeCalamitasRelic : BaseRelicItem
     {
-        public override string DisplayNameToUse => "Infernal Supreme Calamitas Relic";
-
         public override string PersonalMessage
         {
             get
@@ -23,5 +21,7 @@ namespace InfernumMode.Content.Items.Relics
         public override Color? PersonalMessageColor => Color.DarkRed;
 
         public override int TileID => ModContent.TileType<SupremeCalamitasRelicTile>();
+
+        public override int MaxLines => 2;
     }
 }

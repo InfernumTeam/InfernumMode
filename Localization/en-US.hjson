@@ -910,82 +910,82 @@
 
 			AEWRelic: {
 				DisplayName: Infernal Adult Eidolon Wyrm Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			AquaticScourgeRelic: {
 				DisplayName: Infernal Aquatic Scourge Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			AstrumAureusRelic: {
 				DisplayName: Infernal Astrum Aureus Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			AstrumDeusRelic: {
 				DisplayName: Infernal Astrum Deus Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			BereftVassalRelic: {
 				DisplayName: Infernal Bereft Vassal Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			BetsyRelic: {
 				DisplayName: Infernal Betsy Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			BrainOfCthulhuRelic: {
 				DisplayName: Infernal Brain of Cthulhu Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			BrimstoneElementalRelic: {
 				DisplayName: Infernal Brimstone Elemental Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			CeaselessVoidRelic: {
 				DisplayName: Infernal Ceaseless Void Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			CrabulonRelic: {
 				DisplayName: Infernal Crabulon Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			CryogenRelic: {
 				DisplayName: Infernal Cryogen Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DarkMageRelic: {
 				DisplayName: Infernal Dark Mage Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DeerclopsRelic: {
 				DisplayName: Infernal Deerclops Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DesertScourgeRelic: {
 				DisplayName: Infernal Desert Scourge Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DestroyerRelic: {
 				DisplayName: Infernal Destroyer Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DevourerOfGodsRelic: {
 				DisplayName: Infernal Devourer of Gods Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Sometimes pure reaction skill is the most valuable thing to cultivate
@@ -996,7 +996,7 @@
 
 			DraedonRelic: {
 				DisplayName: Infernal Draedon Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1014,33 +1014,33 @@
 
 			DragonfollyRelic: {
 				DisplayName: Infernal Dragonfolly Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DreadnautilusRelic: {
 				DisplayName: Infernal Dreadnautilus Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			DukeFishronRelic: {
 				DisplayName: Infernal Duke Fishron Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			EaterOfWorldsRelic: {
 				DisplayName: Infernal Eater of Worlds Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			EmpressOfLightRelic: {
 				DisplayName: Infernal Empress of Light Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage: The optional foes may at times be the most formidable. So too may they yield the greatest rewards
 			}
 
 			EyeOfCthulhuRelic: {
 				DisplayName: Infernal Eye of Cthulhu Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to
@@ -1050,44 +1050,44 @@
 
 			ForgottenShadowOfCalamitasRelic: {
 				DisplayName: Infernal Forgotten Shadow of Calamitas Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			GiantClamRelic: {
 				DisplayName: Infernal Giant Clam Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			GolemRelic: {
 				DisplayName: Infernal Golem Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage: Simple methodical planning goes a long way. It will be invaluable against future obstacles
 			}
 
 			HiveMindRelic: {
 				DisplayName: Infernal Hive Mind Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			KingSlimeRelic: {
 				DisplayName: Infernal King Slime Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage: Even seasoned players may struggle somewhat in the face of something new and unfamiliar. Adaptability is key
 			}
 
 			LeviathanRelic: {
 				DisplayName: Infernal Leviathan Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			LunaticCultistRelic: {
 				DisplayName: Infernal Lunatic Cultist Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			MoonLordRelic: {
 				DisplayName: Infernal Moon Lord Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					You have done very well thus far
@@ -1097,12 +1097,12 @@
 
 			OgreRelic: {
 				DisplayName: Infernal Ogre Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			OldDukeRelic: {
 				DisplayName: Infernal Old Duke Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Difficult as the fight may be, you were wise to endure and overcome the challenge it brings
@@ -1112,17 +1112,17 @@
 
 			PerforatorsRelic: {
 				DisplayName: Infernal Perforator Hive Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			PlaguebringerGoliathRelic: {
 				DisplayName: Infernal Plaguebringer Goliath Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			PlanteraRelic: {
 				DisplayName: Infernal Plantera Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage:
 					'''
 					Be proud of your death count!
@@ -1132,17 +1132,17 @@
 
 			PolterghastRelic: {
 				DisplayName: Infernal Polterghast Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			ProfanedGuardiansRelic: {
 				DisplayName: Infernal Profaned Guardians Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			ProvidenceRelic: {
 				DisplayName: Infernal Providence Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1160,48 +1160,48 @@
 
 			QueenBeeRelic: {
 				DisplayName: Infernal Queen Bee Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			QueenSlimeRelic: {
 				DisplayName: Infernal Queen Slime Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			RavagerRelic: {
 				DisplayName: Infernal Ravager Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			SignusRelic: {
 				DisplayName: Infernal Signus Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			SkeletronPrimeRelic: {
 				DisplayName: Infernal Skeletron Prime Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			SkeletronRelic: {
 				DisplayName: Infernal Skeletron Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 				PersonalMessage: The first major roadblock. You are better now than before you faced it. Did you have fun learning its patterns?
 			}
 
 			SlimeGodRelic: {
 				DisplayName: Infernal Slime God Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			StormWeaverRelic: {
 				DisplayName: Infernal Storm Weaver Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			SupremeCalamitasRelic: {
 				DisplayName: Infernal Supreme Calamitas Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 
 				PersonalMessage: {
 					DefaultMessage:
@@ -1219,17 +1219,17 @@
 
 			TwinsRelic: {
 				DisplayName: Infernal Twins Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			WallOfFleshRelic: {
 				DisplayName: Infernal Wall of Flesh Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			YharonRelic: {
 				DisplayName: Infernal Yharon Relic
-				Tooltip: GetsChanged
+				Tooltip: "{0}"
 			}
 
 			// Important: Don't translate this tooltip, currently is being used for the tooltip effect

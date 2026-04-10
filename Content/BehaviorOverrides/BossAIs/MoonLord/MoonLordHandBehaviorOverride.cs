@@ -75,7 +75,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             if (hasPopped)
             {
-                npc.life = 1;
+                npc.dontTakeDamage = true;
+                if (npc.life > 1)
+                    npc.life = 1;
 
                 DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
                 idealFrame = 0;
@@ -88,6 +90,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (idealFrameCounter < npc.frameCounter)
                 npc.frameCounter -= 1D;
             npc.frameCounter = Clamp((float)npc.frameCounter, 0f, 21f);
+
+            if (npc.ai[0] == -2)
+            {
+                npc.life = npc.lifeMax;
+            }
 
             return false;
         }

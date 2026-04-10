@@ -85,8 +85,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (hasPopped)
             {
                 idealFrame = 0;
-                npc.life = 1;
                 npc.dontTakeDamage = true;
+                if (npc.life > 1)
+                    npc.life = 1;
             }
 
             // Idly create the leech from the mouth.
@@ -117,6 +118,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (idealFrameCounter < eyeAnimationFrameCounter)
                 eyeAnimationFrameCounter -= 1f;
             eyeAnimationFrameCounter = Clamp((float)eyeAnimationFrameCounter, 0f, 15f);
+
+            if (npc.ai[0] == -2)
+            {
+                npc.life = npc.lifeMax;
+            }
 
             return false;
         }

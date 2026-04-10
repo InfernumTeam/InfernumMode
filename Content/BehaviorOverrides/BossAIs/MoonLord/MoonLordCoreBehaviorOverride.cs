@@ -466,6 +466,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void SelectNextAttack(NPC npc)
         {
+            //Sometimes a netUpdate can coincide with the end of the attack phase, resulting in the attack phase being switched by the update
+            //and then immediately being switched again here. I guess this prevents ML from telegraphing the big laser attacks sometimes
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             npc.ai[1] = 0f;
 
             int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);

@@ -18,8 +18,7 @@ namespace InfernumMode.Content.Items.Relics
         {
             get
             {
-                float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
-                return LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+                return null;
             }
         }
 
@@ -39,7 +38,7 @@ namespace InfernumMode.Content.Items.Relics
                 TooltipLine? obj = tooltips.FirstOrDefault((x) => x.Name == $"Tooltip{i}" && x.Mod == "Terraria");
                 float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
                 Color c = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
-                if (PersonalMessageColor == c)
+                if (PersonalMessageColor is null)
                 {
                     obj?.Text = LumUtils.ColorMessage(obj?.Text, c);
                 }

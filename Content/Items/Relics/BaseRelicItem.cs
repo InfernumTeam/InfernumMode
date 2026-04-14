@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,16 @@ namespace InfernumMode.Content.Items.Relics
     public abstract class BaseRelicItem : ModItem
     {
         public override LocalizedText Tooltip => Utilities.GetLocalization($"Items.{this.Name}.Tooltip").WithFormatArgs(PersonalMessage);
-        public virtual string PersonalMessage => Utilities.InfernalRelicText;
+        public virtual string PersonalMessage => Utilities.GetLocalization("Items.InfernalRelicText").Value;
 
-        public virtual Color? PersonalMessageColor => Color.DarkRed;
+        public virtual Color? PersonalMessageColor
+        {
+            get
+            {
+                float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
+                return LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+            }
+        }
 
         public abstract int TileID { get; }
 
@@ -29,7 +37,16 @@ namespace InfernumMode.Content.Items.Relics
             for (int i = 0; i < MaxLines; i++)
             {
                 TooltipLine? obj = tooltips.FirstOrDefault((x) => x.Name == $"Tooltip{i}" && x.Mod == "Terraria");
-                obj?.OverrideColor = PersonalMessageColor;
+                float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
+                Color c = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+                if (PersonalMessageColor == c)
+                {
+                    obj?.Text = LumUtils.ColorMessage(obj?.Text, c);
+                }
+                else
+                {
+                    obj?.OverrideColor = PersonalMessageColor;
+                }
             }
         }
 

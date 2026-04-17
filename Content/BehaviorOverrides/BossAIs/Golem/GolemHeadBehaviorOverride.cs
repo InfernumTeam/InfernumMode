@@ -31,6 +31,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             [GolemAttackState.SpikeRush] = Color.Green
         };
 
+        public override void Load()
+        {
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)
@@ -39,7 +44,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 return false;
             }
 
-            NPCID.Sets.MustAlwaysDraw[NPCID.GolemHead] = true;
             npc.damage = Main.npc[(int)npc.ai[0]].damage >= 1 ? npc.defDamage : 0;
             npc.chaseable = !npc.dontTakeDamage;
             npc.lifeMax = Main.npc[(int)npc.ai[0]].lifeMax;

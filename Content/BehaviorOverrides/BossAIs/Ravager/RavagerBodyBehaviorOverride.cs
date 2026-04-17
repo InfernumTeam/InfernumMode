@@ -73,6 +73,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         }
         #endregion
 
+        #region Loading
+
+        public override void Load()
+        {
+            // Ensure that the NPC always draws things, even when far away.
+            // Not doing this will result in the arena not being drawn if far from the target.
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
+        #endregion Loading
+
         #region AI
         public override void SetDefaults(NPC npc)
         {
@@ -87,10 +98,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreAI(NPC npc)
         {
-            // Ensure that the NPC always draws things, even when far away.
-            // Not doing this will result in the arena not being drawn if far from the target.
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
-
             // Prevent natural despawns.
             npc.timeLeft = 72000;
 

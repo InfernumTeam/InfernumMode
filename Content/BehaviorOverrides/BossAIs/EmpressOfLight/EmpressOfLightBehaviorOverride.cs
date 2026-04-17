@@ -143,6 +143,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         #endregion Constants and Attack Patterns
 
+        #region Loading
+
+        public override void Load()
+        {
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+
+        }
+
+        #endregion
+
         #region Netcode Syncing
 
         public override void SendExtraData(NPC npc, ModPacket writer)
@@ -1834,8 +1844,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
-
             EmpressOfLightAttackType attackType = (EmpressOfLightAttackType)npc.ai[0];
             float attackTimer = npc.ai[1];
             float WingFrameCounter = npc.localAI[0];

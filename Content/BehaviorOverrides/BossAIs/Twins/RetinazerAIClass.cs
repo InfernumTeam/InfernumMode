@@ -24,6 +24,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Phase3LifeRatioThreshold
         ];
 
+        #region Loading
+
+        public override void Load()
+        {
+            // Draw even if offscreen, to ensure that the telegraph is seen.
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
+        #endregion Loading
+
         #region AI
         public override bool PreAI(NPC npc) => DoAI(npc);
         #endregion AI
@@ -47,9 +57,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            // Draw even if offscreen, to ensure that the telegraph is seen.
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
-
             // Reset afterimage lengths.
             NPCID.Sets.TrailingMode[npc.type] = 3;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;

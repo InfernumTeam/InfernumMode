@@ -9,6 +9,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
     {
         public override int NPCOverrideType => NPCID.PlanterasTentacle;
 
+        public override void Load()
+        {
+            // Ensure that the tentacle always draws, even when far offscreen.
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Die if Plantera is absent or not using tentacles.
@@ -20,9 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 npc.netUpdate = true;
                 return false;
             }
-
-            // Ensure that the tentacle always draws, even when far offscreen.
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             float attachAngle = npc.ai[0];
             ref float attachOffset = ref npc.ai[1];

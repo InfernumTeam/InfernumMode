@@ -52,6 +52,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         }
         #endregion
 
+        #region Loading
+
+        public override void Load()
+        {
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
+        #endregion Loading
+
         #region AI
         public static bool AnyArms => NPC.AnyNPCs(NPCID.PrimeCannon) || NPC.AnyNPCs(NPCID.PrimeLaser) || NPC.AnyNPCs(NPCID.PrimeVice) || NPC.AnyNPCs(NPCID.PrimeSaw);
 
@@ -944,8 +953,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             ref float shudderAmount = ref npc.Infernum().ExtraAI[ShudderAmountIndex];
-
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D eyes = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Prime/PrimeEyes").Value;

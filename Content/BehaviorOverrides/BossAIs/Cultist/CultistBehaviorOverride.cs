@@ -79,6 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public override void Load()
         {
             GlobalNPCOverrides.OnKillEvent += GenerateColosseumEntranceIfNecessary;
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
         }
 
         private void GenerateColosseumEntranceIfNecessary(NPC npc)
@@ -1477,7 +1478,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         {
             NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             // Draw borders.
             bool dying = npc.Infernum().ExtraAI[6] == 2f;

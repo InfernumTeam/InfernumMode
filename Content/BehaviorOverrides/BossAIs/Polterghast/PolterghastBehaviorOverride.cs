@@ -144,6 +144,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Phase3LifeRatio
         ];
 
+        public override void Load()
+        {
+            // Ensure the boss always draws. Without this telegraphs are not properly displayed.
+            NPCID.Sets.MustAlwaysDraw[NPCOverrideType] = true;
+        }
+
         public override void SetDefaults(NPC npc)
         {
             // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
@@ -164,9 +170,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             // Set the whoAmI index.
             CalamityGlobalNPC.ghostBoss = npc.whoAmI;
-
-            // Ensure the boss always draws. Without this telegraphs are not properly displayed.
-            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             // Initialize by creating legs.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)

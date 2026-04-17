@@ -42,6 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             var currentAttack = (RavagerBodyBehaviorOverride.RavagerAttackType)ravager.ai[0];
             npc.target = ravager.target;
             npc.damage = 0;
+            npc.dontTakeDamage = false;
 
             Player target = Main.player[npc.target];
             ref float attackTimer = ref npc.ai[1];

@@ -38,6 +38,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             Item.shoot = ModContent.ProjectileType<AridBattlecryProjectile>();
             Item.channel = true;
             Item.shootSpeed = 0f;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0;

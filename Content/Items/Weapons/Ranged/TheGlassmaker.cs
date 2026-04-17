@@ -34,6 +34,7 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
             Item.noMelee = true;
             Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override Vector2? HoldoutOffset() => -Vector2.UnitX * 4f;

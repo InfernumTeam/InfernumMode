@@ -34,6 +34,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
 
             Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

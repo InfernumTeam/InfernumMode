@@ -22,6 +22,7 @@ namespace InfernumMode.Content.Items.Placeables
             Item.maxStack = 99;
             Item.rare = ItemRarityID.Blue;
             Item.value = Item.buyPrice(0, 1, 0, 0);
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
     }
 }

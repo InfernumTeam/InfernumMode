@@ -35,6 +35,7 @@ namespace InfernumMode.Content.Items.Weapons.Summoner
 
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
             Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool MeleePrefix() => true;

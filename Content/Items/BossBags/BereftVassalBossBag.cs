@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Items.BossBags
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 3;
-            ItemID.Sets.BossBag[Item.type] = true;
+            ItemID.Sets.BossBag[Type] = true;
         }
 
         public override void SetDefaults()
@@ -31,8 +31,9 @@ namespace InfernumMode.Content.Items.BossBags
             Item.consumable = true;
             Item.width = 36;
             Item.height = 32;
-            Item.expert = true;
-            Item.rare = ItemRarityID.Cyan;
+            //Item.expert = true;
+            Item.rare = ItemRarityID.Expert;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
@@ -65,13 +66,13 @@ namespace InfernumMode.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
 
             int[] weapons =
-[
+                [
                 ModContent.ItemType<AridBattlecry>(),
-    ModContent.ItemType<Myrindael>(),
-    ModContent.ItemType<TheGlassmaker>(),
-    ModContent.ItemType<WanderersShell>(),
-    ModContent.ItemType<Perditus>()
-            ];
+                ModContent.ItemType<Myrindael>(),
+                ModContent.ItemType<TheGlassmaker>(),
+                ModContent.ItemType<WanderersShell>(),
+                ModContent.ItemType<Perditus>()
+                ];
 
             itemLoot.Add(DropHelper.CalamityStyle(new Fraction(1, 2), weapons));
 

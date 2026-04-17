@@ -130,6 +130,7 @@ namespace InfernumMode.Content.Items.Accessories
             Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
             Item.accessory = true;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)

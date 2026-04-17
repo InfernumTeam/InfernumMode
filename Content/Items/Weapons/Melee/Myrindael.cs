@@ -24,8 +24,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
-            ItemID.Sets.BonusAttackSpeedMultiplier[Item.type] = 0.33f;
-            ItemID.Sets.Spears[Item.type] = true;
+            ItemID.Sets.BonusAttackSpeedMultiplier[Type] = 0.33f;
+            ItemID.Sets.Spears[Type] = true;
         }
 
         public override void SetDefaults()
@@ -48,6 +48,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.noMelee = true;
             Item.useTurn = true;
             Item.noUseGraphic = true;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override void HoldItem(Player player)

@@ -15,6 +15,7 @@ namespace InfernumMode.Content.Items.LoreItems
             Item.height = 20;
             Item.rare = ItemRarityID.Cyan;
             Item.consumable = false;
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool CanUseItem(Player player) => false;

@@ -30,6 +30,7 @@ namespace InfernumMode.Content.Items.Misc
             Item.autoReuse = true;
             Item.noUseGraphic = true;
             Item.shoot = ModContent.ProjectileType<WaterglassTokenProjectile>();
+            Item.Infernum_Tooltips().InfernumItem = true;
         }
 
         public override bool CanUseItem(Player player)

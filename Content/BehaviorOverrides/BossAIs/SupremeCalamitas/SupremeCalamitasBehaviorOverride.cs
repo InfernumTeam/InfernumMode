@@ -342,6 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackType = (int)SCalAttackType.SummonSepulcher;
                 npc.localAI[0] = 2f;
                 ShieldOpacity = 0f;
+                npc.ModNPC<SCalBoss>().spawnArena = true;
                 npc.netUpdate = true;
             }
 

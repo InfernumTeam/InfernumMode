@@ -19,10 +19,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         {
             this.HideFromBestiary();
             // DisplayName.SetDefault("Plantera's Tentacle");
-            Main.npcFrameCount[NPC.type] = 4;
+            Main.npcFrameCount[Type] = 4;
 
             // Ensure that the tentacle always draws, even when far offscreen.
-            NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
+            NPCID.Sets.MustAlwaysDraw[Type] = true;
         }
 
         public override void SetDefaults()

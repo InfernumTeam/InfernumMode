@@ -990,15 +990,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
     internal sealed class StopCultistShieldDrawingHook : ModSystem
     {
-        public static MethodInfo? CalGlobalNPCPostDraw = typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags);
-        public static ILHook? StopCultistShieldDrawing_IL_Hook;
+        public static MethodInfo? CalGlobalNPCPostDraw = typeof(CalamityVanillaAIOverrideNPC).GetMethod("GlobalPostDraw", Utilities.UniversalBindingFlags);
+        public static ILHook? EditCultistShieldDrawing_IL_Hook;
 
         public override void OnModLoad()
         {
             if (CalGlobalNPCPostDraw != null)
             {
-                StopCultistShieldDrawing_IL_Hook = new(CalGlobalNPCPostDraw, CalGlobalNPCPostDraw_IL);
-                StopCultistShieldDrawing_IL_Hook?.Apply();
+                EditCultistShieldDrawing_IL_Hook = new(CalGlobalNPCPostDraw, CalGlobalNPCPostDraw_IL);
+                EditCultistShieldDrawing_IL_Hook?.Apply();
             }
             else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
@@ -1006,19 +1006,16 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void CalGlobalNPCPostDraw_IL(ILContext context)
         {
             ILCursor cursor = new(context);
-
-            // Make the type checks check a negative number, which they will never match.
-            if (cursor.TryGotoNext(MoveType.After, c => c.MatchLdcI4(439)))
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchBeq(out _)))
             {
-                cursor.Emit(OpCodes.Pop);
-                cursor.Emit(OpCodes.Ldc_I4, -1);
+                return;
             }
-
-            if (cursor.TryGotoNext(MoveType.After, c => c.MatchLdcI4(440)))
+            cursor.EmitDelegate((int type) => { return InfernumMode.CanUseCustomAIs ? -1 : type; });
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchBneUn(out _)))
             {
-                cursor.Emit(OpCodes.Pop);
-                cursor.Emit(OpCodes.Ldc_I4, -1);
+                return;
             }
+            cursor.EmitDelegate((int type) => { return InfernumMode.CanUseCustomAIs ? -1 : type; });
         }
     }
 

@@ -1449,7 +1449,7 @@
 
 			NuclearTerrorRelic: {
 				DisplayName: Nuclear Terror Relic
-				Tooltip: ""
+				Tooltip: "{0}"
 			}
 
 			SakuraTreetop: {

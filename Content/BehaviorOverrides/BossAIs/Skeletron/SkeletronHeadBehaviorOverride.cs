@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 return false;
             }
 
-            if (Main.dayTime)
+            if (Main.IsItDay() && npc.ai[0] != (int)SkeletronAttackType.DeathAnimation)
             {
                 npc.velocity = (npc.velocity * 14f + npc.SafeDirectionTo(target.Center) * 25f) / 15f;
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.3f;

@@ -187,6 +187,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (target.HasBuff(ModContent.BuffType<Nightwither>()))
                 target.ClearBuff(ModContent.BuffType<Nightwither>());
 
+            // Disable AlchNPC buff that ruins projectile visibility
+            if (InfernumMode.GreaterDangersenseType != -1)
+            {
+                foreach (Player p in Main.ActivePlayers)
+                {
+                    // Do both just in case
+                    int index = p.FindBuffIndex(InfernumMode.GreaterDangersenseType);
+                    if (index != -1)
+                    {
+                        p.DelBuff(index);
+                    }
+                    p.buffImmune[InfernumMode.GreaterDangersenseType] = true;
+                }
+            }
+
             // Play an introduction.
             if (introSoundTimer < IntroSoundLength)
             {

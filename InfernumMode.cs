@@ -43,6 +43,11 @@ namespace InfernumMode
 
         internal static Mod PhaseIndicator;
 
+        /// <summary>
+        /// AlchemistNPCLite
+        /// </summary>
+        internal static int GreaterDangersenseType = -1;
+
         public static bool MusicModIsActive
         {
             get;
@@ -101,6 +106,10 @@ namespace InfernumMode
             ModLoader.TryGetMod("Fargowiltas", out FargosMutantMod);
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
+            if (ModLoader.TryGetMod("AlchemistNPCLite", out Mod AlchemistNPCLite) && AlchemistNPCLite.TryFind("GreaterDangersense", out ModBuff GreaterDangersense))
+            {
+                GreaterDangersenseType = GreaterDangersense.Type;
+            }
             MusicModIsActive = ModLoader.TryGetMod("InfernumModeMusic", out InfernumMusicMod);
             CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out CalamityModMusic);
 

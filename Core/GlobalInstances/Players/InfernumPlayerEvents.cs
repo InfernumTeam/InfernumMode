@@ -1,4 +1,5 @@
 ﻿using CalamityMod.CalPlayer;
+using InfernumMode.Content.Cutscenes;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
@@ -190,6 +191,13 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void PostUpdateEquips()
         {
             AccessoryUpdateEvent?.Invoke(this);
+
+            // Band-aid stupid gravitation bug
+            if (ModContent.GetInstance<DraedonPostMechsCutscene>().IsActive)
+            {
+                Player.gravControl = false;
+                Player.gravControl2 = false;
+            }
         }
 
         public override void PostUpdate()

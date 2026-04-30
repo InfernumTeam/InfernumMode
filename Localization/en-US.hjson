@@ -909,7 +909,7 @@
 			}
 
 			AEWRelic: {
-				DisplayName: Infernal Adult Eidolon Wyrm Relic
+				DisplayName: Infernal Primordial Wyrm Relic
 				Tooltip: "{0}"
 			}
 
@@ -1277,7 +1277,7 @@
 				DisplayName: Evoking Searune
 				Tooltip:
 					'''
-					Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss
+					Summons the Primordial Wyrm in the deepest layer of the Abyss
 					A primordial artifact said to have been formed by the First God, it is capable of summoning a guarding apparition
 					Not consumable
 					'''
@@ -1877,7 +1877,7 @@
 			AbyssalSoulTelegraph.DisplayName: Abyssal Telegraph
 			AEWIllusionTelegraphLine.DisplayName: Telegraph
 			AEWNightmareWyrm.DisplayName: Eidolon Wyrm
-			AEWSplitForm.DisplayName: Adult Eidolon Wyrm
+			AEWSplitForm.DisplayName: Primordial Wyrm
 			AEWTelegraphLine.DisplayName: Telegraph
 			CircleCenterTelegraph.DisplayName: Telegraph
 			ConvergingLumenylCrystal.DisplayName: Divine Lumenyl

@@ -334,7 +334,7 @@
 			ShortDescription:
 				'''
 				[c/B32E81:Отдельное испытание для тех, кто ищет что-то отличное, при этом более требовательное, чем режим Смерть]
-				[c/B32E81:Этот режим не работает с режимом мастера или сидом «For the worthy».]
+				[c/B32E81:Этот режим не работает с режимом мастера или зерном «For the worthy».]
 				'''
 			ExpandedDescription:
 				'''
@@ -632,7 +632,7 @@
 				'''
 			SlimeGodIntroScreen.TextToDisplay:
 				'''
-				Первобытная Формация
+				Первичная Формация
 				Бог Слизней
 				'''
 			StormWeaverIntroScreen.TextToDisplay:
@@ -1889,7 +1889,7 @@
 			AbyssalSoulTelegraph.DisplayName: Телеграф Бездны
 			AEWIllusionTelegraphLine.DisplayName: Телеграф
 			AEWNightmareWyrm.DisplayName: Эйдолонский змей
-			AEWSplitForm.DisplayName: Эйдолонский змей
+			AEWSplitForm.DisplayName: Первородный змей
 			AEWTelegraphLine.DisplayName: Телеграф
 			CircleCenterTelegraph.DisplayName: Телеграф
 			ConvergingLumenylCrystal.DisplayName: Божественный люменил
@@ -2480,7 +2480,7 @@
 
 		Status: {
 			AchievementCompletionText: Достижение получено!
-			InfernumDisallowedInWeirdDifficulties: Режим Инфернум не поддерживает режим мастера и сиды «For the worthy» и «Get fixed boi».
+			InfernumDisallowedInWeirdDifficulties: Режим Инфернум не поддерживает режим мастера и зёрна «Для достойных» и «Get fixed boi».
 			EternityModeWarning: Изменения ИИ боссов режима Вечность перекрываются режимом Инфернум во избежание конфликтов.
 			CyberneticImmortalityEnabled: Кибернетическое бессмертие включено.
 			CyberneticImmortalityDisabled: Кибернетическое бессмертие выключено.

@@ -250,7 +250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 if (!Target.dead && Target.active)
                 {
                     Target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
-                    if (Target.mount.Active)
+                    if (Target.mount.CanFly())
                         Target.mount.Dismount(Target); // undo cal's weak petrification change to not unmount
                 }
             }

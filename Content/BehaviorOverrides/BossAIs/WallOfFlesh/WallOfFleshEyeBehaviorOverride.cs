@@ -231,7 +231,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 Main.npc[Main.wofNPCIndex].StrikeNPC(hit);
             }
 
-            npc.life = 1;
+            npc.life = npc.lifeMax;
             npc.ai[1] = 0f;
             npc.Infernum().ExtraAI[IsDetachedFlagIndex] = 1f;
             npc.active = true;

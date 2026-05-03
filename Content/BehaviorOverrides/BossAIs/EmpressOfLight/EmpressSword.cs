@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             set;
         }
 
-        public NPC Owner
+        public NPC? Owner
         {
             get
             {
@@ -86,13 +86,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
+                if (Owner is null)
+                    return Vector2.Zero;
                 Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(Lerp(-0.74f, 0.74f, SwordIndex / (SwordCount - 1f))) * new Vector2(165f, 100f);
                 hoverDestination.Y += Sin(TwoPi * Time / 60f + PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
                 return hoverDestination;
             }
         }
 
-        public Player Target => Main.player[Owner.target];
+        public Player Target
+        {
+            get
+            {
+                if (Owner is null)
+                    return Main.LocalPlayer;
+                return Main.player[Owner.target];
+            }
+        }
 
         public ref float SwordIndex => ref Projectile.localAI[0];
 
@@ -169,6 +179,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public void HoverAboveEmpress()
         {
+            if (Owner is null)
+                return;
             Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
 
             float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
@@ -180,6 +192,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public void PerformAttackBehaviors()
         {
+            if (Owner is null)
+                return;
             int hoverRedirectTime = 20;
             int chargeAnticipationTime = 33;
             int lanceShootDelay = 32;
@@ -326,11 +340,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
 
-        public override bool? CanDamage() => Owner.Infernum().ExtraAI[0] == SwordIndex && !DontDealDamage ? null : false;
+        public override bool? CanDamage()
+        {
+            if (Owner is null)
+                return base.CanDamage();
+            return Owner.Infernum().ExtraAI[0] == SwordIndex && !DontDealDamage ? null : false;
+        }
 
         public Color ColorFunction(float completionRatio)
         {
-            if (Owner.Infernum().ExtraAI[0] != SwordIndex)
+            if (Owner is null || Owner.Infernum().ExtraAI[0] != SwordIndex)
                 return Color.Transparent;
 
             float speed = Vector2.Distance(Projectile.position, Projectile.oldPosition);

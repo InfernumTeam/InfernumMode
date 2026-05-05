@@ -29,14 +29,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
-            if (Projectile.Hitbox.Intersects(Target.Hitbox))
-                Projectile.Kill();
 
             // Emit smoke effects.
             RedirectingPlagueMissile.EmitSmoke(Projectile);
 
             Projectile.tileCollide = Projectile.Center.Y > Target.Center.Y;
             Time++;
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            Projectile.Kill();
         }
 
         public override void OnKill(int timeLeft)

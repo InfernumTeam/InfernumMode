@@ -10,6 +10,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
     {
         public override int NPCOverrideType => NPCID.EaterofWorldsBody;
 
+        public override void SetDefaults(NPC npc)
+        {
+            npc.Calamity().canBreakPlayerDefense = true;
+        }
+
         public static void SegmentAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];

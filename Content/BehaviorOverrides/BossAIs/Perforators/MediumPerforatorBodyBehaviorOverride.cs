@@ -19,6 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             npc.scale = 1f;
             npc.Opacity = 0f;
             npc.defense = 6;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override bool PreAI(NPC npc)

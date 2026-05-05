@@ -51,6 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.canGhostHeal = false;
             npc.netAlways = true;
             npc.DeathSound = SepulcherHead.DeathSound;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void Load()

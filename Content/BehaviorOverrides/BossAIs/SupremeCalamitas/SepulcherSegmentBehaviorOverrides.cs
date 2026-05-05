@@ -40,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.netAlways = true;
             npc.dontCountMe = true;
             npc.HitSound = SoundID.DD2_SkeletonHurt with { Volume = 0.925f };
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public static bool DoAI(NPC npc)

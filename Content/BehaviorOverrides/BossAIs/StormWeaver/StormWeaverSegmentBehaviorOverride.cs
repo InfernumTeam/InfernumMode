@@ -18,6 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.height = 40;
             npc.scale = 1f;
             npc.defense = 150;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public static void SegmentAI(NPC npc)

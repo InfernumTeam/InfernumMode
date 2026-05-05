@@ -21,6 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             npc.defense = 6;
             npc.DR_NERD(0.05f);
             npc.alpha = 255;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override bool PreAI(NPC npc)

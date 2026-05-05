@@ -13,6 +13,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusBody>();
 
+        public override void SetDefaults(NPC npc)
+        {
+            npc.Calamity().canBreakPlayerDefense = true;
+        }
+
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Main.npc[(int)npc.ai[0]].active)

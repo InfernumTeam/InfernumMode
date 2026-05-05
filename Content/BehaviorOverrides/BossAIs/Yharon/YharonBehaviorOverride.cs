@@ -2032,7 +2032,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             [
                 ProjectileID.CultistBossFireBall,
                 ModContent.ProjectileType<DraconicInfernado>(),
-                ModContent.ProjectileType<DragonFireball>(),
                 ModContent.ProjectileType<HomingFireball>(),
                 ModContent.ProjectileType<YharonFireball>(),
                 ModContent.ProjectileType<YharonFireball2>(),
@@ -2045,6 +2044,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 ModContent.ProjectileType<BigFlare2>(),
                 ModContent.ProjectileType<YharonHeatFlashFireball>(),
                 ModContent.ProjectileType<VortexOfFlame>(),
+                ModContent.ProjectileType<VortexFireball>(),
                 ModContent.ProjectileType<RedirectingYharonMeteor>(),
             ];
             for (int i = 0; i < Main.maxProjectiles; i++)

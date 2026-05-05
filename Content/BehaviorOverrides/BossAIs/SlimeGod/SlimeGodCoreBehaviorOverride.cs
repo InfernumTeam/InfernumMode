@@ -48,11 +48,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<CrimulanSGBig>();
             if (bigSlimeGod && Registered(npc.type))
             {
-                for (int i = 0; i < 12; i++)
+                /*for (int i = 0; i < 12; i++) // No clue why this exists but it's erroring so I'm disabling it -Habble
                 {
                     int slime = NPC.NewNPC(npc.GetSource_Death(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, ModContent.NPCType<SplitBigSlimeAnimation>());
                     Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
-                }
+                }*/
 
                 SelectNextAttackSpecific(LeaderOfFight);
             }

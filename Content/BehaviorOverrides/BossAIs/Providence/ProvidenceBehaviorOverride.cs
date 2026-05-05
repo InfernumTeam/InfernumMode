@@ -335,10 +335,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.dontTakeDamage = false;
             npc.Calamity().DR = BossRushEvent.BossRushActive ? 0.65f : 0.3f;
             npc.Calamity().KillTime = 0;
-            //ProvidenceBoss.shouldDrawInfernoBorder = false; // Maybe necessary?
+            ProvidenceBoss.shouldDrawInfernoBorder = false;
             npc.Infernum().Arena = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
+            {
                 npc.defense = hasCompletedCycle == 1f ? CocoonDefenseAfterFullCycle : CocoonDefense;
+            }
 
             // Handle intialization effects.
             if (initialized == 0f)

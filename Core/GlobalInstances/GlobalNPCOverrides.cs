@@ -8,6 +8,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
+using CalamityMod.NPCs.Providence;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
@@ -268,6 +269,13 @@ namespace InfernumMode.Core.GlobalInstances
             bool result = true;
             foreach (StrikeNPCDelegate d in StrikeNPCEvent.GetInvocationList().Cast<StrikeNPCDelegate>())
                 result &= d.Invoke(npc, ref modifiers);
+
+            // Providence cocoon DR before defense. I will move this to NPCBehaviorOverride in the rewrite but for now, it stays here.
+            // The reason this is here is because it still needs to take a reasonable amount of damage without extreme variation between weapon types. -Habble
+            if (npc.type == ModContent.NPCType<Providence>() && npc.localAI[0] == 1f)
+            {
+                modifiers.TargetDamageMultiplier *= 0.5f;
+            }
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)

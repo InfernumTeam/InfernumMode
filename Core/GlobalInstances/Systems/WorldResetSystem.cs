@@ -1,5 +1,9 @@
-﻿using InfernumMode.Content.Credits;
+﻿using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.Yharon;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.Credits;
 using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
@@ -17,6 +21,37 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             ResetEverything();
             CreditManager.StopAbruptly();
+        }
+
+        public override void PreUpdateNPCs()
+        {
+            static void ResetSavedIndex(ref int index, int type, int type2 = -1)
+            {
+                if (index >= 0)
+                {
+                    // If the index npc is not active, reset the index.
+                    if (!Main.npc[index].active)
+                        index = -1;
+
+                    // Else, if this is -1,
+                    else if (type2 == -1)
+                    {
+                        // If the index is not the correct type, reset the index.
+                        if (Main.npc[index].type != type)
+                            index = -1;
+                    }
+                    else
+                    {
+                        if (Main.npc[type].type != type && Main.npc[index].type != type2)
+                            index = -1;
+                    }
+                }
+            }
+
+            ResetSavedIndex(ref GlobalNPCOverrides.Cryogen, ModContent.NPCType<CalamityMod.NPCs.Cryogen.Cryogen>());
+            ResetSavedIndex(ref GlobalNPCOverrides.AstrumAureus, ModContent.NPCType<AstrumAureus>());
+            ResetSavedIndex(ref GlobalNPCOverrides.ProfanedCrystal, ModContent.NPCType<HealerShieldCrystal>());
+            ResetSavedIndex(ref GlobalNPCOverrides.Yharon, ModContent.NPCType<Yharon>());
         }
 
         internal static void ResetEverything()

@@ -4,17 +4,14 @@ using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
-using CalamityMod.NPCs.Yharon;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Core.Balancing;
@@ -82,33 +79,7 @@ namespace InfernumMode.Core.GlobalInstances
         #region Reset Effects
         public override void ResetEffects(NPC npc)
         {
-            static void ResetSavedIndex(ref int index, int type, int type2 = -1)
-            {
-                if (index >= 0)
-                {
-                    // If the index npc is not active, reset the index.
-                    if (!Main.npc[index].active)
-                        index = -1;
 
-                    // Else, if this is -1,
-                    else if (type2 == -1)
-                    {
-                        // If the index is not the correct type, reset the index.
-                        if (Main.npc[index].type != type)
-                            index = -1;
-                    }
-                    else
-                    {
-                        if (Main.npc[type].type != type && Main.npc[index].type != type2)
-                            index = -1;
-                    }
-                }
-            }
-
-            ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
-            ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
-            ResetSavedIndex(ref ProfanedCrystal, ModContent.NPCType<HealerShieldCrystal>());
-            ResetSavedIndex(ref Yharon, ModContent.NPCType<Yharon>());
         }
         #endregion Reset Effects
 

@@ -407,11 +407,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         public static void DoAttack_PsionicBombardment(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int teleportFadeTime = 50;
-            Vector2 teleportDestination = target.Center - Vector2.UnitY * 350f;
+            Vector2 teleportDestination = target.Center - Main.rand.NextVector2CircularEdge(350f, 350f);
+            if (teleportDestination.Y > target.Center.Y)
+                teleportDestination.Y -= (teleportDestination.Y - target.Center.Y) * 2f;
             ref float cyanAuraStrength = ref npc.localAI[1];
 
-            while (Collision.SolidCollision(teleportDestination - npc.Size * 0.5f, npc.width, npc.height))
-                teleportDestination.Y -= 8f;
+            int MaxTries = 10;
+            while (MaxTries-- > 0 && Collision.SolidCollision(teleportDestination - npc.Size * 0.5f, npc.width, npc.height))
+            {
+                teleportDestination = target.Center - Main.rand.NextVector2CircularEdge(350f, 350f);
+                if (teleportDestination.Y > target.Center.Y)
+                    teleportDestination.Y -= (teleportDestination.Y - target.Center.Y) * 2f;
+            }
 
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;

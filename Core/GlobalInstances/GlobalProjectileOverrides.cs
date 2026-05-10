@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using CalamityMod;
 using CalamityMod.Dusts;
@@ -38,14 +39,22 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool InstancePerEntity => true;
 
-        public override void SetDefaults(Projectile projectile)
+        public override void SetStaticDefaults()
         {
             // Allow Infernum projectiles to draw offscreen by default.
             // TODO -- This is pretty far from ideal. While it may be a bit unpleasant projectiles should really be manually evaluated in terms of whether this is necessary.
             // Applying this effect universally is just asking for edge cases that cause performance issues, such as Providence's old ground/ceiling spears.
-            if (projectile.ModProjectile?.Mod.Name == Mod.Name)
-                ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 20000;
+            foreach (KeyValuePair<int, Projectile> pair in ContentSamples.ProjectilesByType)
+            {
+                Projectile projectile = pair.Value;
+                if (projectile.ModProjectile?.Mod.Name == Mod.Name)
+                    ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 20000;
+            }
 
+        }
+
+        public override void SetDefaults(Projectile projectile)
+        {
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
             if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())

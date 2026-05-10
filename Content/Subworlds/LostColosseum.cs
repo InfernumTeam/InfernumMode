@@ -14,6 +14,7 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoMod.RuntimeDetour;
 using ReLogic.Content;
 using ReLogic.Graphics;
 using SubworldLibrary;
@@ -212,16 +213,23 @@ namespace InfernumMode.Content.Subworlds
 
         public override LocalizedText DisplayName => Language.GetText($"Mods.{Mod.Name}.Biomes.{nameof(LostColosseum)}Biome.DisplayName");
 
+        internal static PropertyInfo[]? DownedBossCalList;
         public override void Load()
         {
             LoadingBackgroundTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/ColosseumLoadingBackground", AssetRequestMode.ImmediateLoad).Value;
             LoadingAnimationTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/LoadingAnimation", AssetRequestMode.ImmediateLoad).Value;
         }
 
+        public override void SetStaticDefaults()
+        {
+            DownedBossCalList = AssemblyManager.GetLoadableTypes(InfernumMode.CalamityMod.Code)?.Where(t => t.Name == "DownedBossSystem")?.First()?.GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.GetValue(null) is bool)?.ToArray();
+        }
+
         public override void Unload()
         {
             LoadingBackgroundTexture = null;
             LoadingAnimationTexture = null;
+            DownedBossCalList = null;
         }
 
         public override bool GetLight(Tile tile, int x, int y, ref FastRandom rand, ref Vector3 color)
@@ -238,12 +246,11 @@ namespace InfernumMode.Content.Subworlds
         public override void CopyMainWorldData()
         {
             TagCompound downedCal = [];
-            if (InfernumMode.CalamityMod != null)
+            if (InfernumMode.CalamityMod != null && DownedBossCalList != null)
             {
-                PropertyInfo[]? DownedBossCalList = AssemblyManager.GetLoadableTypes(InfernumMode.CalamityMod.Code)?.Where(t => t.Name == "DownedBossSystem")?.First()?.GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.GetValue(null) is bool)?.ToArray();
-                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                for (int i = 0; i < DownedBossCalList.Length; i++)
                 {
-                    downedCal.Add(DownedBossCalList[i].Name, DownedBossCalList[i].GetValue(null) as bool?);
+                    downedCal.Add(DownedBossCalList[i].Name, DownedBossCalList[i].GetGetMethod()?.Invoke(null, []) is bool down && down);
                 }
                 SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
             }
@@ -254,23 +261,25 @@ namespace InfernumMode.Content.Subworlds
 
         public override void ReadCopiedMainWorldData()
         {
-            if (InfernumMode.CalamityMod != null)
+            if (InfernumMode.CalamityMod != null && DownedBossCalList != null)
             {
                 var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
                 if (downed != null && downed.Count != 0)
                 {
-                    PropertyInfo[]? DownedBossCalList = AssemblyManager.GetLoadableTypes(InfernumMode.CalamityMod.Code)?.Where(t => t.Name == "DownedBossSystem")?.First()?.GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.GetValue(null) is bool)?.ToArray();
-                    for (int i = 0; i < DownedBossCalList?.Length; i++)
+                    for (int i = 0; i < DownedBossCalList.Length; i++)
                     {
                         string Key = DownedBossCalList[i].Name;
-                        if (downed.ContainsKey(Key) && downed.GetBool(Key) == true)
+                        if (downed.TryGet(Key, out bool down))
                         {
-                            DownedBossCalList[i].GetSetMethod()?.Invoke(null, [true]);
+                            DownedBossCalList[i].GetSetMethod()?.Invoke(null, [down]);
                         }
                     }
                 }
             }
-            WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
+            if (SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").TryGet("DownedBereftVassal", out bool argus))
+            {
+                WorldSaveSystem.DownedBereftVassal = argus;
+            }
             base.ReadCopiedMainWorldData();
         }
 
@@ -409,6 +418,28 @@ namespace InfernumMode.Content.Subworlds
 
             Rectangle frame = new(0, frameHeight * Frame, LoadingAnimationTexture.Width, frameHeight);
             Main.spriteBatch.Draw(LoadingAnimationTexture, animationDrawPosition, frame, Color.White, 0f, frame.Size() * 0.5f, 1f, SpriteEffects.FlipHorizontally, 0f);
+        }
+    }
+    internal sealed class DisableCalamity_OnWorldLoad_Hook : ModSystem
+    {
+        public static MethodInfo? Calamity_OnWorldLoad = typeof(DownedBossSystem).GetMethod("OnWorldLoad", Utilities.UniversalBindingFlags);
+        public delegate void Orig_Calamity_OnWorldLoad(DownedBossSystem self);
+        public static Hook? Calamity_OnWorldLoad_Detour_Hook;
+        public override bool IsLoadingEnabled(Mod mod) => ModLoader.GetMod("CalamityMod").Version == Version.Parse("2.1.2");
+        public override void OnModLoad()
+        {
+            if (Calamity_OnWorldLoad != null)
+            {
+                Calamity_OnWorldLoad_Detour_Hook = new(Calamity_OnWorldLoad, Calamity_OnWorldLoad_Detour);
+                Calamity_OnWorldLoad_Detour_Hook?.Apply();
+            }
+            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
+        }
+        public static void Calamity_OnWorldLoad_Detour(Orig_Calamity_OnWorldLoad orig, DownedBossSystem self)
+        {
+            if (SubworldSystem.IsActive<LostColosseum>())
+                return;
+            orig(self);
         }
     }
 }

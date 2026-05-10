@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Player target = Main.player[npc.target];
 
             // Immediately vanish if the target is gone.
-            if (!target.active || target.dead)
+            if (!target.active || target.dead || (npc.ai[1] != (int)SignusAttackType.Patrol && !target.WithinRange(npc.Center, 7000f)))
             {
                 npc.active = false;
                 return false;

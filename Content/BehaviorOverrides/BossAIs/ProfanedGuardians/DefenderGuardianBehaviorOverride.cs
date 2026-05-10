@@ -248,21 +248,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 DrawBackglow(npc, spriteBatch, texture);
             }
 
-            NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
+            if (CalamityGlobalNPC.doughnutBoss != -1)
+            {
+                NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
-            // Draw a dash telegraph when needed.
-            if (commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1)
-                DrawDashTelegraph(npc, spriteBatch, commander);
+                // Draw a dash telegraph when needed.
+                if (commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1)
+                    DrawDashTelegraph(npc, spriteBatch, commander);
 
-            // Glow during the healer solo.
-            if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
-                DrawBackglow(npc, spriteBatch, texture);
-            // Draw the npc.
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
+                // Glow during the healer solo.
+                if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
+                    DrawBackglow(npc, spriteBatch, texture);
+                // Draw the npc.
+                Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
-            // Have an overlay to show the high dr.
-            if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer)
-                DrawDefenseOverlay(npc, spriteBatch, texture);
+                // Have an overlay to show the high dr.
+                if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer)
+                    DrawDefenseOverlay(npc, spriteBatch, texture);
+            }
 
             // Draw the glowmask over everything
             Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);

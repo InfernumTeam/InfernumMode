@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -8,6 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
+    [Obsolete("Unused Projectile")]
     public class DragonFireball : ModProjectile
     {
         public ref float Timer => ref Projectile.ai[1];

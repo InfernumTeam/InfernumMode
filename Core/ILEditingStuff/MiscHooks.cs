@@ -353,29 +353,26 @@ namespace InfernumMode.Core.ILEditingStuff
     }
     internal sealed class FixSCalSkyHook : ModSystem
     {
-        public static MethodInfo? Cal_SCalSky_Update = typeof(SCalSky).GetMethod("Update", Utilities.UniversalBindingFlags);
-        public static ILHook? Cal_SCalSky_Update_IL_Hook;
+        public static MethodInfo? SCalBackgroundScene_IsSceneEffectActive = typeof(SCalBackgroundScene).GetMethod("IsSceneEffectActive", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_SCalBackgroundScene_IsSceneEffectActive(SCalBackgroundScene self, Player playergameTime);
+        public static Hook? SCalBackgroundScene_IsSceneEffectActive_Detour_Hook;
 
         public override void OnModLoad()
         {
-            if (Cal_SCalSky_Update != null)
+            if (SCalBackgroundScene_IsSceneEffectActive != null)
             {
-                Cal_SCalSky_Update_IL_Hook = new(Cal_SCalSky_Update, Cal_SCalSky_Update_IL);
-                Cal_SCalSky_Update_IL_Hook?.Apply();
+                SCalBackgroundScene_IsSceneEffectActive_Detour_Hook = new(SCalBackgroundScene_IsSceneEffectActive, SCalBackgroundScene_IsSceneEffectActive_Detour);
+                SCalBackgroundScene_IsSceneEffectActive_Detour_Hook?.Apply();
             }
             else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
         }
-        public void Cal_SCalSky_Update_IL(ILContext context)
+        public bool SCalBackgroundScene_IsSceneEffectActive_Detour(Orig_SCalBackgroundScene_IsSceneEffectActive orig, SCalBackgroundScene self, Player player)
         {
-            ILCursor cursor = new(context);
-            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchRet()))
+            if (InfernumMode.CanUseCustomAIs)
             {
-
+                return false;
             }
-            cursor.Index += 3;
-            cursor.EmitDelegate(() => !InfernumMode.CanUseCustomAIs);
-            cursor.Emit(OpCodes.And);
-
+            return orig(self, player);
         }
     }
     internal sealed class DisableGSSMessageHook : ModSystem

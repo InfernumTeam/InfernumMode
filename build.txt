@@ -1,5 +1,5 @@
 author = Lucille Karma
-version = 2.0.1.30
+version = 2.0.1.31
 displayName = Calamity Mod Infernum Mode
 modReferences = CalamityMod, SubworldLibrary, Luminance
 hideCode = false

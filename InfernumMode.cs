@@ -189,6 +189,16 @@ namespace InfernumMode
                 if (npc.Mod == this)
                     Utilities.SafeSetStunImmunity(npc.Type);
             }
+            // Allow Infernum projectiles to draw offscreen by default.
+            // TODO -- This is pretty far from ideal. While it may be a bit unpleasant projectiles should really be manually evaluated in terms of whether this is necessary.
+            // Applying this effect universally is just asking for edge cases that cause performance issues, such as Providence's old ground/ceiling spears.
+            foreach (ModProjectile modProj in (typeof(ProjectileLoader).GetField("projectiles", Utilities.UniversalBindingFlags)?.GetValue(null) as List<ModProjectile>)!)
+            {
+                if (modProj.Mod == this)
+                {
+                    ProjectileID.Sets.DrawScreenCheckFluff[modProj.Type] = 20000;
+                }
+            }
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);

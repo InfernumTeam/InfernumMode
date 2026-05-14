@@ -39,5 +39,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         }
 
         public override int OtherworldMusic => VanillaMusic;
+        public override bool IsSceneEffectActive(Player player) => base.IsSceneEffectActive(player) && InfernumMode.CanUseCustomAIs;
     }
 }

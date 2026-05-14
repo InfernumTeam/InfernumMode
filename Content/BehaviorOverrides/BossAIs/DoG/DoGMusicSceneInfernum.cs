@@ -2,6 +2,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Systems;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Calamity = CalamityMod.CalamityMod;
@@ -54,5 +55,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 || DoGPhase2HeadBehaviorOverride.InPhase2 ? phase2Music : phase1Music;
             }
         }
+        public override bool IsSceneEffectActive(Player player) => base.IsSceneEffectActive(player) && InfernumMode.CanUseCustomAIs;
     }
 }

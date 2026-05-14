@@ -73,6 +73,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 return ProvidenceIsInPhase2 ? defaultProviMusic : guardiansMusic;
             }
         }
-        public override bool IsSceneEffectActive(Player player) => base.IsSceneEffectActive(player) && InfernumMode.CanUseCustomAIs;
+        public override bool IsSceneEffectActive(Player player) => InfernumMode.CanUseCustomAIs && base.IsSceneEffectActive(player);
     }
 }

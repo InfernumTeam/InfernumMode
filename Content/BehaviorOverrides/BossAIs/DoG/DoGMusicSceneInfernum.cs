@@ -55,6 +55,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 || DoGPhase2HeadBehaviorOverride.InPhase2 ? phase2Music : phase1Music;
             }
         }
-        public override bool IsSceneEffectActive(Player player) => base.IsSceneEffectActive(player) && InfernumMode.CanUseCustomAIs;
+        public override bool IsSceneEffectActive(Player player) => InfernumMode.CanUseCustomAIs && base.IsSceneEffectActive(player);
     }
 }

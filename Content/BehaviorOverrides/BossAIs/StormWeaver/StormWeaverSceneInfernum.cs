@@ -40,6 +40,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         }
 
         public override int OtherworldMusic => VanillaMusic;
-        public override bool IsSceneEffectActive(Player player) => base.IsSceneEffectActive(player) && InfernumMode.CanUseCustomAIs;
+        public override bool IsSceneEffectActive(Player player) =>  InfernumMode.CanUseCustomAIs && base.IsSceneEffectActive(player);
     }
 }

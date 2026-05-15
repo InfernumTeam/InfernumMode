@@ -1,0 +1,2 @@
+{ModVersion}
+- Added changelogs to the steam workshop page

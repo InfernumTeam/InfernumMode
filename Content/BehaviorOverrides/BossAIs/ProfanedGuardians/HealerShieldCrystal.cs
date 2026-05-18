@@ -1,4 +1,3 @@
-﻿using System.Security.Policy;
 using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;

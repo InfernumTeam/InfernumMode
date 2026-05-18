@@ -1,4 +1,4 @@
-﻿using CalamityMod;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
@@ -100,6 +100,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DoBehavior_SitStill(Player target)
         {
+            /* Akira 5/18/2026: this is the only thing mp patch does for the guadians to "fix" them. the MP patch claims that in multiplayer the crystal sometimes just doesn't spawn and this
+               small change fixes it. after testing with this patch, nothing seems to break, and the only thing i noticed was the healer guaridan in mp seems to like to try to run away at the 
+               very start of the fight but does end up in it's correct pos after a second; the rest of the fight seems to work fine in multiplayer as well. */
+            if (Main.netMode == NetmodeID.Server)
+            {
+                if (ShatteringTimer % 150 == 0)
+                    NPC.netUpdate = true;
+            }
+
             // If the target is close enough, take damage.
             if (target.WithinRange(NPC.Center * NPC.Opacity, 1000))
                 NPC.dontTakeDamage = false;

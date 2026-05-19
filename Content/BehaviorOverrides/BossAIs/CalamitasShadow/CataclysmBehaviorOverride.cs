@@ -106,14 +106,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 CalamityGlobalNPC.catastrophe = npc.whoAmI;
 
                 // Use a fallback target if Cataclysm doesn't have one at the moment. This will not care about large distances.
-                npc.TargetClosestIfTargetIsInvalid(1000000f);
+                npc.target = Main.npc[CalamityGlobalNPC.calamitas].target;
+                //npc.TargetClosestIfTargetIsInvalid(1000000f);
             }
 
             // Have Cataclysm increment the attack timer and handle targeting.
             else if (isCataclysm)
             {
                 CalamityGlobalNPC.cataclysm = npc.whoAmI;
-                npc.TargetClosestIfTargetIsInvalid();
+                npc.target = Main.npc[CalamityGlobalNPC.calamitas].target; //This prevents the brothers targeting a different player than the one CalShadow is since if CalShadow targets a
+                                                                           //different player the soul seekers don't follow the player the brothers are targeting
                 attackTimer++;
 
                 CataclysmEnergyDrawer.Update();

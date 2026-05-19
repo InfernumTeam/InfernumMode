@@ -234,17 +234,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             bool enraged = !target.IsUnderwater() && !phase3 && !BossRushEvent.BossRushActive;
 
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
-            if (!target.Calamity().ZoneAbyss && (AquaticScourgeAttackType)attackType != AquaticScourgeAttackType.DeathAnimation)
+            foreach (Player player in Main.ActivePlayers)
             {
-                target.breath = target.breathMax;
-                target.ignoreWater = true;
+                if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
+                    continue;
 
-                // Give targets infinite flight time.
-                foreach (Player player in Main.ActivePlayers)
+                if (!player.Calamity().ZoneAbyss && (AquaticScourgeAttackType)attackType != AquaticScourgeAttackType.DeathAnimation)
                 {
-                    if (player.dead || player.ghost || !npc.WithinRange(player.Center, 10000f))
-                        continue;
+                    player.breath = player.breathMax;
+                    player.ignoreWater = true;
 
+                    // Give targets infinite flight time.
                     player.DoInfiniteFlightCheck(Color.Lime);
                 }
             }

@@ -1,2 +1,4 @@
 {ModVersion}
 - Added changelogs to the steam workshop page
+- Fixed multiplayer issues with Profaned Guardians, Aquatic Scourge, Forgotten Shadow of Calamitas, and Supreme Calamitas
+- Patched to Calamity Mod 2.2

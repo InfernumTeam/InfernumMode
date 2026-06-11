@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Buffs
         public override void SetStaticDefaults()
         {
             BuffID.Sets.IsATagBuff[Type] = true;
-            CalamityBuffSets.SummonTagDebuff.Add(Type, PerditusTag);
+            CalamityBuffSets.SummonTagDebuff[Type] = PerditusTag;
         }
 
         /*public override void Load()

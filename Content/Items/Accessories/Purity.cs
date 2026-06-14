@@ -42,45 +42,11 @@ namespace InfernumMode.Content.Items.Accessories
                     p.GetDamage<SummonDamageClass>() /= bonus;
                     p.GetDamage<SummonMeleeSpeedDamageClass>() *= bonus;
 
-                    /*float currentStealth = InfernumMode.CalamityMod?.Call("GetCurrentStealth", p) is float f ? f : 1f;
-                    bool stealthStrike = currentStealth > 0f && p.HeldItem.CountsAsClass<RogueDamageClass>();
-
-                    if (!stealthStrike)
-                    {*/
-                        p.GetAttackSpeed<GenericDamageClass>() += bonus - 1f;
-                        //p.GetAttackSpeed<SummonDamageClass>() -= bonus - 1f;
-                        //p.GetAttackSpeed<SummonMeleeSpeedDamageClass>() += bonus - 1f;
-                    //}
+                    p.GetAttackSpeed<GenericDamageClass>() += bonus - 1f;
 
                     p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
                 }
             };
-
-            /*InfernumPlayer.ModifyHitNPCWithItemEvent += (InfernumPlayer player, Item item, NPC target, ref NPC.HitModifiers modifiers) =>
-            {
-                if (player.GetValue<bool>(FieldName))
-                {
-                    // Lie and check if it was a crit seperately because its not possible else.
-                    float crit = player.Player.GetWeaponCrit(item);
-                    if (Main.rand.Next(0, 101) < crit)
-                        OnHitParticles(target);
-
-                    modifiers.DisableCrit();
-                }
-            };
-
-            InfernumPlayer.ModifyHitNPCWithProjEvent += (InfernumPlayer player, Projectile proj, NPC target, ref NPC.HitModifiers modifiers) =>
-            {
-                if (player.GetValue<bool>(FieldName))
-                {
-                    // Lie and check if it was a crit seperately because its not possible else.
-                    float crit = player.Player.GetWeaponCrit(player.Player.HeldItem);
-                    if (Main.rand.Next(0, 101) < crit)
-                        OnHitParticles(target);
-
-                    modifiers.DisableCrit();
-                }
-            };*/
 
             InfernumPlayer.ModifyHitNPCEvent += (InfernumPlayer player, NPC target, ref NPC.HitModifiers modifiers) =>
             {

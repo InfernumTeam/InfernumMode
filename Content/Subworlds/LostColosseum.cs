@@ -254,9 +254,12 @@ namespace InfernumMode.Content.Subworlds
                 }
                 SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
             }
+
             TagCompound downedInf = [];
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
             SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
+
+            base.CopyMainWorldData();
         }
 
         public override void ReadCopiedMainWorldData()
@@ -276,10 +279,12 @@ namespace InfernumMode.Content.Subworlds
                     }
                 }
             }
+
             if (SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").TryGet("DownedBereftVassal", out bool argus))
             {
                 WorldSaveSystem.DownedBereftVassal = argus;
             }
+
             base.ReadCopiedMainWorldData();
         }
 
@@ -290,8 +295,16 @@ namespace InfernumMode.Content.Subworlds
             base.OnEnter();
         }
 
-        public override void CopySubworldData()
+        public override void OnExit()
         {
+            // Portal cooldown
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -2f;
+            // Reset the sunset interpolant.
+            SunsetInterpolant = 0f;
+
+            // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
+            Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
+
             // Ensure that the vassal defeat achievement translates over when the player goes to a different subworld.
             if (Main.netMode != NetmodeID.Server)
             {
@@ -307,18 +320,6 @@ namespace InfernumMode.Content.Subworlds
                     }
                 }
             }
-            base.CopySubworldData();
-        }
-
-        public override void OnExit()
-        {
-            // Portal cooldown
-            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -2f;
-            // Reset the sunset interpolant.
-            SunsetInterpolant = 0f;
-
-            // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
-            Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
             base.OnExit();
         }
 
@@ -418,28 +419,6 @@ namespace InfernumMode.Content.Subworlds
 
             Rectangle frame = new(0, frameHeight * Frame, LoadingAnimationTexture.Width, frameHeight);
             Main.spriteBatch.Draw(LoadingAnimationTexture, animationDrawPosition, frame, Color.White, 0f, frame.Size() * 0.5f, 1f, SpriteEffects.FlipHorizontally, 0f);
-        }
-    }
-    internal sealed class DisableCalamity_OnWorldLoad_Hook : ModSystem
-    {
-        public static MethodInfo? Calamity_OnWorldLoad = typeof(DownedBossSystem).GetMethod("OnWorldLoad", Utilities.UniversalBindingFlags);
-        public delegate void Orig_Calamity_OnWorldLoad(DownedBossSystem self);
-        public static Hook? Calamity_OnWorldLoad_Detour_Hook;
-        public override bool IsLoadingEnabled(Mod mod) => ModLoader.GetMod("CalamityMod").Version == Version.Parse("2.1.2");
-        public override void OnModLoad()
-        {
-            if (Calamity_OnWorldLoad != null)
-            {
-                Calamity_OnWorldLoad_Detour_Hook = new(Calamity_OnWorldLoad, Calamity_OnWorldLoad_Detour);
-                Calamity_OnWorldLoad_Detour_Hook?.Apply();
-            }
-            else InfernumMode.Instance.Logger.Error(this + " returned null on getting MethodInfo");
-        }
-        public static void Calamity_OnWorldLoad_Detour(Orig_Calamity_OnWorldLoad orig, DownedBossSystem self)
-        {
-            if (SubworldSystem.IsActive<LostColosseum>())
-                return;
-            orig(self);
         }
     }
 }

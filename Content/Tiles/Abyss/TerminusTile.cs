@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -17,13 +18,17 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public const int Height = 2;
 
-        public static bool TerminusIsNotAttached => NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()) || DownedBossSystem.downedPrimordialWyrm || !InfernumMode.CanUseCustomAIs;
+        public static bool TerminusIsNotAttached => CalamityMod.NPCs.CalamityGlobalNPC.adultEidolonWyrmHead != -1 || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()) || DownedBossSystem.downedPrimordialWyrm || !InfernumMode.CanUseCustomAIs;
 
         public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
+            TileID.Sets.PreventsTileRemovalIfOnTopOfIt[Type] = true;
+            TileID.Sets.PreventsSandfall[Type] = true;
+            TileID.Sets.PreventsTileHammeringIfOnTopOfIt[Type] = true;
+            TileID.Sets.PreventsTileReplaceIfOnTopOfIt[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.newTile.Width = Width;

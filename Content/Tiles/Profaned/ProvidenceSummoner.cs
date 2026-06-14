@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
@@ -63,7 +64,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCore>()))
                 return true;
 
-            if (NPC.AnyNPCs(ModContent.NPCType<Providence>()) || BossRushEvent.BossRushActive)
+            if (CalamityGlobalNPC.holyBoss != -1 || BossRushEvent.BossRushActive)
                 return true;
 
             if (CalamityUtils.CountProjectiles(ModContent.ProjectileType<ProvidenceSummonerProjectile>()) > 0)

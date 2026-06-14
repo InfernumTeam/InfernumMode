@@ -54,25 +54,29 @@ namespace InfernumMode.Content.Tiles.Abyss
             if (WorldGen.genRand.NextBool() && Main.player[Player.FindClosest(new Vector2(i * 16, j * 16), 16, 16)].cordage)
                 Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i * 16 + 8f, j * 16 + 8f), ItemID.VineRope);
 
-            Point p = new(i, j);
-            if (Main.tile[p.X, p.Y - 1].HasTile && Main.tile[p.X, p.Y - 1].TileType == Type)
+            if (!WorldGen.InWorld(i, j, 4))
+                return;
+            if (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == Type)
             {
-                WorldGen.KillTile(p.X, p.Y - 1, false, false, false);
-                if (!Main.tile[p.X, p.Y - 1].HasTile && Main.netMode != NetmodeID.SinglePlayer)
-                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, p.X, p.Y - 1);
+                WorldGen.KillTile(i, j - 1, false, false, false);
+                if (!Main.tile[i, j - 1].HasTile && Main.netMode != NetmodeID.SinglePlayer)
+                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j - 1);
             }
 
-            if (Main.tile[p.X, p.Y + 1].HasTile && Main.tile[p.X, p.Y + 1].TileType == Type)
+            if (Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].TileType == Type)
             {
-                Main.tile[p.X, p.Y + 1].Get<TileWallWireStateData>().TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
-                Main.tile[p.X, p.Y + 1].Get<TileWallWireStateData>().TileFrameY = 0;
+                Main.tile[i, j + 1].Get<TileWallWireStateData>().TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
+                Main.tile[i, j + 1].Get<TileWallWireStateData>().TileFrameY = 0;
                 if (Main.netMode != NetmodeID.SinglePlayer)
-                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, p.X, p.Y + 1);
+                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j + 1);
             }
         }
 
         public static bool AttemptToGrowVine(Point p)
         {
+            if (!WorldGen.InWorld(p.X, p.Y, 4))
+                return false;
+
             if (!Main.tile[p.X, p.Y].HasTile || Main.tile[p.X, p.Y].TileType != TileType)
                 return false;
 

@@ -45,6 +45,8 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override bool CanPlace(int i, int j)
         {
+            if (!WorldGen.InWorld(i, j, 4))
+                return false;
             if (Main.tile[i, j + 1].Slope == 0 && !Main.tile[i, j + 1].IsHalfBlock)
                 return true;
             if (Main.tile[i, j - 1].Slope == 0 && !Main.tile[i, j - 1].IsHalfBlock)

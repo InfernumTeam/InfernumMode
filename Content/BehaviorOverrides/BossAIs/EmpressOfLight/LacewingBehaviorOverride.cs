@@ -84,7 +84,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 int centerY = (int)npc.Center.Y / 16;
                 for (int i = centerY; i < centerY + 3; i++)
                 {
-                    if ((Main.tile[centerX, i].HasUnactuatedTile && Main.tileSolid[Main.tile[centerX, i].TileType]) || Main.tile[centerX, i].LiquidType > LiquidID.Water)
+                    Tile tile = Framing.GetTileSafely(centerX, i);
+                    if ((tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]) || tile.LiquidType > LiquidID.Water)
                     {
                         speedY *= -1f;
                         if (npc.velocity.Y > 0f)
@@ -101,7 +102,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 bool groundFarBelow = true;
                 for (int i = centerY; i < centerY + 20; i++)
                 {
-                    if (Main.tile[centerX, i].HasUnactuatedTile && Main.tileSolid[Main.tile[centerX, i].TileType])
+                    Tile tile = Framing.GetTileSafely(centerX, i);
+                    if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType])
                         groundFarBelow = false;
                 }
                 if (groundFarBelow)

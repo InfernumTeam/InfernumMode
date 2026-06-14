@@ -323,13 +323,13 @@ namespace InfernumMode
                 }
                 int npcTileX = (int)(npc.position.X + npc.width / 2) / 16;
                 int npcTileY = (int)(npc.position.Y + npc.height / 2) / 16;
-                if (Main.tile[npcTileX, npcTileY - 1].LiquidAmount > 128)
+                if (Framing.GetTileSafely(npcTileX, npcTileY - 1).LiquidAmount > 128)
                 {
-                    if (Main.tile[npcTileX, npcTileY + 1].HasTile)
+                    if (Framing.GetTileSafely(npcTileX, npcTileY + 1).HasTile)
                     {
                         npc.ai[0] = -1f;
                     }
-                    else if (Main.tile[npcTileX, npcTileY + 2].HasTile)
+                    else if (Framing.GetTileSafely(npcTileX, npcTileY + 2).HasTile)
                     {
                         npc.ai[0] = -1f;
                     }

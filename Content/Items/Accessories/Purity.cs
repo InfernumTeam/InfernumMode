@@ -42,19 +42,17 @@ namespace InfernumMode.Content.Items.Accessories
                     p.GetDamage<SummonDamageClass>() /= bonus;
                     p.GetDamage<SummonMeleeSpeedDamageClass>() *= bonus;
 
-                    float currentStealth = InfernumMode.CalamityMod?.Call("GetCurrentStealth", p) is float f ? f : 1f;
+                    /*float currentStealth = InfernumMode.CalamityMod?.Call("GetCurrentStealth", p) is float f ? f : 1f;
                     bool stealthStrike = currentStealth > 0f && p.HeldItem.CountsAsClass<RogueDamageClass>();
 
                     if (!stealthStrike)
-                    {
+                    {*/
                         p.GetAttackSpeed<GenericDamageClass>() += bonus - 1f;
                         //p.GetAttackSpeed<SummonDamageClass>() -= bonus - 1f;
                         //p.GetAttackSpeed<SummonMeleeSpeedDamageClass>() += bonus - 1f;
-                    }
+                    //}
 
                     p.buffImmune[ModContent.BuffType<Nightwither>()] = true;
-                    if (InfernumMode.CalamityMod?.Version == Version.Parse("2.1.2"))
-                        p.Calamity().grapeBeer = false; // Disable Grape Beer's effects as they are incompatible in this version.
                 }
             };
 

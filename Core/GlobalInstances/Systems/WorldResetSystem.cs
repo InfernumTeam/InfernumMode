@@ -14,13 +14,22 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         // TODO: Look into this.
         public override void OnWorldLoad()
         {
-            ResetEverything();
+            WorldSaveSystem.HasDefeatedEidolists = false;
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = default;
+            //ResetEverything();
         }
 
         public override void OnWorldUnload()
         {
-            ResetEverything();
+            WorldSaveSystem.HasDefeatedEidolists = false;
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = default;
+            //ResetEverything();
             CreditManager.StopAbruptly();
+        }
+
+        public override void ClearWorld()
+        {
+            ResetEverything();
         }
 
         public override void PreUpdateNPCs()
@@ -59,8 +68,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             WorldSaveSystem.InfernumModeEnabled = false;
             WorldSaveSystem.HasGeneratedProfanedShrine = false;
             WorldSaveSystem.HasGeneratedColosseumEntrance = false;
+
             WorldSaveSystem.HasBeatenInfernumProvRegularly = false;
             WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = false;
+
             WorldSaveSystem.HasProvidenceDoorShattered = false;
             WorldSaveSystem.HasSepulcherAnimationBeenPlayed = false;
             WorldSaveSystem.InPostAEWUpdateWorld = false;
@@ -72,17 +83,15 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             WorldSaveSystem.MetCalamitasAtCrags = false;
             WorldSaveSystem.HasSeenDoGCutscene = false;
             WorldSaveSystem.HasSeenPostMechsCutscene = false;
-            //WorldSaveSystem.ProvidenceArena = Rectangle.Empty;
-            //WorldSaveSystem.ProvidenceDoorXPosition = 0;
+            WorldSaveSystem.ProvidenceArena = Rectangle.Empty;
+            WorldSaveSystem.ProvidenceDoorXPosition = 0;
             WorldSaveSystem.AbyssLayer1ForestSeed = 0;
             WorldSaveSystem.AbyssLayer3CavernSeed = 0;
-            //WorldSaveSystem.SquidDenCenter = Point.Zero;
-            //WorldSaveSystem.EidolistWorshipPedestalCenter = Point.Zero;
-            //WorldSaveSystem.ForbiddenArchiveCenter = Point.Zero;
-            //WorldSaveSystem.BlossomGardenCenter = Point.Zero;
-            WorldSaveSystem.HasDefeatedEidolists = false;
-            WorldSaveSystem.LostColosseumPortalAnimationTimer = WorldSaveSystem.LostColosseumPortalAnimationTimer;
+            WorldSaveSystem.SquidDenCenter = Point.Zero;
+            WorldSaveSystem.EidolistWorshipPedestalCenter = Point.Zero;
             WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
+            WorldSaveSystem.ForbiddenArchiveCenter = Point.Zero;
+            WorldSaveSystem.BlossomGardenCenter = Point.Zero;
         }
     }
 }

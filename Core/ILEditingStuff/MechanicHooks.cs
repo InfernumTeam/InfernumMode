@@ -1077,6 +1077,10 @@ namespace InfernumMode.Core.ILEditingStuff
         public delegate bool Orig_Cal_GlobalNPC_ShouldAffectNPC(NPC npc);
         public static Hook? Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook;
 
+        public static MethodInfo? Cal_CalamityUtils_CanBeMoved = typeof(CalamityUtils).GetMethod("CanBeMoved", Utilities.UniversalBindingFlags);
+        public delegate bool Orig_Cal_CalamityUtils_CanBeMoved(NPC npc);
+        public static Hook? Cal_CalamityUtils_CanBeMoved_Detour_Hook;
+
         public override void OnModLoad()
         {
             immunitySetFieldInfo = typeof(CalamityNPCSets).GetField("ImmuneToSlowsAndOtherSpecialEffects", Utilities.UniversalBindingFlags);
@@ -1091,6 +1095,12 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook = new(Cal_GlobalNPC_ShouldAffectNPC, Cal_GlobalNPC_ShouldAffectNPC_Detour);
                 Cal_GlobalNPC_ShouldAffectNPC_Detour_Hook?.Apply();
+            }
+
+            if (Cal_CalamityUtils_CanBeMoved != null)
+            {
+                Cal_CalamityUtils_CanBeMoved_Detour_Hook = new(Cal_CalamityUtils_CanBeMoved, Cal_CalamityUtils_CanBeMoved_Detour);
+                Cal_CalamityUtils_CanBeMoved_Detour_Hook?.Apply();
             }
         }
 
@@ -1116,6 +1126,16 @@ namespace InfernumMode.Core.ILEditingStuff
         }
 
         public static bool Cal_GlobalNPC_ShouldAffectNPC_Detour(Orig_Cal_GlobalNPC_ShouldAffectNPC orig, NPC npc)
+        {
+            bool val = orig(npc);
+            if ((InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null) || (npc.ModNPC != null && npc.ModNPC.Mod == InfernumMode.Instance))
+            {
+                val = false;
+            }
+            return val;
+        }
+
+        public static bool Cal_CalamityUtils_CanBeMoved_Detour(Orig_Cal_CalamityUtils_CanBeMoved orig, NPC npc)
         {
             bool val = orig(npc);
             if ((InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type] != null) || (npc.ModNPC != null && npc.ModNPC.Mod == InfernumMode.Instance))

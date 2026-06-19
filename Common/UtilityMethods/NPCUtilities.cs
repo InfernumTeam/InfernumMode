@@ -13,6 +13,7 @@ using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Systems.Collections;
 using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -364,25 +365,11 @@ namespace InfernumMode
 
         public static void SafeSetStunImmunity(int type)
         {
-            if (InfernumMode.CalamityMod?.Version > Version.Parse("2.1.2"))
+            var immunitySetFieldInfo = SlowingStunImmunityHook.immunitySetFieldInfo;
+            if (immunitySetFieldInfo != null && immunitySetFieldInfo.GetValue(null) is bool[] immunitySet)
             {
-                var immunitySetFieldInfo = typeof(CalamityNPCSets).GetFields(UniversalBindingFlags).FirstOrDefault(f => f.Name == "ImmuneToSlowsAndOtherSpecialEffects");
-                if (immunitySetFieldInfo != default)
-                {
-                    bool[] immunitySet = (immunitySetFieldInfo.GetValue(null) as bool[])!;
-                    immunitySet[type] = true;
-                    immunitySetFieldInfo.SetValue(null, immunitySet);
-                }
-            }
-            else
-            {
-                var resistSetFieldInfo = typeof(CalamityNPCSets).GetFields(UniversalBindingFlags).FirstOrDefault(f => f.Name == "ResistSlowingDebuffsAndOtherSpecialEffects");
-                if (resistSetFieldInfo != default)
-                {
-                    bool[] resistSet = (resistSetFieldInfo.GetValue(null) as bool[])!;
-                    resistSet[type] = true;
-                    resistSetFieldInfo.SetValue(null, resistSet);
-                }
+                immunitySet[type] = true;
+                immunitySetFieldInfo.SetValue(null, immunitySet);
             }
         }
     }

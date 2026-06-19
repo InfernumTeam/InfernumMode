@@ -10,20 +10,16 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldResetSystem : ModSystem
     {
-        // For some reason, resetting worldgen stuff here seems to fully reset it, implying it isn't being correctly saved?
-        // TODO: Look into this.
         public override void OnWorldLoad()
         {
             WorldSaveSystem.HasDefeatedEidolists = false;
-            WorldSaveSystem.LostColosseumPortalAnimationTimer = default;
-            //ResetEverything();
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
         }
 
         public override void OnWorldUnload()
         {
             WorldSaveSystem.HasDefeatedEidolists = false;
-            WorldSaveSystem.LostColosseumPortalAnimationTimer = default;
-            //ResetEverything();
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = 0;
             CreditManager.StopAbruptly();
         }
 

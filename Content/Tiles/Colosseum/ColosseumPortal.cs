@@ -57,9 +57,10 @@ namespace InfernumMode.Content.Tiles.Colosseum
 
             // This is necessary to ensure that the primitives properly render.
             TileID.Sets.DrawTileInSolidLayer[Type] = true;
-
-            // Apparently this is necessary in multiplayer for some reason???
-            MinPick = int.MaxValue;
+            TileID.Sets.PreventsSandfall[Type] = true;
+            TileID.Sets.PreventsTileHammeringIfOnTopOfIt[Type] = true;
+            TileID.Sets.PreventsTileRemovalIfOnTopOfIt[Type] = true;
+            TileID.Sets.PreventsTileReplaceIfOnTopOfIt[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
             TileObjectData.newTile.Width = Width;
@@ -152,7 +153,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
 
         public override bool RightClick(int i, int j)
         {
-            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<SandstormsCore>()) && !WorldSaveSystem.HasOpenedLostColosseumPortal)
+            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<SandstormsCore>()))
                 return true;
 
             if (WorldSaveSystem.HasOpenedLostColosseumPortal)

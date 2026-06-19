@@ -12,8 +12,7 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Cosmic Monolith");
+            
         }
 
         public override void SetDefaults()
@@ -46,9 +45,9 @@ namespace InfernumMode.Content.Items.Placeables
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<CosmiliteBar>());
+            recipe.AddIngredient<CosmiliteBar>();
             recipe.AddIngredient(ItemID.Glass, 5);
-            recipe.AddTile(ModContent.TileType<CosmicAnvil>());
+            recipe.AddTile<CosmicAnvil>();
             recipe.Register();
         }
     }

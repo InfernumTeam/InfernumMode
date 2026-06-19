@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.SunkenSea;
 using CalamityMod.NPCs.SunkenSea;
 using Microsoft.Xna.Framework;
@@ -12,7 +13,6 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 2; // King Slime
         }
 
@@ -28,43 +28,48 @@ namespace InfernumMode.Content.Items.SummonItems
             Item.maxStack = 999;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && player.Calamity().ZoneSunkenSea;
+        public override bool CanUseItem(Player player) => player.Calamity().ZoneSunkenSea && !NPC.AnyNPCs(ModContent.NPCType<GiantClam>());
 
         public override void AddRecipes()
         {
             #region fuck fish
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<PrismShard>(), 3);
-            recipe.AddIngredient(ModContent.ItemType<Navystone>(), 3);
+            recipe.AddIngredient<PrismShard>(3);
+            recipe.AddIngredient<Navystone>(3);
+            recipe.AddIngredient<PearlShard>();
             recipe.Register();
 
             Recipe recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Bass, 1);
+            recipe1.AddIngredient<PearlShard>();
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
             recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.RedSnapper, 1);
+            recipe1.AddIngredient<PearlShard>();
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
             recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Tuna, 1);
+            recipe1.AddIngredient<PearlShard>();
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
 
             recipe1 = Recipe.Create(Item.type);
             recipe1.AddIngredient(ItemID.TinCan, 1);
             recipe1.AddIngredient(ItemID.Trout, 1);
+            recipe1.AddIngredient<PearlShard>();
             recipe1.AddTile(TileID.CookingPots);
             recipe1.Register();
             #endregion
         }
 
-        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
+        public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

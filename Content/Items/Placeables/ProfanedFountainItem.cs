@@ -10,8 +10,7 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Profaned Lava Fountain");
+            
         }
 
         public override void SetDefaults()
@@ -33,7 +32,7 @@ namespace InfernumMode.Content.Items.Placeables
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ProfanedRock>(), 20);
+            recipe.AddIngredient<ProfanedRock>(20);
             recipe.AddIngredient(ItemID.LavaBucket);
             recipe.AddTile(TileID.Anvils);
             recipe.Register();

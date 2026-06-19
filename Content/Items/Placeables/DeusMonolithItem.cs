@@ -38,8 +38,8 @@ namespace InfernumMode.Content.Items.Placeables
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<AstralBar>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<AstralStone>(), 15);
+            recipe.AddIngredient<AstralBar>(5);
+            recipe.AddIngredient<AstralStone>(15);
             recipe.AddTile(TileID.LunarCraftingStation);
             recipe.Register();
         }

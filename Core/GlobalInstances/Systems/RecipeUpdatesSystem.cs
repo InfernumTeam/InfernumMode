@@ -52,6 +52,8 @@ namespace InfernumMode.Content.Items
             RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<AerialiteBar>());
             RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<AerialiteBar>());
 
+            RemoveRecipeIngredient(ModContent.ItemType<Portabulb>(), ModContent.ItemType<LivingShard>());
+
             // Create recipes for certain abyss items that are normally found in chests.
 
             // Anechoic Plating and the Depth Charm are interchangeable because they're both arbitrary metallic things and there's little reason to give a damn
@@ -59,18 +61,21 @@ namespace InfernumMode.Content.Items
             Recipe.Create(ModContent.ItemType<AnechoicPlating>()).
                 AddIngredient<SulphuricScale>(5).
                 AddRecipeGroup(RecipeSystem.AnySilverBar, 10).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
 
             Recipe.Create(ModContent.ItemType<DepthCharm>()).
                 AddIngredient<SulphuricScale>(5).
                 AddRecipeGroup(RecipeSystem.AnySilverBar, 10).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
 
             Recipe.Create(ModContent.ItemType<TorrentialTear>()).
                 AddIngredient<CausticTear>().
                 AddIngredient<AbyssGravel>(10).
+                DisableDecraft().
                 AddCondition(Condition.NearWater).
                 Register();
 
@@ -79,6 +84,7 @@ namespace InfernumMode.Content.Items
                 AddIngredient(ItemID.Minishark).
                 AddIngredient<SulphuricScale>(5).
                 AddRecipeGroup(RecipeSystem.AnyGoldBar, 10).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
 
@@ -87,6 +93,7 @@ namespace InfernumMode.Content.Items
                 AddIngredient<UrchinStinger>().
                 AddIngredient<SulphuricScale>(5).
                 AddIngredient<AbyssGravel>(10).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
 
@@ -94,6 +101,7 @@ namespace InfernumMode.Content.Items
                 AddIngredient(ItemID.Bone, 15).
                 AddIngredient<AbyssGravel>(10).
                 AddIngredient<SulphuricScale>(5).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
 
@@ -102,6 +110,7 @@ namespace InfernumMode.Content.Items
                 AddIngredient(ItemID.Chest).
                 AddIngredient<AbyssGravel>(2).
                 AddIngredient<Acidwood>(5).
+                DisableDecraft().
                 AddTile(TileID.Anvils).
                 Register();
         }

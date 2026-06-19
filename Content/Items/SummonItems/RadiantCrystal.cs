@@ -9,7 +9,6 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }
 
@@ -36,7 +35,7 @@ namespace InfernumMode.Content.Items.SummonItems
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.HallowBoss);
 
-        public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
+        public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

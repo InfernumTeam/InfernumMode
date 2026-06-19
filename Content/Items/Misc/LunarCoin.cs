@@ -9,8 +9,7 @@ namespace InfernumMode.Content.Items.Misc
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Lunar Coin");
-            Item.ResearchUnlockCount = 1;
+            
         }
 
         public override void SetDefaults()

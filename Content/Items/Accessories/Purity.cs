@@ -23,8 +23,6 @@ namespace InfernumMode.Content.Items.Accessories
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0350:Use implicitly typed lambda")]
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
-
             InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
             {
                 player.SetValue<bool>(FieldName, false);
@@ -96,9 +94,9 @@ namespace InfernumMode.Content.Items.Accessories
         {
             CreateRecipe().
                 AddTile(TileID.LunarCraftingStation).
-                AddIngredient(ModContent.ItemType<LunarCoin>()).
-                AddIngredient(ModContent.ItemType<ExodiumCluster>(), 25).
-                AddIngredient(ModContent.ItemType<EssenceofEleum>(), 3).
+                AddIngredient<LunarCoin>().
+                AddIngredient<ExodiumCluster>(25).
+                AddIngredient<EssenceofEleum>(3).
                 AddIngredient(ItemID.Ectoplasm, 3).
                 Register();
         }

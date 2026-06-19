@@ -10,8 +10,7 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Grand Statue");
+            
         }
 
         public override void SetDefaults()
@@ -32,7 +31,7 @@ namespace InfernumMode.Content.Items.Placeables
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<GrandScale>());
+            recipe.AddIngredient<GrandScale>();
             recipe.AddIngredient(ItemID.StoneBlock, 25);
             recipe.AddTile(TileID.Furnaces);
             recipe.Register();

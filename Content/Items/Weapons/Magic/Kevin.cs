@@ -48,7 +48,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
                 AddIngredient<MiracleMatter>(3).
                 AddIngredient<DubiousPlating>(150).
                 AddIngredient<MysteriousCircuitry>(150).
-                AddTile(ModContent.TileType<DraedonsForge>()).
+                AddTile<DraedonsForge>().
                 Register();
         }
     }

@@ -24,8 +24,9 @@ namespace InfernumMode.Content.Items.LoreItems
         {
             CreateRecipe(1).
                 AddTile(TileID.Bookcases).
-                AddIngredient(ModContent.ItemType<BereftVassalTrophy>()).
-                AddIngredient(ModContent.ItemType<PearlShard>(), 10).
+                AddIngredient<BereftVassalTrophy>().
+                AddIngredient<PearlShard>(10).
+                DisableDecraft().
                 Register();
         }
     }

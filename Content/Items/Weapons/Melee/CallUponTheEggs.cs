@@ -156,8 +156,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
         {
             CreateRecipe()
                 .AddIngredient(ItemID.Starfury)
-                .AddIngredient(ModContent.ItemType<LivingShard>(), 10)
-                .AddIngredient(ModContent.ItemType<LifeAlloy>(), 5)
+                .AddIngredient<LivingShard>(10)
+                .AddIngredient<LifeAlloy>(5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

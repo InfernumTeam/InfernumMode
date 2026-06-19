@@ -9,7 +9,6 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
         }
 
@@ -30,16 +29,16 @@ namespace InfernumMode.Content.Items.SummonItems
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GuideVoodooDoll);
-            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 5);
+            recipe.AddIngredient<BloodOrb>(5);
+            recipe.AddIngredient<AncientBoneDust>(5);
             recipe.AddIngredient(ItemID.ShadowScale, 10);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
 
             recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GuideVoodooDoll);
-            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 5);
+            recipe.AddIngredient<BloodOrb>(5);
+            recipe.AddIngredient<AncientBoneDust>(5);
             recipe.AddIngredient(ItemID.TissueSample, 10);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

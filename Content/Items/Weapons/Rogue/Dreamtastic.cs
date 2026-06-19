@@ -60,12 +60,12 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         {
             CreateRecipe().
                 AddTile(TileID.Bookcases).
-                AddIngredient(ModContent.ItemType<StratusBookcase>()).
-                AddIngredient(ModContent.ItemType<StratusBed>(), 2).
-                AddIngredient(ModContent.ItemType<StratusChandelier>()).
-                AddIngredient(ModContent.ItemType<StratusPiano>()).
-                AddIngredient(ModContent.ItemType<Vega>()).
-                AddIngredient(ModContent.ItemType<AuricBar>(), 5).
+                AddIngredient<StratusBookcase>().
+                AddIngredient<StratusBed>(2).
+                AddIngredient<StratusChandelier>().
+                AddIngredient<StratusPiano>().
+                AddIngredient<Vega>().
+                AddIngredient<AuricBar>(5).
                 Register();
         }
     }

@@ -17,7 +17,6 @@ namespace InfernumMode.Content.Items.SummonItems
         public int frame;
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 5;
 
             InfernumPlayer.LoadDataEvent += (InfernumPlayer player, TagCompound tag) =>
@@ -52,13 +51,13 @@ namespace InfernumMode.Content.Items.SummonItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
+            recipe.AddIngredient<AncientBoneDust>(3);
             recipe.AddIngredient(ItemID.Vertebrae, 7);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
 
             recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<AncientBoneDust>(), 3);
+            recipe.AddIngredient<AncientBoneDust>(3);
             recipe.AddIngredient(ItemID.RottenChunk, 7);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

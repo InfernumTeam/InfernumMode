@@ -9,7 +9,6 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 12; // Duke Fishron
         }
 
@@ -24,7 +23,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Item.consumable = false;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.DukeFishron) && player.ZoneBeach;
+        public override bool CanUseItem(Player player) => player.ZoneBeach && !NPC.AnyNPCs(NPCID.DukeFishron);
 
         public override void AddRecipes()
         {

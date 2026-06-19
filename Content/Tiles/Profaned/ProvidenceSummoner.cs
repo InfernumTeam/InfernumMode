@@ -2,7 +2,6 @@
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.Providence;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;

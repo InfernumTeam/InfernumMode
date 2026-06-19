@@ -459,7 +459,7 @@ namespace InfernumMode
             }
         }
 
-        [Obsolete(message:"Redundant with BaseRelicItem class tweaks", error:false)]
+        [Obsolete(message: "Redundant with BaseRelicItem class tweaks", error: false)]
         public static string InfernalRelicText
         {
             get

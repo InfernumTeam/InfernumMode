@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
-using InfernumMode.Content.Tiles.Relics;
+﻿using InfernumMode.Content.Tiles.Relics;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Relics

@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Items.Misc
     {
         public override void SetStaticDefaults()
         {
-            
+
         }
 
         public override void SetDefaults()

@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

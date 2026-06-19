@@ -14,7 +14,6 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoMod.RuntimeDetour;
 using ReLogic.Content;
 using ReLogic.Graphics;
 using SubworldLibrary;

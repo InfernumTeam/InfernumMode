@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            
+
         }
 
         public override void SetDefaults()

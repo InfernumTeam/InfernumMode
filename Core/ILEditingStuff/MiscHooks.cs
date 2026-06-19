@@ -5,7 +5,6 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.PrimordialWyrm;
-using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;

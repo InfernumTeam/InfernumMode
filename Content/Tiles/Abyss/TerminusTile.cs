@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

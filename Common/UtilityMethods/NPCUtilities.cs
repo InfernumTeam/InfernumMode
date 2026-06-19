@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -10,7 +9,6 @@ using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.SulphurousSea;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.Projectiles.Enemy;
-using CalamityMod.Systems.Collections;
 using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Core.ILEditingStuff;

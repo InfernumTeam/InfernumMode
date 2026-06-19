@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using CalamityMod.NPCs.CalClone;
-using Terraria;
-using Terraria.ModLoader.IO;
-using Terraria.ModLoader;
 using CalamityMod.NPCs.SupremeCalamitas;
+using Terraria;
+using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Core.GlobalInstances
 {

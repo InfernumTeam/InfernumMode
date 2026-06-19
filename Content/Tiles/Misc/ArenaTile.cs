@@ -1,6 +1,4 @@
 ﻿using CalamityMod.NPCs;
-using CalamityMod.NPCs.CalClone;
-using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Skies;
 using Terraria;
 using Terraria.ID;

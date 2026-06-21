@@ -1,4 +1,9 @@
 {ModVersion}
-- Added changelogs to the steam workshop page
-- Fixed multiplayer issues with Profaned Guardians, Aquatic Scourge, Forgotten Shadow of Calamitas, and Supreme Calamitas
-- Patched to Calamity Mod 2.2
+- Improved Terminus tile stability in regards to its strange disappearances, as well as a few other tile processes
+- Purity no longer disables attack speed during stealth strikes as calamity fixed infinite stealth issue
+- Increased Duststorm In A Bottle's base damage to 160 (originally 110) to account for its recent rework, as it is retiered in Infernum
+- Fixed certain item pull and push mechanics being able to move enemies that aren't meant to in Infernum, such as Leviathan Ambergris knockback on Taurus, the Great Sand Shark
+- Recipe changes:
+ - Removed Living Shard from Portabulb for consistency with other boss summon recipe changes (e.g. Teratoma)
+ - Disabled shimmer decrafting of the Infernum abyss item recipes as they don't originally have one, as well as the Bereft Vassal lore item
+- Increased Sparkling Tuna Can's max stack from 999 to 9999

@@ -814,9 +814,11 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void EyeOfCthulhuSpawnHPMinChange_IL(ILContext context)
         {
             ILCursor cursor = new(context);
-            cursor.GotoNext(i => i.MatchLdcI4(200));
-            cursor.Emit(OpCodes.Pop);
-            cursor.Emit(OpCodes.Ldc_I4, 400);
+            if (!cursor.TryGotoNext(i => i.MatchLdfld<Player>(nameof(Player.ConsumedLifeCrystals))) || !cursor.TryGotoNext(MoveType.After, i => i.MatchLdcI4(5)))
+            {
+                return;
+            }
+            cursor.EmitDelegate((int five) => 10);
         }
     }
 

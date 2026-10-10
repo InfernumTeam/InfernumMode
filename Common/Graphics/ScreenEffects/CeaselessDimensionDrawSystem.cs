@@ -131,7 +131,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
             Vector2 screenArea = new(Main.instance.GraphicsDevice.Viewport.Width, Main.instance.GraphicsDevice.Viewport.Height);
-            Vector2 textureArea = screenArea;
+            float coverageScale = 2;
+            Vector2 textureArea = Vector2.Max(screenArea * coverageScale, new Vector2(2560f, 1440f));
+            Vector2 drawOrigin = (screenArea - textureArea) / 2f;
+
             var backgroundShader = InfernumEffectsRegistry.CeaselessVoidBackgroundShader;
             backgroundShader.Shader.Parameters["vortexSwirlSpeed"].SetValue(-2.33f);
             backgroundShader.Shader.Parameters["vortexSwirlDetail"].SetValue(67f);
@@ -142,7 +145,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             backgroundShader.UseSecondaryColor(Color.White);
             backgroundShader.UseShaderSpecificData(new Vector4(screenArea.Y, screenArea.X, 0f, 0f));
             backgroundShader.Apply();
-            Main.spriteBatch.Draw(pixel, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, textureArea, 0, 0f);
+
+            Main.spriteBatch.Draw(pixel, drawOrigin, null, Color.White, 0f, Vector2.Zero, textureArea, 0, 0f);
         }
 
         public override void PostUpdateEverything()
